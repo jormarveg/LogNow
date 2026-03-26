@@ -1,0 +1,97 @@
+.titulo-tablet {
+    display: none;
+}
+
+.tendencias {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.tendencias .carousel .portada {
+    width: 35vw;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.tendencias .carousel .elemento-carousel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.tendencias .flecha, .tendencias .titulo-puntuacion {
+    display: none;
+}
+
+
+@media (min-width: 768px) {
+
+    .tendencias .titulo-tablet {
+        display: block;
+    }
+
+    .tendencias .titulo-mobile, .tendencias .puntuacion {
+        display: none;
+    }
+
+    .tendencias .flecha {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 3.8rem;
+        color: #999;
+    }
+
+    .tendencias .titulo-puntuacion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .tendencias .estrellas i {
+        font-size: 0.9rem;
+    }
+
+    .tendencias .carousel-wrapper {
+        display: flex;
+        margin: 0 -1rem;
+    }
+
+    .tendencias .carousel {
+        gap: 3rem;
+    }
+
+    .tendencias {
+        border-bottom: 2px solid var(--bordes);
+        padding-bottom: 2rem;
+    }
+
+    .tendencias .carousel .portada {
+        width: 11rem;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        overflow: hidden;
+        border-radius: 4px;
+    }
+
+}
+
+@media (min-width: 992px) {
+    .tendencias .flecha {
+        display: none;
+    }
+
+    .tendencias .carousel-wrapper {
+        align-self: center;
+    }
+
+    .redes-sociales i {
+        font-size: 1.5rem;
+    }
+}

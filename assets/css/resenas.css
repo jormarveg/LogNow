@@ -1,0 +1,188 @@
+.carousel {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    margin: 0 -0.8rem;
+    padding: 0 1.1rem;
+    scrollbar-width: none;
+}
+
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* si el dispositivo tiene un ratón muestra el scroll */
+@media (pointer: fine) {
+    .carousel {
+        scrollbar-width: auto;
+        padding-bottom: 1rem;
+    }
+
+    .carousel::-webkit-scrollbar {
+        display: block;
+        height: 6px;
+    }
+
+    .carousel::-webkit-scrollbar-thumb {
+        background: var(--bordes);
+        border-radius: 10px;
+    }
+}
+
+
+.resenas-recientes {
+    display: flex;
+    flex-direction: column;
+}
+
+.resenas-recientes .puntuacion-tablet, .resenas-recientes p .completo {
+    display: none;
+}
+
+.resenas-recientes .carousel {
+    gap: 1rem;
+}
+
+.resenas-recientes .elemento-carousel {
+    flex-shrink: 0;
+    flex-basis: 55vw;
+    height: 18rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+    padding: 1rem;
+    border: 2px solid var(--bordes);
+    gap: 0.5rem;
+}
+
+.resenas-recientes .mini-portada {
+    width: 3.8rem;
+    overflow: hidden;
+    border-radius: 12px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+.resenas-recientes .nombre-puntuacion {
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    grid-column: 2/span 1;
+}
+
+
+.resenas-recientes .texto, .resenas-recientes .username {
+    grid-column: 1/span 2;
+}
+
+.resenas-recientes .username {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.resenas-recientes .texto {
+    font-size: 0.95rem;
+}
+
+.carousel .puntuacion {
+    padding: 0.15rem 0.35rem;
+    color: var(--puntuacion);
+    border: 1px solid var(--puntuacion);
+    border-radius: 18px;
+    width: fit-content;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+.carousel .puntuacion i {
+    margin-right: 0.2rem;
+}
+
+@media (min-width: 768px) {
+    .resenas-recientes .nombre-puntuacion, .resenas-recientes .username {
+        display: none;
+    }
+
+    .resenas-recientes .puntuacion-tablet, .resenas-recientes p .completo {
+        display: inline;
+    }
+
+    /* ya no es carousel */
+    .resenas-recientes .carousel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* cada reseña */
+    .resenas-recientes .elemento-carousel {
+        flex-basis: 0;
+        height: auto;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        border: none;
+        gap: 2rem;
+    }
+
+    .resenas-recientes .mini-portada {
+        grid-column: 1/span 1;
+        grid-row: 1/-1;
+        width: 7rem;
+        align-self: center;
+    }
+
+    .resenas-recientes .puntuacion-tablet {
+        grid-column: 2/span 2;
+        display: flex;
+    }
+
+    .resenas-recientes .texto {
+        grid-column: 2/-1;
+        font-size: 1.1rem;
+    }
+
+    .resenas-recientes .titulo-puntuacion-wrapper {
+        display: grid;
+        grid-template-columns:1fr 1fr;
+        align-content: start;
+
+    }
+
+    .resenas-recientes .titulo-plataforma {
+        grid-column: 1/-1;
+        font-size: 1.1rem;
+    }
+
+    .resenas-recientes .puntuacion-tablet .fecha {
+        flex-grow: 1;
+        text-align: right;
+        color: #999;
+    }
+
+
+    .estrellas i {
+        color: var(--puntuacion);
+    }
+
+    .estrellas i:last-of-type {
+        color: var(--bordes);
+    }
+
+}
+
+@media (min-width: 992px) {
+
+    .resenas-recientes .carousel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .resenas-recientes .elemento-carousel p {
+        font-size: 0.9rem;
+    }
+}
