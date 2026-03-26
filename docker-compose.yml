@@ -1,0 +1,36 @@
+services:
+  web:
+    container_name: lognow-web
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    container_name: lognow-db
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: lognow
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_datos:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: lognow-pma
+    image: phpmyadmin:latest
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - db
+
+volumes:
+  db_datos:
