@@ -22,8 +22,8 @@
         </div>
         <nav>
             <ul>
-                <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/pages/perfil.php">Perfil</a></li>
-                <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/pages/catalogo.php">Juegos</a></li>
+                <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
+                <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
             </ul>
         </nav>
         <div class="btnAgregar"><i class="fa fa-add"></i><span>Registrar juego</span></div>
