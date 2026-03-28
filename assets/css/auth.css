@@ -1,0 +1,110 @@
+.auth-form {
+    max-width: 28rem;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.auth-form h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.campo {
+    margin-bottom: 1rem;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.campo input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 2px solid var(--bordes);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    background: white;
+}
+
+.campo input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.campo input.invalido {
+    border-color: #e74c3c;
+}
+
+.campo input.valido {
+    border-color: #27ae60;
+}
+
+.msg-error {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    min-height: 1.2rem;
+    margin-top: 0.2rem;
+}
+
+.error {
+    background: #fde8e8;
+    color: #e74c3c;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.exito {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.auth-form button:hover {
+    opacity: 0.9;
+}
+
+.alt-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.alt-link a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .auth-form {
+        margin-top: 3rem;
+        padding: 2rem;
+        border: 2px solid var(--bordes);
+        border-radius: 8px;
+    }
+}
