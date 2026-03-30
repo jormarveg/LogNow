@@ -16,5 +16,10 @@
         </div>
     </div>
 </footer>
+<?php if (isset($js) && !empty($js)): ?>
+    <?php foreach ($js as $archivo): ?>
+        <script src="/assets/js/<?= $archivo ?>"></script>
+    <?php endforeach; ?>
+<?php endif; ?>
 </body>
 </html>

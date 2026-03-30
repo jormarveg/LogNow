@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/auth.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -22,11 +23,20 @@
         </div>
         <nav>
             <ul>
-                <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
+                <?php if (estaLogueado()): ?>
+                    <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
+                    <?php if (esAdmin()): ?>
+                        <li><a href="/admin/">Admin</a></li>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <li<?= $pagina === 'login' ? ' class="active"' : '' ?>><a href="/login.php">Iniciar sesión</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
-        <div class="btnAgregar"><i class="fa fa-add"></i><span>Registrar juego</span></div>
+        <?php if (estaLogueado()): ?>
+            <div class="btnAgregar"><i class="fa fa-add"></i><span>Registrar juego</span></div>
+        <?php endif; ?>
         <div class="info">
             <input id="check-info" type="checkbox" hidden>
             <div class="contenido-info">
@@ -35,6 +45,11 @@
                     <li><a href="#">Privacidad</a></li>
                     <li><a href="#">Contacto</a></li>
                 </ul>
+                <?php if (estaLogueado()): ?>
+                    <div class="session-info">
+                        <a href="/logout.php">Cerrar sesión</a>
+                    </div>
+                <?php endif; ?>
                 <div class="redes-sociales">
                     <a href="https://facebook.com"><i class="fa-brands fa-facebook"></i></a>
                     <a href="https://instagram.com"><i class="fa-brands fa-square-instagram"></i></a>

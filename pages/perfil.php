@@ -1,4 +1,12 @@
 <?php
+require '../includes/auth.php';
+
+if (!estaLogueado()) {
+    header('Location: /login.php');
+    exit;
+}
+
+$datosUsuario = $usuarioModel->obtenerPorId(getUsuario()['id']);
 $titulo = 'Perfil — LogNow!';
 $css = ['resenas.css', 'perfil.css'];
 $pagina = 'perfil';
@@ -10,7 +18,7 @@ require '../includes/header.php';
         <div class="foto-perfil">
             <img src="/assets/img/profile/user.webp" alt="Foto de perfil">
         </div>
-        <h1 class="nombre">Jorge Martínez</h1>
+        <h1 class="nombre"><?= htmlspecialchars($datosUsuario['nombre']) ?></h1>
     </div>
 </section>
 
