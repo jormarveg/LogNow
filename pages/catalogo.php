@@ -11,7 +11,7 @@ require '../includes/header.php';
         <p>50.000 juegos</p>
         <p><i class="fa-solid fa-filter"></i> <b>Filtros</b></p>
         <p>Ordenar por </p>
-        <p><b><i class="fa-solid fa-arrow-down-wide-short"></i> Puntuacion</b></p>
+        <p><b><i class="fa-solid fa-arrow-down-wide-short"></i> Puntuación</b></p>
     </section>
     <section class="juegos">
         <?php for ($i = 0; $i < 24; $i++): ?>

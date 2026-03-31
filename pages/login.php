@@ -2,16 +2,16 @@
 require '../includes/auth.php';
 
 $error = '';
-$identificador = '';
+$emailLogin = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $identificador = trim($_POST['identificador'] ?? '');
+    $emailLogin = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (empty($identificador) || empty($password)) {
+    if (empty($emailLogin) || empty($password)) {
         $error = 'Todos los campos son obligatorios';
     } else {
-        $usuario = $usuarioModel->buscarPorEmail($identificador);
+        $usuario = $usuarioModel->buscarPorEmail($emailLogin);
 
         if ($usuario && password_verify($password, $usuario['password'])) {
             if (!$usuario['activo']) {
@@ -46,8 +46,8 @@ require '../includes/header.php';
         <form method="POST" id="form-login">
             <div class="campo">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="identificador" required
-                       value="<?= htmlspecialchars($identificador) ?>">
+                <input type="email" id="email" name="email" required
+                       value="<?= htmlspecialchars($emailLogin) ?>">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">

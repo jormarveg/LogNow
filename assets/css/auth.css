@@ -103,6 +103,7 @@
 @media (min-width: 768px) {
     .auth-form {
         margin-top: 3rem;
+        margin-bottom: 3rem;
         padding: 2rem;
         border: 2px solid var(--bordes);
         border-radius: 8px;

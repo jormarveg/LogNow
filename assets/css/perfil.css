@@ -280,7 +280,7 @@ aside.sidebar {
         display: flex;
         flex-direction: column;
         padding: 0 1rem;
-        border: 1px solid rgba(195, 207, 217, 0.59)
+        border: 1px solid rgba(195, 207, 217, 0.59);
     }
 
     .resenas-recientes .carousel {

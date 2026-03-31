@@ -28,7 +28,7 @@ require '../includes/header.php';
             <li class="active"><a href="#"><i class="fa-solid fa-user"></i>Perfil</a></li>
             <li><a href="#"><i class="fa-solid fa-gamepad"></i>Tus juegos</a></li>
             <li><a href="#"><i class="fa-solid fa-message"></i>Tus reseñas</a></li>
-            <a class="editar" href="#">Editar perfil</a>
+            <li><a class="editar" href="#">Editar perfil</a></li>
         </ul>
     </div>
 </nav>

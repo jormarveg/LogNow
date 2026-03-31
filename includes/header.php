@@ -36,6 +36,7 @@
         </nav>
         <?php if (estaLogueado()): ?>
             <div class="btnAgregar"><i class="fa fa-add"></i><span>Registrar juego</span></div>
+            <a href="/logout.php" class="btn-salir"><i class="fa-solid fa-right-from-bracket"></i></a>
         <?php endif; ?>
         <div class="info">
             <input id="check-info" type="checkbox" hidden>
