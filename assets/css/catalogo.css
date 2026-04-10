@@ -8,18 +8,56 @@ main{
 
 .encabezado{
     display: flex;
+    flex-direction: column;
     font-size: 0.85rem;
-    gap: 0.5rem;
+    gap: 1rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--bordes);
 }
 
-/* cantidad de juegos */
-.encabezado p:first-child{
-    flex-grow: 1;
+.encabezado > p{
+    font-weight: 600;
 }
 
-.juegos .juego .titulo, .encabezado .fa-filter{
+.filtros-catalogo{
+    display: grid;
+    gap: 0.75rem;
+}
+
+.filtros-catalogo label{
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-weight: 600;
+}
+
+.filtros-catalogo span{
+    color: #4b5c6b;
+}
+
+.filtros-catalogo select,
+.filtros-catalogo button{
+    border: 1px solid var(--bordes);
+    border-radius: 8px;
+    min-height: 2.75rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.filtros-catalogo select{
+    background: white;
+    padding: 0 0.85rem;
+}
+
+.filtros-catalogo button{
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 0 1rem;
+}
+
+.juegos .juego .titulo{
     display: none;
 }
 
@@ -28,6 +66,11 @@ main{
     object-fit: cover;
     overflow: hidden;
     border-radius: 4px;
+}
+
+.juegos .portada img{
+    height: 100%;
+    object-fit: cover;
 }
 
 .juegos .juego {
@@ -54,8 +97,48 @@ main{
     gap: 1rem;
 }
 
+.sin-resultados{
+    grid-column: 1 / -1;
+    text-align: center;
+    border: 2px dashed var(--bordes);
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    color: #4b5c6b;
+}
+
+.paginacion{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.paginacion a{
+    min-width: 2.6rem;
+    text-align: center;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--bordes);
+    background: white;
+}
+
+.paginacion a.active{
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
 @media (min-width: 768px) {
-    .juegos .juego .titulo, .encabezado .fa-filter{
+    .encabezado{
+        gap: 1.25rem;
+    }
+
+    .filtros-catalogo{
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: end;
+    }
+
+    .juegos .juego .titulo{
         display: inline-block;
     }
 
@@ -85,6 +168,19 @@ main{
 }
 
 @media (min-width: 992px) {
+    .encabezado{
+        flex-direction: row;
+        align-items: end;
+    }
+
+    .encabezado > p{
+        min-width: 8rem;
+    }
+
+    .filtros-catalogo{
+        flex: 1;
+    }
+
     .juegos{
         grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
     }
