@@ -14,7 +14,8 @@ services:
     container_name: lognow-php
     build: .
     environment:
-      RAWG_API_KEY: ${RAWG_API_KEY}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
     volumes:
       - ./:/var/www/html
     depends_on:
