@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/rawg.php';
+require_once __DIR__ . '/igdb.php';
 
 function cacheFechaCaducada($fechaCache, $horas = 72) {
     if (!$fechaCache) {
@@ -23,59 +23,63 @@ function cacheValorTexto($valor) {
     return $valor === '' ? null : $valor;
 }
 
-function cacheValorFecha($valor) {
-    $valor = trim((string) $valor);
+function cacheValorFechaIgdb($valor) {
+    $valor = (int) $valor;
 
-    if ($valor === '') {
+    if ($valor <= 0) {
         return null;
     }
 
-    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $valor) ? $valor : null;
+    return date('Y-m-d', $valor);
 }
 
 function cacheGuardarDesarrolladora(PDO $db, $datos) {
-    $nombre = cacheValorTexto($datos['name'] ?? '');
-    $rawgId = (int) ($datos['id'] ?? 0);
+    $compania = $datos['company'] ?? $datos;
+    $nombre = cacheValorTexto($compania['name'] ?? '');
+    $igdbId = (int) ($compania['id'] ?? 0);
 
-    if (!$nombre || $rawgId <= 0) {
+    if (!$nombre || $igdbId <= 0) {
         return null;
     }
 
-    $stmt = $db->prepare('SELECT id FROM DESARROLLADORA WHERE rawg_id = ? LIMIT 1');
-    $stmt->execute([$rawgId]);
+    $stmt = $db->prepare('SELECT id FROM DESARROLLADORA WHERE igdb_id = ? LIMIT 1');
+    $stmt->execute([$igdbId]);
     $existente = $stmt->fetchColumn();
 
     if ($existente) {
-        $update = $db->prepare('UPDATE DESARROLLADORA SET nombre = ?, pais = ? WHERE id = ?');
-        $update->execute([
-            $nombre,
-            cacheValorTexto($datos['country'] ?? ''),
-            $existente
-        ]);
+        $update = $db->prepare('UPDATE DESARROLLADORA SET nombre = ? WHERE id = ?');
+        $update->execute([$nombre, $existente]);
 
         return (int) $existente;
     }
 
-    $insert = $db->prepare('INSERT INTO DESARROLLADORA (nombre, pais, rawg_id) VALUES (?, ?, ?)');
-    $insert->execute([
-        $nombre,
-        cacheValorTexto($datos['country'] ?? ''),
-        $rawgId
-    ]);
+    $stmt = $db->prepare('SELECT id FROM DESARROLLADORA WHERE nombre = ? LIMIT 1');
+    $stmt->execute([$nombre]);
+    $porNombre = $stmt->fetchColumn();
+
+    if ($porNombre) {
+        $update = $db->prepare('UPDATE DESARROLLADORA SET igdb_id = ? WHERE id = ?');
+        $update->execute([$igdbId, $porNombre]);
+
+        return (int) $porNombre;
+    }
+
+    $insert = $db->prepare('INSERT INTO DESARROLLADORA (nombre, pais, igdb_id) VALUES (?, ?, ?)');
+    $insert->execute([$nombre, null, $igdbId]);
 
     return (int) $db->lastInsertId();
 }
 
 function cacheGuardarGenero(PDO $db, $datos) {
     $nombre = cacheValorTexto($datos['name'] ?? '');
-    $rawgId = (int) ($datos['id'] ?? 0);
+    $igdbId = (int) ($datos['id'] ?? 0);
 
-    if (!$nombre || $rawgId <= 0) {
+    if (!$nombre || $igdbId <= 0) {
         return null;
     }
 
-    $stmt = $db->prepare('SELECT id FROM GENERO WHERE rawg_id = ? LIMIT 1');
-    $stmt->execute([$rawgId]);
+    $stmt = $db->prepare('SELECT id FROM GENERO WHERE igdb_id = ? LIMIT 1');
+    $stmt->execute([$igdbId]);
     $existente = $stmt->fetchColumn();
 
     if ($existente) {
@@ -90,31 +94,30 @@ function cacheGuardarGenero(PDO $db, $datos) {
     $porNombre = $stmt->fetchColumn();
 
     if ($porNombre) {
-        $update = $db->prepare('UPDATE GENERO SET rawg_id = ? WHERE id = ?');
-        $update->execute([$rawgId, $porNombre]);
+        $update = $db->prepare('UPDATE GENERO SET igdb_id = ? WHERE id = ?');
+        $update->execute([$igdbId, $porNombre]);
 
         return (int) $porNombre;
     }
 
-    $insert = $db->prepare('INSERT INTO GENERO (nombre, rawg_id) VALUES (?, ?)');
-    $insert->execute([$nombre, $rawgId]);
+    $insert = $db->prepare('INSERT INTO GENERO (nombre, igdb_id) VALUES (?, ?)');
+    $insert->execute([$nombre, $igdbId]);
 
     return (int) $db->lastInsertId();
 }
 
 function cacheGuardarPlataforma(PDO $db, $datos) {
-    $plataforma = $datos['platform'] ?? $datos;
-    $nombre = cacheValorTexto($plataforma['name'] ?? '');
-    $rawgId = (int) ($plataforma['id'] ?? 0);
+    $nombre = cacheValorTexto($datos['name'] ?? '');
+    $igdbId = (int) ($datos['id'] ?? 0);
 
-    if (!$nombre || $rawgId <= 0) {
+    if (!$nombre || $igdbId <= 0) {
         return null;
     }
 
     $acronimo = strtoupper(substr($nombre, 0, 5));
 
-    $stmt = $db->prepare('SELECT id FROM PLATAFORMA WHERE rawg_id = ? LIMIT 1');
-    $stmt->execute([$rawgId]);
+    $stmt = $db->prepare('SELECT id FROM PLATAFORMA WHERE igdb_id = ? LIMIT 1');
+    $stmt->execute([$igdbId]);
     $existente = $stmt->fetchColumn();
 
     if ($existente) {
@@ -129,14 +132,14 @@ function cacheGuardarPlataforma(PDO $db, $datos) {
     $porNombre = $stmt->fetchColumn();
 
     if ($porNombre) {
-        $update = $db->prepare('UPDATE PLATAFORMA SET rawg_id = ?, acronimo = ? WHERE id = ?');
-        $update->execute([$rawgId, $acronimo, $porNombre]);
+        $update = $db->prepare('UPDATE PLATAFORMA SET igdb_id = ?, acronimo = ? WHERE id = ?');
+        $update->execute([$igdbId, $acronimo, $porNombre]);
 
         return (int) $porNombre;
     }
 
-    $insert = $db->prepare('INSERT INTO PLATAFORMA (nombre, acronimo, rawg_id) VALUES (?, ?, ?)');
-    $insert->execute([$nombre, $acronimo, $rawgId]);
+    $insert = $db->prepare('INSERT INTO PLATAFORMA (nombre, acronimo, igdb_id) VALUES (?, ?, ?)');
+    $insert->execute([$nombre, $acronimo, $igdbId]);
 
     return (int) $db->lastInsertId();
 }
@@ -179,26 +182,42 @@ function cacheSyncPlataformas(PDO $db, $idVideojuego, $plataformas) {
     }
 }
 
-function cacheGuardarJuegoRawg(PDO $db, $juego) {
-    $rawgId = (int) ($juego['id'] ?? 0);
-    $titulo = cacheValorTexto($juego['name'] ?? '');
+function cacheDesarrolladoraJuego($juego) {
+    $companias = $juego['involved_companies'] ?? [];
 
-    if ($rawgId <= 0 || !$titulo) {
+    if (!is_array($companias)) {
         return null;
     }
 
-    $desarrolladoras = $juego['developers'] ?? [];
-    $idDesarrolladora = null;
-
-    if (is_array($desarrolladoras) && !empty($desarrolladoras)) {
-        $idDesarrolladora = cacheGuardarDesarrolladora($db, $desarrolladoras[0]);
+    foreach ($companias as $compania) {
+        if (!empty($compania['developer']) && !empty($compania['company'])) {
+            return $compania['company'];
+        }
     }
 
-    $stmt = $db->prepare('SELECT id, descripcion FROM VIDEOJUEGO WHERE rawg_id = ? LIMIT 1');
-    $stmt->execute([$rawgId]);
+    if (!empty($companias[0]['company'])) {
+        return $companias[0]['company'];
+    }
+
+    return null;
+}
+
+function cacheGuardarJuegoIgdb(PDO $db, $juego) {
+    $igdbId = (int) ($juego['id'] ?? 0);
+    $titulo = cacheValorTexto($juego['name'] ?? '');
+
+    if ($igdbId <= 0 || !$titulo) {
+        return null;
+    }
+
+    $desarrolladora = cacheDesarrolladoraJuego($juego);
+    $idDesarrolladora = $desarrolladora ? cacheGuardarDesarrolladora($db, $desarrolladora) : null;
+
+    $stmt = $db->prepare('SELECT id, descripcion FROM VIDEOJUEGO WHERE igdb_id = ? LIMIT 1');
+    $stmt->execute([$igdbId]);
     $existente = $stmt->fetch();
 
-    $descripcion = cacheValorTexto($juego['description_raw'] ?? ($juego['description'] ?? ''));
+    $descripcion = cacheValorTexto($juego['summary'] ?? '');
 
     if ($existente && !$descripcion) {
         $descripcion = $existente['descripcion'];
@@ -206,21 +225,20 @@ function cacheGuardarJuegoRawg(PDO $db, $juego) {
 
     $datos = [
         $titulo,
-        cacheValorTexto($juego['background_image'] ?? ''),
-        cacheValorTexto($juego['background_image_additional'] ?? ($juego['background_image'] ?? '')),
-        cacheValorFecha($juego['released'] ?? ''),
+        igdbPortadaJuego($juego['cover'] ?? null),
+        igdbBackgroundJuego($juego),
+        cacheValorFechaIgdb($juego['first_release_date'] ?? 0),
         $descripcion,
-        isset($juego['rating']) ? (float) $juego['rating'] : null,
         $idDesarrolladora
     ];
 
     if ($existente) {
-        $update = $db->prepare('UPDATE VIDEOJUEGO SET titulo = ?, portada_url = ?, background_url = ?, fecha_lanzamiento = ?, descripcion = ?, rating_rawg = ?, id_desarrolladora = ?, fecha_cache = NOW() WHERE id = ?');
+        $update = $db->prepare('UPDATE VIDEOJUEGO SET titulo = ?, portada_url = ?, background_url = ?, fecha_lanzamiento = ?, descripcion = ?, id_desarrolladora = ?, fecha_cache = NOW() WHERE id = ?');
         $update->execute(array_merge($datos, [$existente['id']]));
         $idVideojuego = (int) $existente['id'];
     } else {
-        $insert = $db->prepare('INSERT INTO VIDEOJUEGO (rawg_id, titulo, portada_url, background_url, fecha_lanzamiento, descripcion, rating_rawg, id_desarrolladora, fecha_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())');
-        $insert->execute(array_merge([$rawgId], $datos));
+        $insert = $db->prepare('INSERT INTO VIDEOJUEGO (igdb_id, titulo, portada_url, background_url, fecha_lanzamiento, descripcion, id_desarrolladora, fecha_cache) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())');
+        $insert->execute(array_merge([$igdbId], $datos));
         $idVideojuego = (int) $db->lastInsertId();
     }
 
@@ -230,67 +248,85 @@ function cacheGuardarJuegoRawg(PDO $db, $juego) {
     return $idVideojuego;
 }
 
-function cacheObtenerJuegoPorRawgId(PDO $db, $rawgId) {
-    $stmt = $db->prepare('SELECT * FROM VIDEOJUEGO WHERE rawg_id = ? LIMIT 1');
-    $stmt->execute([(int) $rawgId]);
+function cacheObtenerJuegoPorIgdbId(PDO $db, $igdbId) {
+    $stmt = $db->prepare('SELECT * FROM VIDEOJUEGO WHERE igdb_id = ? LIMIT 1');
+    $stmt->execute([(int) $igdbId]);
 
     return $stmt->fetch() ?: null;
 }
 
-function cacheActualizarJuegoPorRawgId(PDO $db, $rawgId) {
-    $detalle = rawgObtenerJuego($rawgId);
+function cacheActualizarJuegoPorIgdbId(PDO $db, $igdbId) {
+    $detalle = igdbObtenerJuego($igdbId);
 
     if (!$detalle || empty($detalle['id'])) {
         return null;
     }
 
-    cacheGuardarJuegoRawg($db, $detalle);
+    cacheGuardarJuegoIgdb($db, $detalle);
 
-    return cacheObtenerJuegoPorRawgId($db, $rawgId);
+    return cacheObtenerJuegoPorIgdbId($db, $igdbId);
 }
 
-function cacheObtenerJuegoRawg(PDO $db, $rawgId, $horas = 72) {
-    $juego = cacheObtenerJuegoPorRawgId($db, $rawgId);
+function cacheObtenerJuegoIgdb(PDO $db, $igdbId, $horas = 72) {
+    $juego = cacheObtenerJuegoPorIgdbId($db, $igdbId);
 
     if ($juego && !cacheFechaCaducada($juego['fecha_cache'], $horas)) {
         return $juego;
     }
 
-    if (!rawgDisponible()) {
+    if (!igdbDisponible()) {
         return $juego;
     }
 
-    $actualizado = cacheActualizarJuegoPorRawgId($db, $rawgId);
+    $actualizado = cacheActualizarJuegoPorIgdbId($db, $igdbId);
 
     return $actualizado ?: $juego;
 }
 
-function cacheImportarPopulares(PDO $db, $pagina = 1, $cantidad = 20) {
-    if (!rawgDisponible()) {
+function cacheVaciarCatalogo(PDO $db) {
+    $db->exec('DELETE FROM REPORTE');
+    $db->exec('DELETE FROM RESENA');
+    $db->exec('DELETE FROM USUARIO_JUEGO');
+    $db->exec('DELETE FROM LISTA_VIDEOJUEGO');
+    $db->exec('DELETE FROM VIDEOJUEGO_GENERO');
+    $db->exec('DELETE FROM VIDEOJUEGO_PLATAFORMA');
+    $db->exec('DELETE FROM VIDEOJUEGO');
+    $db->exec('DELETE FROM GENERO');
+    $db->exec('DELETE FROM PLATAFORMA');
+    $db->exec('DELETE FROM DESARROLLADORA');
+    $db->exec('ALTER TABLE VIDEOJUEGO AUTO_INCREMENT = 1');
+    $db->exec('ALTER TABLE GENERO AUTO_INCREMENT = 1');
+    $db->exec('ALTER TABLE PLATAFORMA AUTO_INCREMENT = 1');
+    $db->exec('ALTER TABLE DESARROLLADORA AUTO_INCREMENT = 1');
+}
+
+function cacheImportarJuegosIgdb(PDO $db, $pagina = 1, $cantidad = 20, $reiniciar = false) {
+    if (!igdbDisponible()) {
         return [
             'ok' => false,
-            'mensaje' => 'No hay clave de RAWG configurada',
+            'mensaje' => 'No hay credenciales de IGDB configuradas',
             'importados' => 0
         ];
     }
 
-    $respuesta = rawgPopulares($pagina, $cantidad);
+    if ($reiniciar) {
+        cacheVaciarCatalogo($db);
+    }
 
-    if (!$respuesta || empty($respuesta['results'])) {
+    $respuesta = igdbPopulares($pagina, $cantidad);
+
+    if (!$respuesta) {
         return [
             'ok' => false,
-            'mensaje' => 'No se han podido obtener juegos desde RAWG',
+            'mensaje' => 'No se han podido obtener juegos desde IGDB',
             'importados' => 0
         ];
     }
 
     $importados = 0;
 
-    foreach ($respuesta['results'] as $juego) {
-        $detalle = rawgObtenerJuego($juego['id'] ?? 0);
-        $datos = $detalle ?: $juego;
-
-        if (cacheGuardarJuegoRawg($db, $datos)) {
+    foreach ($respuesta as $juego) {
+        if (cacheGuardarJuegoIgdb($db, $juego)) {
             $importados++;
         }
     }
@@ -333,7 +369,7 @@ function cacheConstruirFiltrosCatalogo($filtros) {
 
 function cacheOrdenCatalogo($orden) {
     $opciones = [
-        'puntuacion' => 'v.rating_rawg DESC, v.titulo ASC',
+        'puntuacion' => 'COALESCE(r.puntuacion_media, -1) DESC, v.titulo ASC',
         'nombre' => 'v.titulo ASC',
         'fecha' => 'v.fecha_lanzamiento DESC, v.titulo ASC'
     ];
@@ -343,7 +379,6 @@ function cacheOrdenCatalogo($orden) {
 
 function cacheContarJuegosCatalogo(PDO $db, $filtros = []) {
     $partes = cacheConstruirFiltrosCatalogo($filtros);
-
     $sql = 'SELECT COUNT(DISTINCT v.id) FROM VIDEOJUEGO v ' . $partes['joins'];
 
     if (!empty($partes['where'])) {
@@ -358,8 +393,14 @@ function cacheContarJuegosCatalogo(PDO $db, $filtros = []) {
 
 function cacheListarJuegosCatalogo(PDO $db, $filtros = [], $orden = 'puntuacion', $limite = 12, $offset = 0) {
     $partes = cacheConstruirFiltrosCatalogo($filtros);
-    $sql = 'SELECT DISTINCT v.id, v.rawg_id, v.titulo, v.portada_url, v.rating_rawg, v.fecha_lanzamiento
-            FROM VIDEOJUEGO v ' . $partes['joins'];
+    $sql = 'SELECT DISTINCT v.id, v.igdb_id, v.titulo, v.portada_url, v.fecha_lanzamiento, r.puntuacion_media
+            FROM VIDEOJUEGO v
+            LEFT JOIN (
+                SELECT id_videojuego, ROUND(AVG(puntuacion), 1) AS puntuacion_media
+                FROM RESENA
+                WHERE activa = 1
+                GROUP BY id_videojuego
+            ) r ON r.id_videojuego = v.id ' . $partes['joins'];
 
     if (!empty($partes['where'])) {
         $sql .= ' WHERE ' . implode(' AND ', $partes['where']);

@@ -18,8 +18,9 @@ if (!$esCli) {
 
 $pagina = $esCli ? ($argv[1] ?? 1) : ($_GET['pagina'] ?? 1);
 $cantidad = $esCli ? ($argv[2] ?? 20) : ($_GET['cantidad'] ?? 20);
+$reiniciar = $esCli ? (($argv[3] ?? ($pagina == 1 ? '1' : '0')) === '1') : (($_GET['reiniciar'] ?? ($pagina == 1 ? '1' : '0')) === '1');
 
-$resultado = cacheImportarPopulares($db, (int) $pagina, (int) $cantidad);
+$resultado = cacheImportarJuegosIgdb($db, (int) $pagina, (int) $cantidad, $reiniciar);
 
 echo $resultado['mensaje'] . PHP_EOL;
 echo 'Juegos importados: ' . $resultado['importados'] . PHP_EOL;

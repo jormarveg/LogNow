@@ -23,33 +23,32 @@ CREATE TABLE DESARROLLADORA (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     pais VARCHAR(50),
-    rawg_id INT
+    igdb_id INT
 );
 
 CREATE TABLE GENERO (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE,
-    rawg_id INT
+    igdb_id INT
 );
 
 CREATE TABLE PLATAFORMA (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     acronimo VARCHAR(20),
-    rawg_id INT
+    igdb_id INT
 );
 
 -- Tablas con dependencias
 
 CREATE TABLE VIDEOJUEGO (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    rawg_id INT UNIQUE,
+    igdb_id INT UNIQUE,
     titulo VARCHAR(150) NOT NULL,
     portada_url VARCHAR(255),
     background_url VARCHAR(255),
     fecha_lanzamiento DATE,
     descripcion TEXT,
-    rating_rawg DECIMAL(3,1),
     id_desarrolladora INT,
     fecha_cache DATETIME,
     FOREIGN KEY (id_desarrolladora) REFERENCES DESARROLLADORA(id) ON DELETE SET NULL
