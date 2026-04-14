@@ -10,7 +10,7 @@ $filtroPlataforma = isset($_GET['plataforma']) ? (int) $_GET['plataforma'] : 0;
 $filtroAnio = isset($_GET['anio']) ? (int) $_GET['anio'] : 0;
 $orden = $_GET['orden'] ?? 'puntuacion';
 $paginaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
-$porPagina = 12;
+$porPagina = 18;
 
 $filtros = [
     'genero' => $filtroGenero,
@@ -45,6 +45,32 @@ function urlCatalogo($cambios = []) {
     $query = http_build_query($params);
 
     return '/catalogo.php' . ($query ? '?' . $query : '');
+}
+
+function paginasCatalogo($paginaActual, $totalPaginas) {
+    if ($totalPaginas <= 7) {
+        return range(1, $totalPaginas);
+    }
+
+    $paginas = [1];
+    $inicio = max(2, $paginaActual - 1);
+    $fin = min($totalPaginas - 1, $paginaActual + 1);
+
+    if ($inicio > 2) {
+        $paginas[] = '...';
+    }
+
+    for ($i = $inicio; $i <= $fin; $i++) {
+        $paginas[] = $i;
+    }
+
+    if ($fin < $totalPaginas - 1) {
+        $paginas[] = '...';
+    }
+
+    $paginas[] = $totalPaginas;
+
+    return $paginas;
 }
 
 require '../includes/header.php';
@@ -102,21 +128,23 @@ require '../includes/header.php';
     <section class="juegos">
         <?php if ($juegos): ?>
             <?php foreach ($juegos as $juego): ?>
-                <article class="juego">
+                <a class="juego" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">
                     <div class="portada">
                         <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                        <div class="titulo">
+                            <p><?= htmlspecialchars($juego['titulo']) ?></p>
+                        </div>
                     </div>
-                    <div class="titulo"><p><?= htmlspecialchars($juego['titulo']) ?></p></div>
                     <div class="puntuacion">
                         <i class="fa-solid fa-star"></i>
-                        <span><?= $juego['rating_rawg'] !== null ? number_format((float) $juego['rating_rawg'], 1) : 'N/D' ?></span>
+                        <span><?= $juego['puntuacion_media'] !== null ? number_format((float) $juego['puntuacion_media'], 1) : 'N/D' ?></span>
                     </div>
-                </article>
+                </a>
             <?php endforeach; ?>
         <?php else: ?>
             <div class="sin-resultados">
                 <p>No hay juegos disponibles con esos filtros.</p>
-                <p>Importa primero juegos desde RAWG para llenar el catálogo.</p>
+                <p>Importa primero juegos desde IGDB para llenar el catálogo.</p>
             </div>
         <?php endif; ?>
     </section>
@@ -126,9 +154,13 @@ require '../includes/header.php';
                 <a href="<?= htmlspecialchars(urlCatalogo(['p' => $paginaActual - 1])) ?>">Anterior</a>
             <?php endif; ?>
 
-            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
-                <a href="<?= htmlspecialchars(urlCatalogo(['p' => $i])) ?>"<?= $i === $paginaActual ? ' class="active"' : '' ?>><?= $i ?></a>
-            <?php endfor; ?>
+            <?php foreach (paginasCatalogo($paginaActual, $totalPaginas) as $item): ?>
+                <?php if ($item === '...'): ?>
+                    <span class="separador">...</span>
+                <?php else: ?>
+                    <a href="<?= htmlspecialchars(urlCatalogo(['p' => $item])) ?>"<?= $item === $paginaActual ? ' class="active"' : '' ?>><?= $item ?></a>
+                <?php endif; ?>
+            <?php endforeach; ?>
 
             <?php if ($paginaActual < $totalPaginas): ?>
                 <a href="<?= htmlspecialchars(urlCatalogo(['p' => $paginaActual + 1])) ?>">Siguiente</a>
