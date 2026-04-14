@@ -1,0 +1,426 @@
+main {
+    padding-top: 0;
+    margin-top: 0;
+    gap: 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+h3 {
+    margin-bottom: 0.5rem;
+}
+
+.encabezado-juego {
+    background: #ebe9ff;
+    border-bottom: 2px solid var(--bordes);
+}
+
+.cabecera-juego {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 11rem;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.portada-juego {
+    width: 6.5rem;
+    position: relative;
+    margin-bottom: -3rem;
+    border: 3px solid rgba(132, 51, 208, 0.8);
+    background: #ead8ff;
+}
+
+.favorito-juego {
+    position: absolute;
+    right: -0.55rem;
+    top: -0.55rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #d65a7c;
+    border: 1px solid #f2c8d3;
+}
+
+.favorito-juego.active {
+    background: #d65a7c;
+    color: white;
+}
+
+.banner-juego {
+    display: none;
+}
+
+.datos-principales {
+    padding-bottom: 0.75rem;
+    flex: 1;
+}
+
+.datos-principales h1 {
+    margin-bottom: 0.35rem;
+    font-size: 2.1rem;
+    line-height: 1;
+}
+
+.subtitulo {
+    color: #6f7d8c;
+    font-size: 1rem;
+}
+
+.content-grid {
+    padding: 3.75rem 0.8rem 0 0.8rem;
+    display: flex;
+    flex-direction: column;
+}
+
+aside.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.estados-juego {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    text-align: center;
+}
+
+.estado {
+    min-width: 0;
+    color: #4b5c6b;
+    padding: 0.4rem 0.2rem 0.6rem 0.2rem;
+    border-bottom: 4px solid transparent;
+}
+
+.estado i {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 1.15rem;
+}
+
+.estado span {
+    display: block;
+    font-size: 0.76rem;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.estado.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.puntuaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tu-puntuacion,
+.media-juego,
+.informacion-juego,
+.sin-resenas,
+.juego-vacio {
+    border: 1px solid rgba(195, 207, 217, 0.59);
+    background: white;
+    padding: 1rem;
+}
+
+.numero-puntuacion {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0.35rem 0 0.6rem 0;
+}
+
+.estrellas {
+    display: flex;
+    gap: 0.2rem;
+    color: var(--puntuacion);
+}
+
+.estrellas .vacia {
+    color: var(--bordes);
+}
+
+.nota-usuario,
+.total-resenas {
+    color: #6f7d8c;
+    font-size: 0.95rem;
+    margin-top: 0.75rem;
+}
+
+.media-juego h3,
+.tu-puntuacion h2 {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bordes);
+}
+
+.grafica {
+    font-size: 0.75rem;
+    width: 12rem;
+    height: 8rem;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr auto;
+    align-content: end;
+    text-align: center;
+    margin-top: 0.75rem;
+}
+
+.grafica .barra {
+    background-color: #fdf3d3;
+    border: 2px solid var(--puntuacion);
+    margin-right: -1px;
+    margin-left: -1px;
+    align-self: end;
+    height: 0;
+}
+
+.grafica .fa-star {
+    color: var(--puntuacion);
+}
+
+.separador {
+    border: none;
+    border-top: 2px solid var(--bordes);
+    outline: none;
+    width: 10rem;
+    margin: 1rem auto;
+}
+
+section.principal {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.metadatos-juego {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lanzamiento {
+    width: fit-content;
+    border: 2px solid var(--bordes);
+    background: #f7f9fa;
+    padding: 0.75rem 1rem;
+}
+
+.lanzamiento span,
+.datos-juego strong {
+    display: block;
+}
+
+.lanzamiento span {
+    font-size: 0.95rem;
+    color: #4b5c6b;
+    margin-bottom: 0.3rem;
+}
+
+.datos-juego {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.datos-juego p {
+    line-height: 1.45;
+}
+
+.datos-juego strong {
+    margin-bottom: 0.15rem;
+}
+
+.descripcion-juego {
+    font-style: italic;
+    line-height: 1.6;
+    color: #4b5c6b;
+}
+
+.resenas-juego h2 {
+    margin-bottom: 0.75rem;
+}
+
+.resenas-juego .carousel {
+    gap: 1rem;
+}
+
+.resenas-juego .mini-portada {
+    width: 4.8rem;
+    aspect-ratio: 1 / 1;
+    border: 2px solid rgba(132, 51, 208, 0.8);
+    border-radius: 999px;
+    background: #ead8ff;
+}
+
+.resenas-juego .mini-portada img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 999px;
+}
+
+.resenas-juego .elemento-carousel {
+    height: auto;
+    min-height: 15rem;
+}
+
+.sin-resenas,
+.juego-vacio {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .cabecera-juego {
+        min-height: 15rem;
+        padding: 1.5rem 2rem;
+        gap: 1.5rem;
+    }
+
+    .portada-juego {
+        width: 10rem;
+        margin-bottom: -4rem;
+    }
+
+    .datos-principales h1 {
+        font-size: 3.2rem;
+    }
+
+    .subtitulo {
+        font-size: 1.15rem;
+    }
+
+    .banner-juego {
+        width: 8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 1.2rem;
+    }
+
+    .banner-juego img {
+        width: 100%;
+        max-height: 4.5rem;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .content-grid {
+        padding: 5rem 2rem 0 2rem;
+    }
+
+    .separador {
+        width: 100%;
+    }
+
+    .metadatos-juego {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+    }
+
+    .datos-juego {
+        flex: 1;
+    }
+
+    .resenas-juego .carousel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .resenas-juego .elemento-carousel {
+        min-height: 0;
+    }
+}
+
+@media (min-width: 992px) {
+    .cabecera-juego {
+        min-height: 18rem;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .portada-juego {
+        width: 15rem;
+        margin-bottom: -5rem;
+    }
+
+    .favorito-juego {
+        top: 1rem;
+        right: -1.2rem;
+    }
+
+    .banner-juego {
+        width: 10rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .banner-juego img {
+        max-height: 5.5rem;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 18rem 1fr;
+        padding: 5.5rem 0 0 0;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    aside.sidebar {
+        padding: 0 1rem;
+        border: 1px solid rgba(195, 207, 217, 0.59);
+    }
+
+    .estado {
+        padding: 0.75rem 0 0.6rem 0;
+    }
+
+    .numero-puntuacion {
+        font-size: 2.4rem;
+    }
+
+    .grafica {
+        justify-self: center;
+    }
+
+    .principal {
+        padding: 0 2rem 1rem 2rem;
+    }
+
+    .descripcion-juego {
+        font-size: 1.1rem;
+    }
+
+    .resenas-juego .carousel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .resenas-juego .elemento-carousel {
+        border: none;
+        border-bottom: 1px solid var(--bordes);
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .resenas-juego .elemento-carousel:last-child {
+        border-bottom: none;
+    }
+}
