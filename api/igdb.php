@@ -179,7 +179,7 @@ function igdbBackgroundJuego($juego) {
 
     if (is_array($artwork)) {
         if (!empty($artwork['url'])) {
-            return igdbUrlImagen($artwork['url']);
+            return igdbUrlImagen($artwork['url'], 't_screenshot_big');
         }
 
         if (!empty($artwork['image_id'])) {
@@ -191,7 +191,7 @@ function igdbBackgroundJuego($juego) {
 
     if (is_array($screenshot)) {
         if (!empty($screenshot['url'])) {
-            return igdbUrlImagen($screenshot['url']);
+            return igdbUrlImagen($screenshot['url'], 't_screenshot_big');
         }
 
         if (!empty($screenshot['image_id'])) {

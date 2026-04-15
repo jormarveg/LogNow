@@ -14,18 +14,29 @@ h3 {
 }
 
 .encabezado-juego {
-    background: #ebe9ff;
+    background-color: #ebe9ff;
+    background-size: cover;
+    background-position: center;
     border-bottom: 2px solid var(--bordes);
+    position: relative;
+}
+
+.encabezado-juego::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(235, 233, 255, 0.82);
 }
 
 .cabecera-juego {
     display: flex;
     align-items: end;
-    justify-content: space-between;
     gap: 1rem;
     min-height: 11rem;
     padding: 1rem;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 .portada-juego {
@@ -54,10 +65,6 @@ h3 {
 .favorito-juego.active {
     background: #d65a7c;
     color: white;
-}
-
-.banner-juego {
-    display: none;
 }
 
 .datos-principales {
@@ -303,21 +310,6 @@ section.principal {
         font-size: 1.15rem;
     }
 
-    .banner-juego {
-        width: 8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 1.2rem;
-    }
-
-    .banner-juego img {
-        width: 100%;
-        max-height: 4.5rem;
-        object-fit: contain;
-        border-radius: 8px;
-    }
-
     .content-grid {
         padding: 5rem 2rem 0 2rem;
     }
@@ -362,15 +354,6 @@ section.principal {
     .favorito-juego {
         top: 1rem;
         right: -1.2rem;
-    }
-
-    .banner-juego {
-        width: 10rem;
-        padding-bottom: 1.5rem;
-    }
-
-    .banner-juego img {
-        max-height: 5.5rem;
     }
 
     .content-grid {

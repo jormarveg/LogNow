@@ -70,7 +70,7 @@ require '../includes/header.php';
 ?>
 
 <?php if ($juego): ?>
-    <section class="encabezado-juego">
+    <section class="encabezado-juego" style="background-image: url('<?= htmlspecialchars($background) ?>');">
         <div class="container cabecera-juego">
             <div class="portada-juego">
                 <img src="<?= htmlspecialchars($portada) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
@@ -89,9 +89,6 @@ require '../includes/header.php';
                         Juego de LogNow!
                     <?php endif; ?>
                 </p>
-            </div>
-            <div class="banner-juego">
-                <img src="<?= htmlspecialchars($background) ?>" alt="Banner de <?= htmlspecialchars($juego['titulo']) ?>">
             </div>
         </div>
     </section>

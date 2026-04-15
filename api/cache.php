@@ -270,7 +270,9 @@ function cacheActualizarJuegoPorIgdbId(PDO $db, $igdbId) {
 function cacheObtenerJuegoIgdb(PDO $db, $igdbId, $horas = 72) {
     $juego = cacheObtenerJuegoPorIgdbId($db, $igdbId);
 
-    if ($juego && !cacheFechaCaducada($juego['fecha_cache'], $horas)) {
+    $backgroundAntiguo = $juego && !empty($juego['background_url']) && str_contains($juego['background_url'], '/t_thumb/');
+
+    if ($juego && !$backgroundAntiguo && !cacheFechaCaducada($juego['fecha_cache'], $horas)) {
         return $juego;
     }
 
