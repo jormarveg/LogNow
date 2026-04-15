@@ -145,7 +145,6 @@ main{
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
-    margin-bottom: 3rem;
 }
 
 .paginacion a{

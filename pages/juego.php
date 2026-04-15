@@ -48,7 +48,7 @@ $estados = [
     'completado' => ['icono' => 'fa-check', 'texto' => 'Completado'],
     'jugando' => ['icono' => 'fa-gamepad', 'texto' => 'Jugando'],
     'pendiente' => ['icono' => 'fa-calendar-days', 'texto' => 'Pendiente'],
-    'abandonado' => ['icono' => 'fa-octagon', 'texto' => 'Abandonado']
+    'abandonado' => ['icono' => 'fa-ban', 'texto' => 'Abandonado']
 ];
 
 $background = $juego['background_url'] ?? '/assets/img/profile/banner.webp';
