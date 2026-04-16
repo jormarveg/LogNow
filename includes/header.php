@@ -17,10 +17,10 @@
     <div class="container">
         <div class="logo"><a href="/"><span>LogNow!</span></a></div>
 
-        <div class="buscar">
+        <form class="buscar" action="/buscar.php" method="GET">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar juegos...">
-        </div>
+            <input type="text" name="q" placeholder="Buscar juegos..." value="<?= htmlspecialchars($busquedaHeader ?? '') ?>">
+        </form>
         <nav>
             <ul>
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>

@@ -474,6 +474,101 @@ function cacheImportarJuegosIgdb(PDO $db, $pagina = 1, $cantidad = 20, $reinicia
     ];
 }
 
+function cacheContarBusquedaLocal(PDO $db, $busqueda) {
+    $busqueda = trim((string) $busqueda);
+
+    if ($busqueda === '') {
+        return 0;
+    }
+
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM VIDEOJUEGO
+                          WHERE titulo LIKE ?');
+    $stmt->execute(['%' . $busqueda . '%']);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cacheBuscarJuegosLocal(PDO $db, $busqueda, $limite = 12, $offset = 0) {
+    $busqueda = trim((string) $busqueda);
+
+    if ($busqueda === '') {
+        return [];
+    }
+
+    $limite = max(1, (int) $limite);
+    $offset = max(0, (int) $offset);
+    $coincidencia = '%' . $busqueda . '%';
+    $inicio = $busqueda . '%';
+
+    $sql = 'SELECT v.id, v.igdb_id, v.titulo, v.portada_url, v.fecha_lanzamiento, r.puntuacion_media
+            FROM VIDEOJUEGO v
+            LEFT JOIN (
+                SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
+                FROM RESENA
+                WHERE activa = 1
+                GROUP BY id_videojuego
+            ) r ON r.id_videojuego = v.id
+            WHERE v.titulo LIKE ?
+            ORDER BY
+                CASE
+                    WHEN v.titulo LIKE ? THEN 0
+                    WHEN v.titulo LIKE ? THEN 1
+                    ELSE 2
+                END,
+                v.titulo ASC
+            LIMIT ' . $limite . ' OFFSET ' . $offset;
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$coincidencia, $busqueda, $inicio]);
+
+    return $stmt->fetchAll();
+}
+
+function cacheImportarBusquedaIgdb(PDO $db, $busqueda, $pagina = 1, $cantidad = 12) {
+    $busqueda = trim((string) $busqueda);
+
+    if ($busqueda === '') {
+        return [
+            'ok' => false,
+            'mensaje' => 'No hay termino de busqueda',
+            'importados' => 0
+        ];
+    }
+
+    if (!igdbDisponible()) {
+        return [
+            'ok' => false,
+            'mensaje' => 'No hay credenciales de IGDB configuradas',
+            'importados' => 0
+        ];
+    }
+
+    $respuesta = igdbBuscarJuegos($busqueda, $pagina, $cantidad);
+
+    if (!$respuesta) {
+        return [
+            'ok' => false,
+            'mensaje' => 'No se han podido obtener resultados desde IGDB',
+            'importados' => 0
+        ];
+    }
+
+    $importados = 0;
+
+    foreach ($respuesta as $juego) {
+        if (cacheGuardarJuegoIgdb($db, $juego)) {
+            $importados++;
+        }
+    }
+
+    return [
+        'ok' => true,
+        'mensaje' => 'Busqueda completada',
+        'importados' => $importados
+    ];
+}
+
 function cacheConstruirFiltrosCatalogo($filtros) {
     $where = [];
     $params = [];

@@ -19,6 +19,11 @@ main{
     font-weight: 600;
 }
 
+.encabezado-busqueda{
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
 .filtros-catalogo{
     display: grid;
     gap: 0.75rem;
@@ -36,6 +41,7 @@ main{
 }
 
 .filtros-catalogo select,
+.filtros-catalogo input,
 .filtros-catalogo button{
     border: 1px solid var(--bordes);
     border-radius: 8px;
@@ -45,6 +51,11 @@ main{
 }
 
 .filtros-catalogo select{
+    background: white;
+    padding: 0 0.85rem;
+}
+
+.filtros-catalogo input{
     background: white;
     padding: 0 0.85rem;
 }
@@ -140,6 +151,28 @@ main{
     color: #4b5c6b;
 }
 
+.aviso-busqueda{
+    border: 1px solid var(--bordes);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    background: #f7f9fb;
+    color: #4b5c6b;
+}
+
+.aviso-busqueda p{
+    margin: 0;
+}
+
+.aviso-igdb{
+    border-color: rgba(63, 116, 160, 0.25);
+    background: rgba(63, 116, 160, 0.08);
+    color: #2f5473;
+}
+
+.formulario-busqueda-movil{
+    display: grid;
+}
+
 .paginacion{
     display: flex;
     flex-wrap: wrap;
@@ -174,6 +207,15 @@ main{
 @media (min-width: 768px) {
     .encabezado{
         gap: 1.25rem;
+    }
+
+    .encabezado-busqueda{
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--bordes);
+    }
+
+    .formulario-busqueda-movil{
+        display: none;
     }
 
     .filtros-catalogo{
