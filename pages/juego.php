@@ -44,6 +44,29 @@ function puntuacionVisible($puntuacion) {
     return number_format($puntuacion, 1, ',', '.');
 }
 
+function estrellasJuego($puntuacion) {
+    if ($puntuacion === null) {
+        $puntuacion = 0;
+    }
+
+    $puntuacion = max(0, min(5, (float) $puntuacion));
+    $estrellasCompletas = (int) floor($puntuacion);
+    $mediaEstrella = ($puntuacion - $estrellasCompletas) >= 0.5;
+    $html = '';
+
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= $estrellasCompletas) {
+            $html .= '<i class="fa-solid fa-star"></i>';
+        } elseif ($mediaEstrella && $i === $estrellasCompletas + 1) {
+            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
+        } else {
+            $html .= '<i class="fa-solid fa-star vacia"></i>';
+        }
+    }
+
+    return $html;
+}
+
 $estados = [
     'completado' => ['icono' => 'fa-check', 'texto' => 'Completado'],
     'jugando' => ['icono' => 'fa-gamepad', 'texto' => 'Jugando'],
@@ -61,6 +84,7 @@ $puntuacionMedia = $juego['resumen_resenas']['media'] ?? null;
 $totalResenas = $juego['resumen_resenas']['total'] ?? 0;
 $histograma = $juego['histograma'] ?? [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 $maxHistograma = max($histograma);
+$mensajeBiblioteca = $_GET['biblioteca'] ?? '';
 $generos = $juego ? implode(' · ', $juego['generos']) : '';
 $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
@@ -94,6 +118,12 @@ require '../includes/header.php';
     </section>
 
     <main class="container">
+        <?php if ($mensajeBiblioteca === 'ok'): ?>
+            <p class="mensaje-juego exito">Juego añadido correctamente a tu biblioteca.</p>
+        <?php elseif ($mensajeBiblioteca === 'existe'): ?>
+            <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
+        <?php endif; ?>
+
         <div class="content-grid">
             <aside class="sidebar">
                 <nav class="estados-juego">
@@ -110,12 +140,7 @@ require '../includes/header.php';
                         <h2>Tu puntuación</h2>
                         <?php if (estaLogueado()): ?>
                             <p class="numero-puntuacion"><?= $puntuacionUsuario !== null ? puntuacionVisible($puntuacionUsuario) : 'N/D' ?></p>
-                            <div class="estrellas">
-                                <?php $estrellasUsuario = $puntuacionUsuario !== null ? (int) round($puntuacionUsuario) : 0; ?>
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fa-solid fa-star<?= $i > $estrellasUsuario ? ' vacia' : '' ?>"></i>
-                                <?php endfor; ?>
-                            </div>
+                            <div class="estrellas"><?= estrellasJuego($puntuacionUsuario) ?></div>
                             <p class="nota-usuario">
                                 <?php if ($plataformaUsuario): ?>
                                     En <?= htmlspecialchars($plataformaUsuario) ?>
@@ -123,6 +148,11 @@ require '../includes/header.php';
                                     <?= $puntuacionUsuario !== null ? 'Con reseña guardada' : 'Sin puntuar todavía' ?>
                                 <?php endif; ?>
                             </p>
+                            <?php if (!$estadoActual): ?>
+                                <a class="cta-biblioteca" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>">Añadir a mi biblioteca</a>
+                            <?php else: ?>
+                                <a class="cta-biblioteca secundaria" href="/perfil.php?tab=juegos">Ver mi biblioteca</a>
+                            <?php endif; ?>
                         <?php else: ?>
                             <p class="numero-puntuacion">N/D</p>
                             <div class="estrellas">
@@ -131,6 +161,7 @@ require '../includes/header.php';
                                 <?php endfor; ?>
                             </div>
                             <p class="nota-usuario">Inicia sesión para guardar tu estado y tu puntuación</p>
+                            <a class="cta-biblioteca secundaria" href="/login.php">Iniciar sesión</a>
                         <?php endif; ?>
                     </div>
 
@@ -177,7 +208,6 @@ require '../includes/header.php';
                     <?php if (!empty($juego['resenas'])): ?>
                         <div class="carousel">
                             <?php foreach ($juego['resenas'] as $resena): ?>
-                                <?php $estrellasResena = $resena['puntuacion_estrellas'] !== null ? (int) round($resena['puntuacion_estrellas']) : 0; ?>
                                 <article class="elemento-carousel mini-resena">
                                     <div class="mini-portada">
                                         <img src="<?= htmlspecialchars($resena['avatar'] ?: '/assets/img/profile/user.webp') ?>" alt="Avatar de <?= htmlspecialchars($resena['nick']) ?>">
@@ -197,11 +227,7 @@ require '../includes/header.php';
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
                                             </p>
-                                            <div class="estrellas">
-                                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                    <i class="fa-solid fa-star<?= $i > $estrellasResena ? ' vacia' : '' ?>"></i>
-                                                <?php endfor; ?>
-                                            </div>
+                                            <div class="estrellas"><?= estrellasJuego($resena['puntuacion_estrellas']) ?></div>
                                         </div>
                                         <p class="fecha"><?= fechaBonita($resena['fecha_publicacion'], true) ?></p>
                                     </div>

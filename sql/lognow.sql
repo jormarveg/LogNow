@@ -102,7 +102,7 @@ CREATE TABLE RESENA (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_videojuego INT NOT NULL,
-    puntuacion INT CHECK (puntuacion BETWEEN 0 AND 100),
+    puntuacion INT CHECK (puntuacion BETWEEN 0 AND 100 AND puntuacion % 10 = 0),
     comentario TEXT,
     fecha_publicacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     editada BOOLEAN DEFAULT FALSE,

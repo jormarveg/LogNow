@@ -25,6 +25,7 @@
             <ul>
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
                 <?php if (estaLogueado()): ?>
+                    <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/perfil.php?tab=juegos">Mis juegos</a></li>
                     <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                     <?php if (esAdmin()): ?>
                         <li><a href="/admin/">Admin</a></li>
@@ -35,7 +36,7 @@
             </ul>
         </nav>
         <?php if (estaLogueado()): ?>
-            <div class="btnAgregar"><i class="fa fa-add"></i><span>Registrar juego</span></div>
+            <a href="/catalogo.php" class="btnAgregar"><i class="fa-solid fa-plus"></i><span>Registrar juego</span></a>
             <a href="/logout.php" class="btn-salir"><i class="fa-solid fa-right-from-bracket"></i></a>
         <?php endif; ?>
         <div class="info">

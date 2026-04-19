@@ -3,6 +3,22 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/igdb.php';
 
+function cachePuntuacionUsuarioEstrellas($puntuacion) {
+    if ($puntuacion === null) {
+        return null;
+    }
+
+    return round((((float) $puntuacion) / 20) * 2) / 2;
+}
+
+function cachePuntuacionMediaEstrellas($puntuacion) {
+    if ($puntuacion === null) {
+        return null;
+    }
+
+    return round(((float) $puntuacion) / 20, 1);
+}
+
 function cacheFechaCaducada($fechaCache, $horas = 72) {
     if (!$fechaCache) {
         return true;
@@ -307,6 +323,17 @@ function cachePlataformasJuego(PDO $db, $idVideojuego) {
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
+function cachePlataformasJuegoDetalle(PDO $db, $idVideojuego) {
+    $stmt = $db->prepare('SELECT p.id, p.nombre
+                          FROM VIDEOJUEGO_PLATAFORMA vp
+                          INNER JOIN PLATAFORMA p ON p.id = vp.id_plataforma
+                          WHERE vp.id_videojuego = ?
+                          ORDER BY p.nombre ASC');
+    $stmt->execute([(int) $idVideojuego]);
+
+    return $stmt->fetchAll();
+}
+
 function cacheResumenResenasJuego(PDO $db, $idVideojuego) {
     $stmt = $db->prepare('SELECT COUNT(*) AS total, AVG(puntuacion) AS media
                           FROM RESENA
@@ -323,7 +350,7 @@ function cacheResumenResenasJuego(PDO $db, $idVideojuego) {
 
     return [
         'total' => (int) ($resumen['total'] ?? 0),
-        'media' => $resumen['media'] !== null ? round(((float) $resumen['media']) / 20, 1) : null
+        'media' => cachePuntuacionMediaEstrellas($resumen['media'])
     ];
 }
 
@@ -349,10 +376,15 @@ function cacheHistogramaJuego(PDO $db, $idVideojuego) {
 }
 
 function cacheUsuarioJuego(PDO $db, $idVideojuego, $idUsuario) {
-    $stmt = $db->prepare('SELECT uj.estado, uj.favorito, p.nombre AS plataforma, r.puntuacion AS puntuacion_usuario
+    $stmt = $db->prepare('SELECT uj.id, uj.id_plataforma, uj.estado, uj.horas_jugadas, uj.minutos_jugados, uj.fecha_inicio, uj.fecha_fin, uj.favorito, p.nombre AS plataforma, r.puntuacion AS puntuacion_usuario
                           FROM USUARIO_JUEGO uj
                           LEFT JOIN PLATAFORMA p ON p.id = uj.id_plataforma
-                          LEFT JOIN RESENA r ON r.id_usuario = uj.id_usuario AND r.id_videojuego = uj.id_videojuego AND r.activa = 1
+                          LEFT JOIN (
+                              SELECT id_usuario, id_videojuego, MAX(puntuacion) AS puntuacion
+                              FROM RESENA
+                              WHERE activa = 1
+                              GROUP BY id_usuario, id_videojuego
+                          ) r ON r.id_usuario = uj.id_usuario AND r.id_videojuego = uj.id_videojuego
                           WHERE uj.id_videojuego = ? AND uj.id_usuario = ?
                           LIMIT 1');
     $stmt->execute([(int) $idVideojuego, (int) $idUsuario]);
@@ -362,9 +394,7 @@ function cacheUsuarioJuego(PDO $db, $idVideojuego, $idUsuario) {
         return null;
     }
 
-    if ($datos['puntuacion_usuario'] !== null) {
-        $datos['puntuacion_usuario'] = round(((float) $datos['puntuacion_usuario']) / 20, 1);
-    }
+    $datos['puntuacion_usuario'] = cachePuntuacionUsuarioEstrellas($datos['puntuacion_usuario']);
 
     $datos['favorito'] = !empty($datos['favorito']);
 
@@ -384,7 +414,7 @@ function cacheResenasJuego(PDO $db, $idVideojuego, $limite = 6) {
     $resenas = $stmt->fetchAll();
 
     foreach ($resenas as &$resena) {
-        $resena['puntuacion_estrellas'] = $resena['puntuacion'] !== null ? round(((float) $resena['puntuacion']) / 20, 1) : null;
+        $resena['puntuacion_estrellas'] = cachePuntuacionUsuarioEstrellas($resena['puntuacion']);
     }
 
     return $resenas;
@@ -411,12 +441,112 @@ function cacheDetalleJuego(PDO $db, $igdbId, $idUsuario = 0, $horas = 72) {
 
     $juego['generos'] = cacheGenerosJuego($db, $juego['id']);
     $juego['plataformas'] = cachePlataformasJuego($db, $juego['id']);
+    $juego['plataformas_detalle'] = cachePlataformasJuegoDetalle($db, $juego['id']);
     $juego['resumen_resenas'] = cacheResumenResenasJuego($db, $juego['id']);
     $juego['histograma'] = cacheHistogramaJuego($db, $juego['id']);
     $juego['resenas'] = cacheResenasJuego($db, $juego['id']);
     $juego['usuario_juego'] = $idUsuario > 0 ? cacheUsuarioJuego($db, $juego['id'], $idUsuario) : null;
 
     return $juego;
+}
+
+function cacheGuardarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos) {
+    $stmt = $db->prepare('INSERT INTO USUARIO_JUEGO (
+        id_usuario,
+        id_videojuego,
+        id_plataforma,
+        estado,
+        horas_jugadas,
+        minutos_jugados,
+        fecha_inicio,
+        fecha_fin,
+        favorito
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+
+    return $stmt->execute([
+        (int) $idUsuario,
+        (int) $idVideojuego,
+        (int) $datos['id_plataforma'],
+        $datos['estado'],
+        (int) $datos['horas_jugadas'],
+        (int) $datos['minutos_jugados'],
+        $datos['fecha_inicio'],
+        $datos['fecha_fin'],
+        !empty($datos['favorito']) ? 1 : 0
+    ]);
+}
+
+function cacheResumenBibliotecaUsuario(PDO $db, $idUsuario) {
+    $stmt = $db->prepare("SELECT
+                            COUNT(*) AS total,
+                            SUM(CASE WHEN favorito = 1 THEN 1 ELSE 0 END) AS favoritos,
+                            SUM(CASE WHEN estado = 'jugando' THEN 1 ELSE 0 END) AS jugando,
+                            SUM(CASE WHEN estado = 'completado' THEN 1 ELSE 0 END) AS completados,
+                            SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) AS pendientes,
+                            SUM(CASE WHEN estado = 'abandonado' THEN 1 ELSE 0 END) AS abandonados
+                          FROM USUARIO_JUEGO
+                          WHERE id_usuario = ?");
+    $stmt->execute([(int) $idUsuario]);
+    $datos = $stmt->fetch() ?: [];
+
+    return [
+        'total' => (int) ($datos['total'] ?? 0),
+        'favoritos' => (int) ($datos['favoritos'] ?? 0),
+        'jugando' => (int) ($datos['jugando'] ?? 0),
+        'completados' => (int) ($datos['completados'] ?? 0),
+        'pendientes' => (int) ($datos['pendientes'] ?? 0),
+        'abandonados' => (int) ($datos['abandonados'] ?? 0)
+    ];
+}
+
+function cacheListarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '') {
+    $params = [(int) $idUsuario];
+    $whereEstado = '';
+
+    if ($estado !== '') {
+        $whereEstado = ' AND uj.estado = ?';
+        $params[] = $estado;
+    }
+
+    $stmt = $db->prepare('SELECT
+                            uj.estado,
+                            uj.horas_jugadas,
+                            uj.minutos_jugados,
+                            uj.fecha_inicio,
+                            uj.fecha_fin,
+                            uj.favorito,
+                            p.nombre AS plataforma,
+                            v.igdb_id,
+                            v.titulo,
+                            v.portada_url,
+                            r.puntuacion
+                          FROM USUARIO_JUEGO uj
+                          INNER JOIN VIDEOJUEGO v ON v.id = uj.id_videojuego
+                          INNER JOIN PLATAFORMA p ON p.id = uj.id_plataforma
+                          LEFT JOIN (
+                              SELECT id_usuario, id_videojuego, MAX(puntuacion) AS puntuacion
+                              FROM RESENA
+                              WHERE activa = 1
+                              GROUP BY id_usuario, id_videojuego
+                          ) r ON r.id_usuario = uj.id_usuario AND r.id_videojuego = uj.id_videojuego
+                          WHERE uj.id_usuario = ?' . $whereEstado . '
+                          ORDER BY
+                              CASE
+                                  WHEN uj.estado = "jugando" THEN 0
+                                  WHEN uj.estado = "pendiente" THEN 1
+                                  WHEN uj.estado = "completado" THEN 2
+                                  ELSE 3
+                              END,
+                              uj.favorito DESC,
+                              v.titulo ASC');
+    $stmt->execute($params);
+    $juegos = $stmt->fetchAll();
+
+    foreach ($juegos as &$juego) {
+        $juego['puntuacion_usuario'] = cachePuntuacionUsuarioEstrellas($juego['puntuacion']);
+    }
+
+    return $juegos;
 }
 
 function cacheVaciarCatalogo(PDO $db) {
@@ -627,7 +757,7 @@ function cacheListarJuegosCatalogo(PDO $db, $filtros = [], $orden = 'puntuacion'
     $sql = 'SELECT DISTINCT v.id, v.igdb_id, v.titulo, v.portada_url, v.fecha_lanzamiento, r.puntuacion_media
             FROM VIDEOJUEGO v
             LEFT JOIN (
-                SELECT id_videojuego, ROUND(AVG(puntuacion), 1) AS puntuacion_media
+                SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
                 FROM RESENA
                 WHERE activa = 1
                 GROUP BY id_videojuego

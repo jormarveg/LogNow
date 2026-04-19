@@ -172,6 +172,41 @@ aside.sidebar {
     margin-top: 0.75rem;
 }
 
+.cta-biblioteca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+.cta-biblioteca.secundaria {
+    background: #f7f9fa;
+    color: #4b5c6b;
+    border: 2px solid var(--bordes);
+}
+
+.mensaje-juego {
+    margin: 1.25rem 0 0 0;
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.mensaje-juego.exito {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.mensaje-juego.aviso {
+    background: #fff6db;
+    color: #9d6c00;
+}
+
 .media-juego h3,
 .tu-puntuacion h2 {
     padding-bottom: 0.5rem;
