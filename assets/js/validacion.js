@@ -1,33 +1,33 @@
-var regexNick = /^[a-zA-Z0-9_]{3,20}$/;
-var regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-var regexPassword = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const regexNick = /^[a-zA-Z0-9_]{3,20}$/;
+const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const regexPassword = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 function mostrarError(input, mensaje) {
-    var campo = input.parentElement;
-    var span = campo.querySelector('.msg-error');
+    const campo = input.parentElement;
+    const span = campo.querySelector('.msg-error');
     input.classList.add('invalido');
     input.classList.remove('valido');
     span.textContent = mensaje;
 }
 
 function mostrarOk(input) {
-    var campo = input.parentElement;
-    var span = campo.querySelector('.msg-error');
+    const campo = input.parentElement;
+    const span = campo.querySelector('.msg-error');
     input.classList.remove('invalido');
     input.classList.add('valido');
     span.textContent = '';
 }
 
 function limpiarValidacion(input) {
-    var campo = input.parentElement;
-    var span = campo.querySelector('.msg-error');
+    const campo = input.parentElement;
+    const span = campo.querySelector('.msg-error');
     input.classList.remove('invalido', 'valido');
     span.textContent = '';
 }
 
 function validarCampo(input) {
-    var valor = input.value.trim();
-    var id = input.id;
+    const valor = input.value.trim();
+    const id = input.id;
 
     if (valor === '') {
         mostrarError(input, 'Este campo es obligatorio');
@@ -56,7 +56,7 @@ function validarCampo(input) {
     }
 
     if (id === 'password2') {
-        var password = document.getElementById('password');
+        const password = document.getElementById('password');
         if (password && valor !== password.value) {
             mostrarError(input, 'Las contraseñas no coinciden');
             return false;
@@ -67,9 +67,9 @@ function validarCampo(input) {
     return true;
 }
 
-var formRegistro = document.getElementById('form-registro');
+const formRegistro = document.getElementById('form-registro');
 if (formRegistro) {
-    var inputs = formRegistro.querySelectorAll('input');
+    const inputs = formRegistro.querySelectorAll('input');
 
     inputs.forEach(function(input) {
         input.addEventListener('blur', function() {
@@ -86,7 +86,7 @@ if (formRegistro) {
     });
 
     formRegistro.addEventListener('submit', function(e) {
-        var valido = true;
+        let valido = true;
 
         inputs.forEach(function(input) {
             if (!validarCampo(input)) {
@@ -100,11 +100,11 @@ if (formRegistro) {
     });
 }
 
-var formLogin = document.getElementById('form-login');
+const formLogin = document.getElementById('form-login');
 if (formLogin) {
     formLogin.addEventListener('submit', function(e) {
-        var valido = true;
-        var inputs = formLogin.querySelectorAll('input');
+        let valido = true;
+        const inputs = formLogin.querySelectorAll('input');
 
         inputs.forEach(function(input) {
             if (input.value.trim() === '') {

@@ -1,0 +1,462 @@
+main {
+    padding-top: 0;
+    margin-top: 0;
+    gap: 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+h3 {
+    margin-bottom: 0.5rem;
+}
+
+.encabezado-juego {
+    background-color: #ebe9ff;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid var(--bordes);
+    position: relative;
+}
+
+.encabezado-juego::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(18, 24, 32, 0.18);
+}
+
+.cabecera-juego {
+    display: flex;
+    align-items: end;
+    gap: 1rem;
+    min-height: 13rem;
+    padding: 1rem;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+.portada-juego {
+    width: 6.5rem;
+    position: relative;
+    margin-bottom: -3rem;
+    border: 2px solid rgba(44, 136, 217, 0.55);
+    background: #dfe6ed;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.favorito-juego {
+    position: absolute;
+    right: -0.55rem;
+    top: -0.55rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #d65a7c;
+    border: 1px solid #f2c8d3;
+}
+
+.favorito-juego.active {
+    background: #d65a7c;
+    color: white;
+}
+
+.datos-principales {
+    padding-bottom: 0.75rem;
+    flex: 1;
+}
+
+.datos-principales h1 {
+    margin-bottom: 0.35rem;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
+}
+
+.subtitulo {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.75);
+}
+
+.content-grid {
+    padding: 3.75rem 0.8rem 0 0.8rem;
+    display: flex;
+    flex-direction: column;
+}
+
+aside.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.estados-juego {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.35rem 0.5rem;
+    text-align: center;
+}
+
+.estado {
+    min-width: 0;
+    color: #4b5c6b;
+    padding: 0.45rem 0.25rem 0.55rem 0.25rem;
+    border-bottom: 4px solid transparent;
+}
+
+.estado i {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.estado span {
+    display: block;
+    font-size: 0.8rem;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.estado.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.puntuaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tu-puntuacion,
+.media-juego,
+.informacion-juego,
+.sin-resenas,
+.juego-vacio {
+    border: 1px solid rgba(195, 207, 217, 0.59);
+    background: white;
+    padding: 1rem;
+}
+
+.numero-puntuacion {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0.35rem 0 0.6rem 0;
+}
+
+.estrellas {
+    display: flex;
+    gap: 0.2rem;
+    color: var(--puntuacion);
+}
+
+.estrellas .vacia {
+    color: var(--bordes);
+}
+
+.nota-usuario,
+.total-resenas {
+    color: #6f7d8c;
+    font-size: 0.95rem;
+    margin-top: 0.75rem;
+}
+
+.cta-biblioteca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+.cta-biblioteca.secundaria {
+    background: #f7f9fa;
+    color: #4b5c6b;
+    border: 2px solid var(--bordes);
+}
+
+.mensaje-juego {
+    margin: 1.25rem 0 0 0;
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.mensaje-juego.exito {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.mensaje-juego.aviso {
+    background: #fff6db;
+    color: #9d6c00;
+}
+
+.media-juego h3,
+.tu-puntuacion h2 {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bordes);
+}
+
+.grafica {
+    font-size: 0.75rem;
+    width: 12rem;
+    height: 8rem;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr auto;
+    align-content: end;
+    text-align: center;
+    margin-top: 0.75rem;
+}
+
+.grafica .barra {
+    background-color: #fdf3d3;
+    border: 2px solid var(--puntuacion);
+    margin-right: -1px;
+    margin-left: -1px;
+    align-self: end;
+    height: 0;
+}
+
+.grafica .fa-star {
+    color: var(--puntuacion);
+}
+
+.separador {
+    border: none;
+    border-top: 2px solid var(--bordes);
+    outline: none;
+    width: 10rem;
+    margin: 1rem auto;
+}
+
+section.principal {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.metadatos-juego {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lanzamiento {
+    width: fit-content;
+    border: 2px solid var(--bordes);
+    background: #f7f9fa;
+    padding: 0.75rem 1rem;
+}
+
+.lanzamiento span,
+.datos-juego strong {
+    display: block;
+}
+
+.lanzamiento span {
+    font-size: 0.95rem;
+    color: #4b5c6b;
+    margin-bottom: 0.3rem;
+}
+
+.datos-juego {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.datos-juego p {
+    line-height: 1.45;
+}
+
+.datos-juego strong {
+    margin-bottom: 0.15rem;
+}
+
+.descripcion-juego {
+    font-style: italic;
+    line-height: 1.6;
+    color: #4b5c6b;
+}
+
+.resenas-juego h2 {
+    margin-bottom: 0.75rem;
+}
+
+.resenas-juego .carousel {
+    gap: 1rem;
+}
+
+.resenas-juego .mini-portada {
+    width: 4.8rem;
+    aspect-ratio: 1 / 1;
+    border: 2px solid rgba(132, 51, 208, 0.8);
+    border-radius: 999px;
+    background: #ead8ff;
+}
+
+.resenas-juego .mini-portada img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 999px;
+}
+
+.resenas-juego .elemento-carousel {
+    height: auto;
+    min-height: 15rem;
+}
+
+.sin-resenas,
+.juego-vacio {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .cabecera-juego {
+        min-height: 19rem;
+        padding: 1.5rem 2rem;
+        gap: 1.5rem;
+    }
+
+    .portada-juego {
+        width: 10rem;
+        margin-bottom: -4rem;
+    }
+
+    .datos-principales h1 {
+        font-size: 3.2rem;
+    }
+
+    .subtitulo {
+        font-size: 1.15rem;
+    }
+
+    .content-grid {
+        padding: 5rem 2rem 0 2rem;
+    }
+
+    .separador {
+        width: 100%;
+    }
+
+    .metadatos-juego {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+    }
+
+    .datos-juego {
+        flex: 1;
+    }
+
+    .resenas-juego .carousel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .resenas-juego .elemento-carousel {
+        min-height: 0;
+    }
+}
+
+@media (min-width: 992px) {
+    .cabecera-juego {
+        min-height: 24rem;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .portada-juego {
+        width: 15rem;
+        margin-bottom: -5rem;
+    }
+
+    .favorito-juego {
+        top: 1rem;
+        right: -1.2rem;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 20rem 1fr;
+        padding: 5.5rem 0 0 0;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    aside.sidebar {
+        padding: 0 1rem;
+        border: 1px solid rgba(195, 207, 217, 0.59);
+    }
+
+    .estado {
+        padding: 0.75rem 0.15rem 0.6rem 0.15rem;
+    }
+
+    .estados-juego {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+    }
+
+    .estado i {
+        font-size: 1.1rem;
+    }
+
+    .estado span {
+        font-size: 0.75rem;
+    }
+
+    .numero-puntuacion {
+        font-size: 2.4rem;
+    }
+
+    .grafica {
+        justify-self: center;
+    }
+
+    .principal {
+        padding: 0 2rem 1rem 2rem;
+    }
+
+    .descripcion-juego {
+        font-size: 1.1rem;
+    }
+
+    .resenas-juego .carousel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .resenas-juego .elemento-carousel {
+        border: none;
+        border-bottom: 1px solid var(--bordes);
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .resenas-juego .elemento-carousel:last-child {
+        border-bottom: none;
+    }
+}

@@ -2,13 +2,13 @@
 
 Aplicación web de seguimiento y reseñas de videojuegos.
 
-Permite a los usuarios gestionar su biblioteca de juegos, escribir reseñas, crear listas personalizadas y descubrir nuevos títulos a través del catálogo integrado con la API de RAWG.
+Permite a los usuarios gestionar su biblioteca de juegos, escribir reseñas, crear listas personalizadas y descubrir nuevos títulos a través del catálogo integrado con la API de IGDB.
 
 ## Tecnologías
 
 - **Frontend:** HTML5, CSS3, JavaScript
 - **Backend:** PHP, MySQL
-- **API externa:** [RAWG](https://rawg.io/)
+- **API externa:** [IGDB](https://www.igdb.com/api)
 
 ## Autor
 

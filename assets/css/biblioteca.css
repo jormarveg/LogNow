@@ -1,0 +1,387 @@
+.cabecera-biblioteca {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+}
+
+.texto-cabecera {
+    max-width: 42rem;
+    color: #5e6d7a;
+}
+
+.bloque-biblioteca {
+    display: grid;
+    gap: 1rem;
+}
+
+.resumen-juego-biblioteca,
+.formulario-biblioteca,
+.tarjeta-resumen,
+.tarjeta-biblioteca,
+.panel-vacio {
+    border: 1px solid rgba(195, 207, 217, 0.59);
+    background: white;
+}
+
+.resumen-juego-biblioteca {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    align-items: start;
+}
+
+.portada-resumen {
+    width: 6.5rem;
+}
+
+.datos-resumen h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.35rem;
+}
+
+.subtexto-resumen {
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.meta-resumen {
+    margin-top: 0.75rem;
+    color: #6f7d8c;
+    line-height: 1.45;
+}
+
+.formulario-biblioteca {
+    padding: 1rem;
+}
+
+.grid-formulario {
+    display: grid;
+    gap: 1rem;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 2px solid var(--bordes);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    background: white;
+}
+
+.campo input:focus,
+.campo select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.campo input.invalido,
+.campo select.invalido {
+    border-color: #e74c3c;
+}
+
+.campo input.valido,
+.campo select.valido {
+    border-color: #27ae60;
+}
+
+.msg-error {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    min-height: 1.2rem;
+    margin-top: 0.2rem;
+}
+
+.oculto {
+    display: none;
+}
+
+.check-favorito {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin: 0.3rem 0 1rem 0;
+    font-weight: 600;
+}
+
+.check-favorito input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #d65a7c;
+}
+
+.acciones-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.acciones-formulario button,
+.boton-principal,
+.boton-secundario {
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+.acciones-formulario button,
+.boton-principal {
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.boton-secundario {
+    border: 2px solid var(--bordes);
+    color: #4b5c6b;
+    background: #f7f9fa;
+}
+
+.error {
+    background: #fde8e8;
+    color: #e74c3c;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.tarjetas-resumen {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tarjeta-resumen {
+    padding: 1rem;
+}
+
+.valor-resumen {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.label-resumen {
+    display: block;
+    margin-top: 0.4rem;
+    color: #6f7d8c;
+    font-weight: 600;
+}
+
+.filtros-biblioteca {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+}
+
+.filtros-biblioteca a {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid var(--bordes);
+    border-radius: 999px;
+    background: #f7f9fa;
+    color: #4b5c6b;
+    font-size: 0.95rem;
+}
+
+.filtros-biblioteca a.active {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.grid-biblioteca {
+    display: grid;
+    gap: 1rem;
+}
+
+.tarjeta-biblioteca {
+    overflow: hidden;
+}
+
+.portada-biblioteca {
+    display: block;
+    position: relative;
+}
+
+.favorito-biblioteca {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #d65a7c;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contenido-biblioteca {
+    padding: 1rem;
+}
+
+.cabecera-tarjeta-biblioteca {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.cabecera-tarjeta-biblioteca h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0;
+}
+
+.estado-biblioteca {
+    width: fit-content;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.estado-jugando {
+    background: #e9f4ff;
+    color: #2c88d9;
+}
+
+.estado-completado {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.estado-pendiente {
+    background: #fff6db;
+    color: #b88100;
+}
+
+.estado-abandonado {
+    background: #fde8e8;
+    color: #c84a4a;
+}
+
+.plataforma-biblioteca {
+    margin-top: 0.75rem;
+    font-weight: 600;
+    color: #4b5c6b;
+}
+
+.meta-biblioteca {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #6f7d8c;
+}
+
+.pie-biblioteca {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--bordes);
+    padding-top: 0.85rem;
+}
+
+.nota-biblioteca {
+    color: var(--puntuacion);
+    font-weight: 600;
+}
+
+.nota-biblioteca.sin-nota {
+    color: #6f7d8c;
+}
+
+.enlace-detalle-biblioteca {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.panel-vacio {
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.panel-vacio p {
+    max-width: 34rem;
+    margin: 0 auto 1rem auto;
+    color: #5e6d7a;
+}
+
+@media (min-width: 768px) {
+    .cabecera-biblioteca {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .bloque-biblioteca {
+        grid-template-columns: 18rem 1fr;
+        align-items: start;
+    }
+
+    .resumen-juego-biblioteca {
+        grid-template-columns: 1fr;
+    }
+
+    .portada-resumen {
+        width: 100%;
+        max-width: 12rem;
+    }
+
+    .grid-formulario {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .acciones-formulario {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .tarjetas-resumen {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid-biblioteca {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .grid-biblioteca {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
