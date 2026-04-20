@@ -19,6 +19,16 @@ function cachePuntuacionMediaEstrellas($puntuacion) {
     return round(((float) $puntuacion) / 20, 1);
 }
 
+function cachePuntuacionResenaValida($puntuacion) {
+    if ($puntuacion === null || $puntuacion === '') {
+        return false;
+    }
+
+    $puntuacion = (int) $puntuacion;
+
+    return $puntuacion >= 10 && $puntuacion <= 100 && $puntuacion % 10 === 0;
+}
+
 function cacheFechaCaducada($fechaCache, $horas = 72) {
     if (!$fechaCache) {
         return true;
@@ -379,12 +389,15 @@ function cacheUsuarioJuego(PDO $db, $idVideojuego, $idUsuario) {
     $stmt = $db->prepare('SELECT uj.id, uj.id_plataforma, uj.estado, uj.horas_jugadas, uj.minutos_jugados, uj.fecha_inicio, uj.fecha_fin, uj.favorito, p.nombre AS plataforma, r.puntuacion AS puntuacion_usuario
                           FROM USUARIO_JUEGO uj
                           LEFT JOIN PLATAFORMA p ON p.id = uj.id_plataforma
-                          LEFT JOIN (
-                              SELECT id_usuario, id_videojuego, MAX(puntuacion) AS puntuacion
-                              FROM RESENA
-                              WHERE activa = 1
-                              GROUP BY id_usuario, id_videojuego
-                          ) r ON r.id_usuario = uj.id_usuario AND r.id_videojuego = uj.id_videojuego
+                          LEFT JOIN RESENA r ON r.id = (
+                              SELECT r2.id
+                              FROM RESENA r2
+                              WHERE r2.id_usuario = uj.id_usuario
+                                AND r2.id_videojuego = uj.id_videojuego
+                                AND r2.activa = 1
+                              ORDER BY r2.fecha_publicacion DESC, r2.id DESC
+                              LIMIT 1
+                          )
                           WHERE uj.id_videojuego = ? AND uj.id_usuario = ?
                           LIMIT 1');
     $stmt->execute([(int) $idVideojuego, (int) $idUsuario]);
@@ -476,6 +489,127 @@ function cacheGuardarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos)
     ]);
 }
 
+function cacheActualizarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos) {
+    $stmt = $db->prepare('UPDATE USUARIO_JUEGO
+                          SET id_plataforma = ?,
+                              estado = ?,
+                              horas_jugadas = ?,
+                              minutos_jugados = ?,
+                              fecha_inicio = ?,
+                              fecha_fin = ?,
+                              favorito = ?
+                          WHERE id_usuario = ? AND id_videojuego = ?');
+
+    return $stmt->execute([
+        (int) $datos['id_plataforma'],
+        $datos['estado'],
+        (int) $datos['horas_jugadas'],
+        (int) $datos['minutos_jugados'],
+        $datos['fecha_inicio'],
+        $datos['fecha_fin'],
+        !empty($datos['favorito']) ? 1 : 0,
+        (int) $idUsuario,
+        (int) $idVideojuego
+    ]);
+}
+
+function cacheActualizarEstadoJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $estado) {
+    $estadosValidos = ['jugando', 'completado', 'pendiente', 'abandonado'];
+
+    if (!in_array($estado, $estadosValidos, true)) {
+        return false;
+    }
+
+    if ($estado === 'pendiente') {
+        $stmt = $db->prepare('UPDATE USUARIO_JUEGO
+                              SET estado = ?, fecha_inicio = NULL, fecha_fin = NULL
+                              WHERE id_usuario = ? AND id_videojuego = ?');
+
+        return $stmt->execute([$estado, (int) $idUsuario, (int) $idVideojuego]);
+    }
+
+    if ($estado !== 'completado') {
+        $stmt = $db->prepare('UPDATE USUARIO_JUEGO
+                              SET estado = ?, fecha_fin = NULL
+                              WHERE id_usuario = ? AND id_videojuego = ?');
+
+        return $stmt->execute([$estado, (int) $idUsuario, (int) $idVideojuego]);
+    }
+
+    $stmt = $db->prepare('UPDATE USUARIO_JUEGO
+                          SET estado = ?
+                          WHERE id_usuario = ? AND id_videojuego = ?');
+
+    return $stmt->execute([$estado, (int) $idUsuario, (int) $idVideojuego]);
+}
+
+function cacheActualizarFavoritoJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $favorito) {
+    $stmt = $db->prepare('UPDATE USUARIO_JUEGO
+                          SET favorito = ?
+                          WHERE id_usuario = ? AND id_videojuego = ?');
+
+    return $stmt->execute([
+        $favorito ? 1 : 0,
+        (int) $idUsuario,
+        (int) $idVideojuego
+    ]);
+}
+
+function cacheLimpiarPuntuacionUsuario(PDO $db, $idUsuario, $idVideojuego) {
+    $stmt = $db->prepare('SELECT id, comentario
+                          FROM RESENA
+                          WHERE id_usuario = ? AND id_videojuego = ?
+                          ORDER BY fecha_publicacion DESC, id DESC
+                          LIMIT 1');
+    $stmt->execute([(int) $idUsuario, (int) $idVideojuego]);
+    $resena = $stmt->fetch();
+
+    if (!$resena) {
+        return true;
+    }
+
+    $comentario = trim((string) ($resena['comentario'] ?? ''));
+
+    if ($comentario === '') {
+        $delete = $db->prepare('DELETE FROM RESENA WHERE id = ?');
+
+        return $delete->execute([(int) $resena['id']]);
+    }
+
+    $update = $db->prepare('UPDATE RESENA
+                            SET puntuacion = NULL, editada = 1
+                            WHERE id = ?');
+
+    return $update->execute([(int) $resena['id']]);
+}
+
+function cacheGuardarPuntuacionUsuario(PDO $db, $idUsuario, $idVideojuego, $puntuacion) {
+    if (!cachePuntuacionResenaValida($puntuacion)) {
+        return false;
+    }
+
+    $stmt = $db->prepare('SELECT id
+                          FROM RESENA
+                          WHERE id_usuario = ? AND id_videojuego = ?
+                          ORDER BY fecha_publicacion DESC, id DESC
+                          LIMIT 1');
+    $stmt->execute([(int) $idUsuario, (int) $idVideojuego]);
+    $idResena = $stmt->fetchColumn();
+
+    if ($idResena) {
+        $update = $db->prepare('UPDATE RESENA
+                                SET puntuacion = ?, editada = 1
+                                WHERE id = ?');
+
+        return $update->execute([(int) $puntuacion, (int) $idResena]);
+    }
+
+    $insert = $db->prepare('INSERT INTO RESENA (id_usuario, id_videojuego, puntuacion, comentario)
+                            VALUES (?, ?, ?, NULL)');
+
+    return $insert->execute([(int) $idUsuario, (int) $idVideojuego, (int) $puntuacion]);
+}
+
 function cacheResumenBibliotecaUsuario(PDO $db, $idUsuario) {
     $stmt = $db->prepare("SELECT
                             COUNT(*) AS total,
@@ -523,12 +657,15 @@ function cacheListarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '') {
                           FROM USUARIO_JUEGO uj
                           INNER JOIN VIDEOJUEGO v ON v.id = uj.id_videojuego
                           INNER JOIN PLATAFORMA p ON p.id = uj.id_plataforma
-                          LEFT JOIN (
-                              SELECT id_usuario, id_videojuego, MAX(puntuacion) AS puntuacion
-                              FROM RESENA
-                              WHERE activa = 1
-                              GROUP BY id_usuario, id_videojuego
-                          ) r ON r.id_usuario = uj.id_usuario AND r.id_videojuego = uj.id_videojuego
+                          LEFT JOIN RESENA r ON r.id = (
+                              SELECT r2.id
+                              FROM RESENA r2
+                              WHERE r2.id_usuario = uj.id_usuario
+                                AND r2.id_videojuego = uj.id_videojuego
+                                AND r2.activa = 1
+                              ORDER BY r2.fecha_publicacion DESC, r2.id DESC
+                              LIMIT 1
+                          )
                           WHERE uj.id_usuario = ?' . $whereEstado . '
                           ORDER BY
                               CASE

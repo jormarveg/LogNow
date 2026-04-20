@@ -1,70 +1,11 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/biblioteca_helpers.php';
 
 if (!estaLogueado()) {
     header('Location: /login.php');
     exit;
-}
-
-function textoEstadoPerfil($estado) {
-    $estados = [
-        'jugando' => 'Jugando',
-        'completado' => 'Completado',
-        'pendiente' => 'Pendiente',
-        'abandonado' => 'Abandonado'
-    ];
-
-    return $estados[$estado] ?? 'Sin estado';
-}
-
-function tiempoPerfil($horas, $minutos) {
-    $horas = (int) $horas;
-    $minutos = (int) $minutos;
-
-    if ($horas <= 0 && $minutos <= 0) {
-        return 'Sin tiempo registrado';
-    }
-
-    if ($horas > 0 && $minutos > 0) {
-        return $horas . ' h ' . $minutos . ' min';
-    }
-
-    if ($horas > 0) {
-        return $horas . ' h';
-    }
-
-    return $minutos . ' min';
-}
-
-function fechaPerfilBonita($fecha) {
-    if (!$fecha) {
-        return 'Sin fecha';
-    }
-
-    $marca = strtotime($fecha);
-
-    if ($marca === false) {
-        return $fecha;
-    }
-
-    $meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-
-    return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
-}
-
-function puntuacionPerfilVisible($puntuacion) {
-    if ($puntuacion === null) {
-        return 'N/D';
-    }
-
-    $puntuacion = (float) $puntuacion;
-
-    if (abs($puntuacion - round($puntuacion)) < 0.05) {
-        return number_format($puntuacion, 0, ',', '.');
-    }
-
-    return number_format($puntuacion, 1, ',', '.');
 }
 
 function urlPerfilTab($tab, $extra = []) {
@@ -113,6 +54,7 @@ $filtros = [
     'pendiente' => 'Pendientes',
     'abandonado' => 'Abandonados'
 ];
+$baseBibliotecaUrl = '/perfil.php?tab=juegos';
 
 $titulo = 'Perfil — LogNow!';
 $css = ['resenas.css', 'perfil.css', 'biblioteca.css'];
@@ -231,95 +173,7 @@ require '../includes/header.php';
                     </div>
                 </section>
             <?php elseif ($tab === 'juegos'): ?>
-                <section class="cabecera-biblioteca">
-                    <div>
-                        <p class="eyebrow">Biblioteca personal</p>
-                        <h2>Mis juegos</h2>
-                        <p class="texto-cabecera">Consulta tu biblioteca, filtra por estado y revisa rápido lo que tienes en marcha.</p>
-                    </div>
-                    <a class="boton-principal" href="/catalogo.php">Registrar otro juego</a>
-                </section>
-
-                <section class="tarjetas-resumen">
-                    <article class="tarjeta-resumen">
-                        <span class="valor-resumen"><?= $resumenBiblioteca['total'] ?></span>
-                        <span class="label-resumen">Totales</span>
-                    </article>
-                    <article class="tarjeta-resumen">
-                        <span class="valor-resumen"><?= $resumenBiblioteca['favoritos'] ?></span>
-                        <span class="label-resumen">Favoritos</span>
-                    </article>
-                    <article class="tarjeta-resumen">
-                        <span class="valor-resumen"><?= $resumenBiblioteca['jugando'] ?></span>
-                        <span class="label-resumen">Jugando</span>
-                    </article>
-                    <article class="tarjeta-resumen">
-                        <span class="valor-resumen"><?= $resumenBiblioteca['completados'] ?></span>
-                        <span class="label-resumen">Completados</span>
-                    </article>
-                </section>
-
-                <nav class="filtros-biblioteca">
-                    <?php foreach ($filtros as $clave => $texto): ?>
-                        <a href="<?= htmlspecialchars(urlPerfilTab('juegos', ['estado' => $clave])) ?>"<?= $estadoFiltro === $clave ? ' class="active"' : '' ?>>
-                            <span><?= $texto ?></span>
-                            <strong><?= $contadorFiltros[$clave] ?? 0 ?></strong>
-                        </a>
-                    <?php endforeach; ?>
-                </nav>
-
-                <section class="grid-biblioteca">
-                    <?php if ($juegosBiblioteca): ?>
-                        <?php foreach ($juegosBiblioteca as $juego): ?>
-                            <article class="tarjeta-biblioteca">
-                                <a class="portada-biblioteca" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">
-                                    <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
-                                    <?php if (!empty($juego['favorito'])): ?>
-                                        <span class="favorito-biblioteca"><i class="fa-solid fa-heart"></i></span>
-                                    <?php endif; ?>
-                                </a>
-
-                                <div class="contenido-biblioteca">
-                                    <div class="cabecera-tarjeta-biblioteca">
-                                        <h2><a href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>"><?= htmlspecialchars($juego['titulo']) ?></a></h2>
-                                        <span class="estado-biblioteca estado-<?= htmlspecialchars($juego['estado']) ?>"><?= textoEstadoPerfil($juego['estado']) ?></span>
-                                    </div>
-
-                                    <p class="plataforma-biblioteca"><?= htmlspecialchars($juego['plataforma']) ?></p>
-
-                                    <div class="meta-biblioteca">
-                                        <p><?= tiempoPerfil($juego['horas_jugadas'], $juego['minutos_jugados']) ?></p>
-                                        <p>Inicio: <?= fechaPerfilBonita($juego['fecha_inicio']) ?></p>
-                                        <?php if ($juego['estado'] === 'completado' && !empty($juego['fecha_fin'])): ?>
-                                            <p>Fin: <?= fechaPerfilBonita($juego['fecha_fin']) ?></p>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <div class="pie-biblioteca">
-                                        <?php if ($juego['puntuacion_usuario'] !== null): ?>
-                                            <p class="nota-biblioteca"><i class="fa-solid fa-star"></i> <?= puntuacionPerfilVisible($juego['puntuacion_usuario']) ?></p>
-                                        <?php else: ?>
-                                            <p class="nota-biblioteca sin-nota">Sin reseña todavía</p>
-                                        <?php endif; ?>
-
-                                        <a class="enlace-detalle-biblioteca" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">Ver ficha</a>
-                                    </div>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="panel-vacio">
-                            <?php if ($resumenBiblioteca['total'] > 0): ?>
-                                <h2>No hay juegos con ese filtro</h2>
-                                <p>Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.</p>
-                            <?php else: ?>
-                                <h2>Tu biblioteca está vacía</h2>
-                                <p>Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.</p>
-                            <?php endif; ?>
-                            <a class="boton-secundario" href="/catalogo.php">Ir al catálogo</a>
-                        </div>
-                    <?php endif; ?>
-                </section>
+                <?php require '../includes/bloque-mis-juegos.php'; ?>
             <?php else: ?>
                 <section class="resenas-recientes">
                     <h2>Tus reseñas recientes</h2>
