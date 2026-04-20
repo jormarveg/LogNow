@@ -36,7 +36,7 @@ services:
     container_name: lognow-pma
     image: phpmyadmin:latest
     ports:
-      - "8080:80"
+      - "8000:80"
     environment:
       PMA_HOST: db
       PMA_USER: root
