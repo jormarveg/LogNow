@@ -16,17 +16,17 @@ if (
     && estaLogueado()
     && !empty($juego['usuario_juego'])
 ) {
-    $nuevoEstado = $_POST['estado_juego'] ?? '';
-    $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
+        $nuevoEstado = $_POST['estado_juego'] ?? '';
+        $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
 
-    if (isset($_POST['toggle_favorito'])) {
-        cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], !$juego['usuario_juego']['favorito']);
-    } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
-        cacheActualizarEstadoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
-    }
+        if (isset($_POST['toggle_favorito'])) {
+            cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], !$juego['usuario_juego']['favorito']);
+        } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
+            cacheActualizarEstadoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
+        }
 
-    header('Location: /juego.php?id=' . $idIgdb);
-    exit;
+        header('Location: /juego.php?id=' . $idIgdb);
+        exit;
 }
 
 function fechaBonita($fecha, $abreviada = false) {
@@ -104,6 +104,7 @@ $totalResenas = $juego['resumen_resenas']['total'] ?? 0;
 $histograma = $juego['histograma'] ?? [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 $maxHistograma = max($histograma);
 $mensajeBiblioteca = $_GET['biblioteca'] ?? '';
+$mensajeResena = $_GET['resena'] ?? '';
 $generos = $juego ? implode(' · ', $juego['generos']) : '';
 $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
@@ -157,6 +158,10 @@ require '../includes/header.php';
                 <p class="mensaje-juego exito">Datos del juego actualizados correctamente.</p>
             <?php elseif ($mensajeBiblioteca === 'existe'): ?>
                 <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
+            <?php elseif ($mensajeResena === 'ok'): ?>
+                <p class="mensaje-juego exito">Reseña publicada correctamente.</p>
+            <?php elseif ($mensajeResena === 'editada'): ?>
+                <p class="mensaje-juego exito">Reseña actualizada correctamente.</p>
             <?php endif; ?>
 
             <aside class="sidebar">
@@ -248,7 +253,14 @@ require '../includes/header.php';
                 </section>
 
                 <section class="resenas-recientes resenas-juego">
-                    <h2>Reseñas</h2>
+                    <div class="cabecera-resenas-juego">
+                        <h2>Reseñas</h2>
+                        <?php if (estaLogueado() && $estadoActual): ?>
+                            <a class="cta-resena-inline" href="/<?= !empty($juego['usuario_juego']['tiene_resena_texto']) ? 'editar-resena' : 'escribir-resena' ?>.php?id=<?= (int) $juego['igdb_id'] ?>">
+                                <?= !empty($juego['usuario_juego']['tiene_resena_texto']) ? 'Editar reseña' : 'Escribir reseña' ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
 
                     <?php if (!empty($juego['resenas'])): ?>
                         <div class="carousel">
@@ -272,7 +284,10 @@ require '../includes/header.php';
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
                                             </p>
-                                            <div class="estrellas"><?= estrellasJuego($resena['puntuacion_estrellas']) ?></div>
+                                            <div class="meta-resena-linea">
+                                                <div class="estrellas"><?= estrellasJuego($resena['puntuacion_estrellas']) ?></div>
+                                                <p class="autor-resena">por <strong><?= htmlspecialchars($resena['nick']) ?></strong></p>
+                                            </div>
                                         </div>
                                         <p class="fecha"><?= fechaBonita($resena['fecha_publicacion'], true) ?></p>
                                     </div>

@@ -387,36 +387,6 @@
     color: #6f7d8c;
 }
 
-.pie-biblioteca {
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    border-top: 1px solid var(--bordes);
-    padding-top: 0.85rem;
-}
-
-.acciones-tarjeta-biblioteca {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-}
-
-.nota-biblioteca {
-    color: var(--puntuacion);
-    font-weight: 600;
-}
-
-.nota-biblioteca.sin-nota {
-    color: #6f7d8c;
-}
-
-.enlace-detalle-biblioteca {
-    color: var(--primary);
-    font-weight: 600;
-}
-
 .panel-vacio {
     padding: 1.25rem;
     text-align: center;

@@ -59,25 +59,12 @@ $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
 
                     <div class="meta-biblioteca">
                         <p><?= tiempoBiblioteca($juego['horas_jugadas'], $juego['minutos_jugados']) ?></p>
-                        <?php if ($juego['estado'] !== 'pendiente' || !empty($juego['fecha_inicio'])): ?>
+                        <?php if (!empty($juego['fecha_inicio'])): ?>
                             <p>Inicio: <?= fechaBibliotecaBonita($juego['fecha_inicio']) ?></p>
                         <?php endif; ?>
                         <?php if ($juego['estado'] === 'completado' && !empty($juego['fecha_fin'])): ?>
                             <p>Fin: <?= fechaBibliotecaBonita($juego['fecha_fin']) ?></p>
                         <?php endif; ?>
-                    </div>
-
-                    <div class="pie-biblioteca">
-                        <?php if ($juego['puntuacion_usuario'] !== null): ?>
-                            <p class="nota-biblioteca"><i class="fa-solid fa-star"></i> <?= puntuacionBibliotecaVisible($juego['puntuacion_usuario']) ?></p>
-                        <?php else: ?>
-                            <p class="nota-biblioteca sin-nota">Sin reseña todavía</p>
-                        <?php endif; ?>
-
-                        <div class="acciones-tarjeta-biblioteca">
-                            <a class="enlace-detalle-biblioteca" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">Ver ficha</a>
-                            <a class="enlace-detalle-biblioteca" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>&editar=1">Editar</a>
-                        </div>
                     </div>
                 </div>
             </article>

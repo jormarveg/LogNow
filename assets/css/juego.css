@@ -208,7 +208,9 @@ aside.sidebar {
 }
 
 .estrellas .vacia {
-    color: var(--bordes);
+    color: white;
+    -webkit-text-stroke: 1px var(--bordes);
+    text-stroke: 1px var(--bordes);
 }
 
 .nota-usuario,
@@ -344,8 +346,31 @@ section.principal {
     color: #4b5c6b;
 }
 
-.resenas-juego h2 {
+.cabecera-resenas-juego {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin-bottom: 0.75rem;
+}
+
+.resenas-juego h2 {
+    margin: 0;
+}
+
+.cta-resena-inline {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--bordes);
+    border-radius: 999px;
+    background: #f7f9fa;
+    color: #4b5c6b;
+    font-size: 0.88rem;
+    font-weight: 600;
 }
 
 .resenas-juego .carousel {
@@ -409,6 +434,19 @@ section.principal {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+}
+
+.resenas-juego .meta-resena-linea {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.resenas-juego .autor-resena {
+    color: #6f7d8c;
+    font-size: 0.95rem;
+    margin: 0;
 }
 
 .resenas-juego .titulo-plataforma {
@@ -489,7 +527,14 @@ section.principal {
 
     .resenas-juego .titulo-plataforma {
         grid-column: 1;
+    }
+
+    .resenas-juego .titulo-plataforma {
         font-size: 1.1rem;
+    }
+
+    .resenas-juego .meta-resena-linea {
+        grid-column: 1;
     }
 
     .resenas-juego .titulo-puntuacion-wrapper .estrellas {
