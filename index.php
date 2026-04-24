@@ -1,4 +1,80 @@
 <?php
+require_once __DIR__ . '/api/cache.php';
+
+function fechaInicioBonita($fecha) {
+    if (!$fecha) {
+        return '';
+    }
+
+    $marca = strtotime($fecha);
+
+    if ($marca === false) {
+        return $fecha;
+    }
+
+    $meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
+}
+
+function puntuacionInicioVisible($puntuacion) {
+    if ($puntuacion === null) {
+        return 'N/D';
+    }
+
+    $puntuacion = (float) $puntuacion;
+
+    if (abs($puntuacion - round($puntuacion)) < 0.05) {
+        return number_format($puntuacion, 0, ',', '.');
+    }
+
+    return number_format($puntuacion, 1, ',', '.');
+}
+
+function estrellasInicio($puntuacion) {
+    if ($puntuacion === null) {
+        $puntuacion = 0;
+    }
+
+    $puntuacion = max(0, min(5, (float) $puntuacion));
+    $completas = (int) floor($puntuacion);
+    $media = ($puntuacion - $completas) >= 0.5;
+    $html = '';
+
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= $completas) {
+            $html .= '<i class="fa-solid fa-star"></i>';
+        } elseif ($media && $i === $completas + 1) {
+            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
+        } else {
+            $html .= '<i class="fa-solid fa-star vacia"></i>';
+        }
+    }
+
+    return $html;
+}
+
+function partesTextoInicioResena($texto, $limite = 110) {
+    $texto = trim((string) $texto);
+
+    if (mb_strlen($texto, 'UTF-8') <= $limite) {
+        return [$texto, ''];
+    }
+
+    $corto = mb_substr($texto, 0, $limite, 'UTF-8');
+    $resto = mb_substr($texto, $limite, null, 'UTF-8');
+
+    $ultimoEspacio = mb_strrpos($corto, ' ', 0, 'UTF-8');
+
+    if ($ultimoEspacio !== false && $ultimoEspacio > 60) {
+        $resto = mb_substr($corto, $ultimoEspacio + 1, null, 'UTF-8') . $resto;
+        $corto = mb_substr($corto, 0, $ultimoEspacio, 'UTF-8');
+    }
+
+    return [rtrim($corto) . '...', ltrim($resto)];
+}
+
+$resenasRecientes = cacheResenasRecientesInicio($db, 4);
 $titulo = 'Inicio — LogNow!';
 $css = ['resenas.css', 'index.css'];
 $pagina = 'inicio';
@@ -79,100 +155,48 @@ require 'includes/header.php';
 
     <section class="resenas-recientes">
         <h2>Reseñas recientes</h2>
-        <div class="carousel">
-            <div class="elemento-carousel mini-resena">
-                <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                <div class="nombre-puntuacion">
-                    <h4>Juego 1</h4>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                </div>
-                <div class="puntuacion-tablet">
-                    <div class="titulo-puntuacion-wrapper">
-                        <p class="titulo-plataforma"><strong>Juego 1</strong> en <strong>Nintendo Switch</strong></p>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
+        <?php if ($resenasRecientes): ?>
+            <div class="carousel">
+                <?php foreach ($resenasRecientes as $resena): ?>
+                    <?php [$textoCorto, $textoCompleto] = partesTextoInicioResena($resena['comentario']); ?>
+                    <article class="elemento-carousel mini-resena">
+                        <div class="mini-portada">
+                            <a href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>" aria-label="Ver ficha de <?= htmlspecialchars($resena['titulo']) ?>">
+                                <img src="<?= htmlspecialchars($resena['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>">
+                            </a>
                         </div>
-                        <span> por Usuario2</span>
-                    </div>
-                    <p class="fecha">22 febrero 2026</p>
-                </div>
-                <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt tenetur?
-                    Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                </p>
-                <p class="username">Usuario1</p>
-            </div>
-            <div class="elemento-carousel">
-                <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                <div class="nombre-puntuacion">
-                    <h4>Juego 2</h4>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                </div>
-                <div class="puntuacion-tablet">
-                    <div class="titulo-puntuacion-wrapper">
-                        <p class="titulo-plataforma"><strong>Juego 2</strong> en <strong>PC</strong></p>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
+                        <div class="nombre-puntuacion">
+                            <h4><a href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>"><?= htmlspecialchars($resena['titulo']) ?></a></h4>
+                            <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionInicioVisible($resena['puntuacion_estrellas']) ?></span></div>
                         </div>
-                        <span> por Usuario2</span>
-                    </div>
-                    <p class="fecha">19 febrero 2026</p>
-                </div>
-                <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt tenetur?
-                    Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                </p>
-                <p class="username">Usuario3</p>
-            </div>
-            <div class="elemento-carousel mini-resena">
-                <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                <div class="nombre-puntuacion">
-                    <h4>Juego 3</h4>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                </div>
-                <div class="puntuacion-tablet">
-                    <div class="titulo-puntuacion-wrapper">
-                        <p class="titulo-plataforma"><strong>Juego 3</strong> en <strong>PlayStation 5</strong></p>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
+                        <div class="puntuacion-tablet">
+                            <div class="titulo-puntuacion-wrapper">
+                                <p class="titulo-plataforma">
+                                    <strong><a href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>"><?= htmlspecialchars($resena['titulo']) ?></a></strong>
+                                    <?php if (!empty($resena['plataforma'])): ?>
+                                        en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
+                                    <?php endif; ?>
+                                </p>
+                                <div class="meta-resena-inline">
+                                    <div class="estrellas"><?= estrellasInicio($resena['puntuacion_estrellas']) ?></div>
+                                    <span>por <?= htmlspecialchars($resena['nick']) ?></span>
+                                </div>
+                            </div>
+                            <p class="fecha"><?= fechaInicioBonita($resena['fecha_publicacion']) ?></p>
                         </div>
-                        <span> por Usuario3</span>
-                    </div>
-                    <p class="fecha">16 febrero 2026</p>
-                </div>
-                <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt tenetur?
-                    Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                </p>
-                <p class="username">Usuario3</p>
+                        <p class="texto">
+                            <?= htmlspecialchars($textoCorto) ?>
+                            <?php if ($textoCompleto !== ''): ?>
+                                <span class="completo"><?= htmlspecialchars($textoCompleto) ?></span>
+                            <?php endif; ?>
+                        </p>
+                        <p class="username"><?= htmlspecialchars($resena['nick']) ?></p>
+                    </article>
+                <?php endforeach; ?>
             </div>
-            <div class="elemento-carousel mini-resena">
-                <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                <div class="nombre-puntuacion">
-                    <h4>Juego 4</h4>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                </div>
-                <div class="puntuacion-tablet">
-                    <div class="titulo-puntuacion-wrapper">
-                        <p class="titulo-plataforma"><strong>Juego 4</strong> en <strong>PlayStation 5</strong></p>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                        <span> por Usuario4</span>
-                    </div>
-                    <p class="fecha">16 febrero 2026</p>
-                </div>
-                <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt tenetur?
-                    Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                </p>
-                <p class="username">Usuario4</p>
-            </div>
-        </div>
+        <?php else: ?>
+            <p>Todavía no hay reseñas recientes publicadas en LogNow!.</p>
+        <?php endif; ?>
     </section>
 </main>
 

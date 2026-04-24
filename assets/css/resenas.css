@@ -60,18 +60,47 @@
     overflow: hidden;
     border-radius: 12px;
     aspect-ratio: 2 / 3;
+    background: var(--fondos);
+}
+
+.resenas-recientes .mini-portada a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.resenas-recientes .mini-portada img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.22s ease;
 }
 
 .resenas-recientes .nombre-puntuacion {
     justify-self: center;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-
+    justify-content: flex-start;
+    align-self: start;
     grid-column: 2/span 1;
 }
 
+.resenas-recientes .nombre-puntuacion h4 a,
+.resenas-recientes .titulo-plataforma a {
+    transition: color 0.2s ease;
+}
+
+.resenas-recientes .elemento-carousel:hover .mini-portada img,
+.resenas-recientes .elemento-carousel:focus-within .mini-portada img {
+    transform: scale(1.05);
+}
+
+.resenas-recientes .elemento-carousel:hover .nombre-puntuacion h4 a,
+.resenas-recientes .elemento-carousel:hover .titulo-plataforma a,
+.resenas-recientes .elemento-carousel:focus-within .nombre-puntuacion h4 a,
+.resenas-recientes .elemento-carousel:focus-within .titulo-plataforma a {
+    color: var(--primary);
+}
 
 .resenas-recientes .texto, .resenas-recientes .username {
     grid-column: 1/span 2;
@@ -85,6 +114,7 @@
 
 .resenas-recientes .texto {
     font-size: 0.95rem;
+    align-self: start;
 }
 
 .carousel .puntuacion {
@@ -123,33 +153,39 @@
         height: auto;
         display: grid;
         grid-template-columns: auto 1fr;
-        grid-template-rows: auto auto;
+        grid-template-rows: auto auto auto;
+        align-items: start;
         border: none;
-        gap: 2rem;
+        gap: 0.7rem 2rem;
     }
 
     .resenas-recientes .mini-portada {
         grid-column: 1/span 1;
-        grid-row: 1/-1;
+        grid-row: 1 / span 3;
         width: 7rem;
         align-self: center;
     }
 
     .resenas-recientes .puntuacion-tablet {
-        grid-column: 2/span 2;
+        grid-column: 2 / -1;
+        grid-row: 1;
         display: flex;
+        align-items: start;
     }
 
     .resenas-recientes .texto {
-        grid-column: 2/-1;
+        grid-column: 2 / -1;
+        grid-row: 2;
         font-size: 1.1rem;
+        margin-top: 0;
+        align-self: start;
     }
 
     .resenas-recientes .titulo-puntuacion-wrapper {
         display: grid;
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:1fr;
         align-content: start;
-
+        row-gap: 0.2rem;
     }
 
     .resenas-recientes .titulo-plataforma {
@@ -157,10 +193,22 @@
         font-size: 1.1rem;
     }
 
+    .resenas-recientes .meta-resena-inline {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+
+    .resenas-recientes .meta-resena-inline > span {
+        font-size: 0.88rem;
+        color: #6f7d8c;
+    }
+
     .resenas-recientes .puntuacion-tablet .fecha {
         flex-grow: 1;
         text-align: right;
         color: #999;
+        margin-top: 0;
     }
 
 
@@ -169,7 +217,9 @@
     }
 
     .estrellas .vacia {
-        color: var(--bordes);
+        color: white;
+        -webkit-text-stroke: 1px var(--bordes);
+        text-stroke: 1px var(--bordes);
     }
 
 }
@@ -179,7 +229,7 @@
     .resenas-recientes .carousel {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        align-items: start;
     }
 
     .resenas-recientes .elemento-carousel p {
