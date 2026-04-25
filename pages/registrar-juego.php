@@ -270,7 +270,7 @@ require '../includes/header.php';
 
                     <div class="acciones-formulario">
                         <button type="submit"><?= $modoEdicion ? 'Guardar cambios' : 'Guardar en mi biblioteca' ?></button>
-                        <a class="boton-secundario" href="/mis-juegos.php">Ver mi biblioteca</a>
+                        <a class="boton-secundario" href="/perfil.php?tab=juegos">Ver mi biblioteca</a>
                     </div>
                 </form>
             </section>

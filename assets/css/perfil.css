@@ -288,6 +288,10 @@ aside.sidebar {
         gap: 1.5rem;
     }
 
+    .resenas-recientes .elemento-carousel {
+        width: 100%;
+    }
+
     .favorito {
         width: 100%;
     }

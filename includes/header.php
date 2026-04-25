@@ -25,7 +25,7 @@
             <ul>
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
                 <?php if (estaLogueado()): ?>
-                    <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/mis-juegos.php">Mis juegos</a></li>
+                    <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/perfil.php?tab=juegos">Mis juegos</a></li>
                     <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                     <?php if (esAdmin()): ?>
                         <li><a href="/admin/">Admin</a></li>

@@ -22,6 +22,80 @@ function urlPerfilTab($tab, $extra = []) {
     return '/perfil.php' . ($query ? '?' . $query : '');
 }
 
+function fechaPerfilBonita($fecha, $abreviada = false) {
+    if (!$fecha) {
+        return '';
+    }
+
+    $marca = strtotime($fecha);
+
+    if ($marca === false) {
+        return $fecha;
+    }
+
+    $meses = $abreviada
+        ? ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+        : ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
+}
+
+function puntuacionPerfilVisible($puntuacion) {
+    if ($puntuacion === null) {
+        return 'N/D';
+    }
+
+    $puntuacion = (float) $puntuacion;
+
+    if (abs($puntuacion - round($puntuacion)) < 0.05) {
+        return number_format($puntuacion, 0, ',', '.');
+    }
+
+    return number_format($puntuacion, 1, ',', '.');
+}
+
+function estrellasPerfil($puntuacion) {
+    if ($puntuacion === null) {
+        $puntuacion = 0;
+    }
+
+    $puntuacion = max(0, min(5, (float) $puntuacion));
+    $estrellasCompletas = (int) floor($puntuacion);
+    $mediaEstrella = ($puntuacion - $estrellasCompletas) >= 0.5;
+    $html = '';
+
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= $estrellasCompletas) {
+            $html .= '<i class="fa-solid fa-star"></i>';
+        } elseif ($mediaEstrella && $i === $estrellasCompletas + 1) {
+            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
+        } else {
+            $html .= '<i class="fa-solid fa-star vacia"></i>';
+        }
+    }
+
+    return $html;
+}
+
+function partesTextoPerfilResena($texto, $limite = 110) {
+    $texto = trim((string) $texto);
+
+    if (mb_strlen($texto, 'UTF-8') <= $limite) {
+        return [$texto, ''];
+    }
+
+    $corto = mb_substr($texto, 0, $limite, 'UTF-8');
+    $resto = mb_substr($texto, $limite, null, 'UTF-8');
+    $ultimoEspacio = mb_strrpos($corto, ' ', 0, 'UTF-8');
+
+    if ($ultimoEspacio !== false && $ultimoEspacio > 60) {
+        $resto = mb_substr($corto, $ultimoEspacio + 1, null, 'UTF-8') . $resto;
+        $corto = mb_substr($corto, 0, $ultimoEspacio, 'UTF-8');
+    }
+
+    return [rtrim($corto) . '...', ltrim($resto)];
+}
+
 $tab = $_GET['tab'] ?? 'perfil';
 $tabsValidas = ['perfil', 'juegos', 'resenas'];
 
@@ -38,8 +112,11 @@ if (!in_array($estadoFiltro, $estadosValidos, true)) {
 }
 
 $datosUsuario = $usuarioModel->obtenerPorId(getUsuario()['id']);
+$idUsuario = (int) getUsuario()['id'];
 $resumenBiblioteca = cacheResumenBibliotecaUsuario($db, (int) getUsuario()['id']);
 $juegosBiblioteca = cacheListarBibliotecaUsuario($db, (int) getUsuario()['id'], $estadoFiltro);
+$resenasUsuarioPerfil = cacheListarResenasUsuario($db, $idUsuario, 5);
+$resenasUsuarioTab = cacheListarResenasUsuario($db, $idUsuario, 20);
 $contadorFiltros = [
     '' => $resumenBiblioteca['total'],
     'jugando' => $resumenBiblioteca['jugando'],
@@ -145,64 +222,78 @@ require '../includes/header.php';
 
                 <section class="resenas-recientes">
                     <h2>Tus reseñas recientes</h2>
-                    <div class="carousel">
-                        <?php for ($i = 0; $i < 5; $i++): ?>
-                        <div class="elemento-carousel mini-resena">
-                            <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                            <div class="nombre-puntuacion">
-                                <h4>Juego 1</h4>
-                                <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                            </div>
-                            <div class="puntuacion-tablet">
-                                <div class="titulo-puntuacion-wrapper">
-                                    <p class="titulo-plataforma"><strong>Juego 1</strong> en <strong>Nintendo Switch</strong></p>
-                                    <div class="estrellas">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                            class="fa-solid fa-star"></i><i
-                                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
+                    <?php if ($resenasUsuarioPerfil): ?>
+                        <div class="carousel">
+                            <?php foreach ($resenasUsuarioPerfil as $resena): ?>
+                                <?php [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']); ?>
+                                <div class="elemento-carousel mini-resena">
+                                    <div class="mini-portada"><img src="<?= htmlspecialchars($resena['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
+                                    <div class="nombre-puntuacion">
+                                        <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
+                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionPerfilVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
+                                    <div class="puntuacion-tablet">
+                                        <div class="titulo-puntuacion-wrapper">
+                                            <p class="titulo-plataforma">
+                                                <strong><?= htmlspecialchars($resena['titulo']) ?></strong>
+                                                <?php if (!empty($resena['plataforma'])): ?>
+                                                    en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
+                                                <?php endif; ?>
+                                            </p>
+                                            <div class="estrellas"><?= estrellasPerfil($resena['puntuacion_estrellas']) ?></div>
+                                        </div>
+                                        <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
+                                    </div>
+                                    <p class="texto"><?= htmlspecialchars($textoCorto) ?><?php if ($textoCompleto !== ''): ?><span class="completo"><?= htmlspecialchars($textoCompleto) ?></span><?php endif; ?></p>
+                                    <p class="username"><?= htmlspecialchars($datosUsuario['nick']) ?></p>
                                 </div>
-                                <p class="fecha">22 febrero 2026</p>
-                            </div>
-                            <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt
-                                tenetur? Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                            </p>
-                            <p class="username">Usuario1</p>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endfor; ?>
-                    </div>
+                    <?php else: ?>
+                        <div class="panel-vacio">
+                            <h2>Todavía no has publicado reseñas</h2>
+                            <p>Cuando completes tu primera reseña desde un juego guardado en biblioteca, aparecerá aquí.</p>
+                        </div>
+                    <?php endif; ?>
                 </section>
             <?php elseif ($tab === 'juegos'): ?>
                 <?php require '../includes/bloque-mis-juegos.php'; ?>
             <?php else: ?>
                 <section class="resenas-recientes">
                     <h2>Tus reseñas recientes</h2>
-                    <div class="carousel">
-                        <?php for ($i = 0; $i < 5; $i++): ?>
-                        <div class="elemento-carousel mini-resena">
-                            <div class="mini-portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                            <div class="nombre-puntuacion">
-                                <h4>Juego 1</h4>
-                                <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.0</span></div>
-                            </div>
-                            <div class="puntuacion-tablet">
-                                <div class="titulo-puntuacion-wrapper">
-                                    <p class="titulo-plataforma"><strong>Juego 1</strong> en <strong>Nintendo Switch</strong></p>
-                                    <div class="estrellas">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                            class="fa-solid fa-star"></i><i
-                                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
+                    <?php if ($resenasUsuarioTab): ?>
+                        <div class="carousel">
+                            <?php foreach ($resenasUsuarioTab as $resena): ?>
+                                <?php [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']); ?>
+                                <div class="elemento-carousel mini-resena">
+                                    <div class="mini-portada"><img src="<?= htmlspecialchars($resena['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
+                                    <div class="nombre-puntuacion">
+                                        <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
+                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionPerfilVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
+                                    <div class="puntuacion-tablet">
+                                        <div class="titulo-puntuacion-wrapper">
+                                            <p class="titulo-plataforma">
+                                                <strong><?= htmlspecialchars($resena['titulo']) ?></strong>
+                                                <?php if (!empty($resena['plataforma'])): ?>
+                                                    en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
+                                                <?php endif; ?>
+                                            </p>
+                                            <div class="estrellas"><?= estrellasPerfil($resena['puntuacion_estrellas']) ?></div>
+                                        </div>
+                                        <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
+                                    </div>
+                                    <p class="texto"><?= htmlspecialchars($textoCorto) ?><?php if ($textoCompleto !== ''): ?><span class="completo"><?= htmlspecialchars($textoCompleto) ?></span><?php endif; ?></p>
+                                    <p class="username"><?= htmlspecialchars($datosUsuario['nick']) ?></p>
                                 </div>
-                                <p class="fecha">22 febrero 2026</p>
-                            </div>
-                            <p class="texto">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae, incidunt
-                                tenetur? Odit.<span class="completo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque dicta excepturi molestias.</span>
-                            </p>
-                            <p class="username">Usuario1</p>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endfor; ?>
-                    </div>
+                    <?php else: ?>
+                        <div class="panel-vacio">
+                            <h2>Todavía no has publicado reseñas</h2>
+                            <p>Cuando completes tu primera reseña desde un juego guardado en biblioteca, aparecerá aquí.</p>
+                        </div>
+                    <?php endif; ?>
                 </section>
             <?php endif; ?>
         </section>
