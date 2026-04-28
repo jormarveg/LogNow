@@ -162,7 +162,7 @@ require 'includes/header.php';
                     <article class="elemento-carousel mini-resena">
                         <div class="mini-portada">
                             <a href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>" aria-label="Ver ficha de <?= htmlspecialchars($resena['titulo']) ?>">
-                                <img src="<?= htmlspecialchars($resena['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>">
+                                <img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>">
                             </a>
                         </div>
                         <div class="nombre-puntuacion">

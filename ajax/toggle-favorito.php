@@ -37,10 +37,10 @@ if ($idVideojuego <= 0 || ($favorito !== 0 && $favorito !== 1)) {
 $actualizado = cacheActualizarFavoritoJuegoBiblioteca($db, (int) getUsuario()['id'], $idVideojuego, $favorito === 1);
 
 if (!$actualizado) {
-    http_response_code(500);
+    http_response_code(422);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'No se ha podido actualizar el favorito'
+        'mensaje' => $favorito === 1 ? 'Has alcanzado el límite de juegos favoritos' : 'No se ha podido actualizar el favorito'
     ]);
     exit;
 }

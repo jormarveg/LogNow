@@ -31,4 +31,18 @@ class Usuario {
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
+
+    public function existeNickDeOtroUsuario($idUsuario, $nick) {
+        $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE nick = ? AND id <> ?');
+        $stmt->execute([$nick, $idUsuario]);
+        return $stmt->fetch() !== false;
+    }
+
+    public function actualizarPerfil($idUsuario, $nombre, $nick, $biografia, $avatar, $encabezado) {
+        $stmt = $this->db->prepare('UPDATE USUARIO
+                                    SET nombre = ?, nick = ?, biografia = ?, avatar = ?, encabezado = ?
+                                    WHERE id = ?');
+
+        return $stmt->execute([$nombre, $nick, $biografia, $avatar, $encabezado, $idUsuario]);
+    }
 }

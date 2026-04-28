@@ -97,7 +97,8 @@
 }
 
 .campo input,
-.campo select {
+.campo select,
+.campo textarea {
     width: 100%;
     padding: 0.7rem;
     border: 2px solid var(--bordes);
@@ -108,19 +109,27 @@
 }
 
 .campo input:focus,
-.campo select:focus {
+.campo select:focus,
+.campo textarea:focus {
     outline: none;
     border-color: var(--primary);
 }
 
 .campo input.invalido,
-.campo select.invalido {
+.campo select.invalido,
+.campo textarea.invalido {
     border-color: #e74c3c;
 }
 
 .campo input.valido,
-.campo select.valido {
+.campo select.valido,
+.campo textarea.valido {
     border-color: #27ae60;
+}
+
+.campo textarea {
+    resize: vertical;
+    min-height: 7rem;
 }
 
 .msg-error {
@@ -129,6 +138,12 @@
     font-size: 0.8rem;
     min-height: 1.2rem;
     margin-top: 0.2rem;
+}
+
+.ayuda-campo {
+    color: #6f7d8c;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
 }
 
 .oculto {
@@ -398,6 +413,37 @@
     color: #5e6d7a;
 }
 
+.paginacion-biblioteca {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.paginacion-biblioteca a {
+    min-width: 2.6rem;
+    text-align: center;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--bordes);
+    background: white;
+}
+
+.paginacion-biblioteca .separador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.paginacion-biblioteca a.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
 @media (min-width: 768px) {
     .cabecera-biblioteca {
         flex-direction: row;
@@ -425,6 +471,10 @@
     }
 
     .campo-puntuacion {
+        grid-column: 1 / -1;
+    }
+
+    .campo-ancho {
         grid-column: 1 / -1;
     }
 

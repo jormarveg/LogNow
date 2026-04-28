@@ -48,6 +48,7 @@ CREATE TABLE VIDEOJUEGO (
     portada_url VARCHAR(255),
     background_url VARCHAR(255),
     fecha_lanzamiento DATE,
+    puntuacion_igdb DECIMAL(4,1),
     descripcion TEXT,
     id_desarrolladora INT,
     fecha_cache DATETIME,

@@ -67,6 +67,8 @@ function urlBibliotecaEstado($baseUrl, $estado = '') {
         $params['estado'] = $estado;
     }
 
+    $params['p'] = 1;
+
     $query = http_build_query($params);
 
     if ($query === '') {
@@ -74,4 +76,42 @@ function urlBibliotecaEstado($baseUrl, $estado = '') {
     }
 
     return $baseUrl . (str_contains($baseUrl, '?') ? '&' : '?') . $query;
+}
+
+function urlBibliotecaPagina($baseUrl, $estado = '', $pagina = 1) {
+    $params = ['p' => max(1, (int) $pagina)];
+
+    if ($estado !== '') {
+        $params['estado'] = $estado;
+    }
+
+    $query = http_build_query($params);
+
+    return $baseUrl . (str_contains($baseUrl, '?') ? '&' : '?') . $query;
+}
+
+function paginasBiblioteca($paginaActual, $totalPaginas) {
+    if ($totalPaginas <= 7) {
+        return range(1, $totalPaginas);
+    }
+
+    $paginas = [1];
+    $inicio = max(2, $paginaActual - 1);
+    $fin = min($totalPaginas - 1, $paginaActual + 1);
+
+    if ($inicio > 2) {
+        $paginas[] = '...';
+    }
+
+    for ($i = $inicio; $i <= $fin; $i++) {
+        $paginas[] = $i;
+    }
+
+    if ($fin < $totalPaginas - 1) {
+        $paginas[] = '...';
+    }
+
+    $paginas[] = $totalPaginas;
+
+    return $paginas;
 }

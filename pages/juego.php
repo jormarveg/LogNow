@@ -20,7 +20,16 @@ if (
         $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
 
         if (isset($_POST['toggle_favorito'])) {
-            cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], !$juego['usuario_juego']['favorito']);
+            $nuevoFavorito = !$juego['usuario_juego']['favorito'];
+            $actualizadoFavorito = cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoFavorito);
+            $destino = '/juego.php?id=' . $idIgdb;
+
+            if (!$actualizadoFavorito && $nuevoFavorito) {
+                $destino .= '&favorito=limite';
+            }
+
+            header('Location: ' . $destino);
+            exit;
         } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
             cacheActualizarEstadoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
         }
@@ -94,7 +103,7 @@ $estados = [
 ];
 
 $background = $juego['background_url'] ?? '/assets/img/profile/banner.webp';
-$portada = $juego['portada_url'] ?? '/assets/img/covers/expedition33.jpg';
+$portada = urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'] ?? 'Sin portada');
 $estadoActual = $juego['usuario_juego']['estado'] ?? '';
 $favorito = !empty($juego['usuario_juego']['favorito']);
 $puntuacionUsuario = $juego['usuario_juego']['puntuacion_usuario'] ?? null;
@@ -105,6 +114,7 @@ $histograma = $juego['histograma'] ?? [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 $maxHistograma = max($histograma);
 $mensajeBiblioteca = $_GET['biblioteca'] ?? '';
 $mensajeResena = $_GET['resena'] ?? '';
+$mensajeFavorito = $_GET['favorito'] ?? '';
 $generos = $juego ? implode(' · ', $juego['generos']) : '';
 $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
@@ -162,6 +172,8 @@ require '../includes/header.php';
                 <p class="mensaje-juego exito">Reseña publicada correctamente.</p>
             <?php elseif ($mensajeResena === 'editada'): ?>
                 <p class="mensaje-juego exito">Reseña actualizada correctamente.</p>
+            <?php elseif ($mensajeFavorito === 'limite'): ?>
+                <p class="mensaje-juego aviso">Has alcanzado el límite de juegos favoritos.</p>
             <?php endif; ?>
 
             <aside class="sidebar">

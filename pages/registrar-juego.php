@@ -88,6 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
         $error = 'La fecha de inicio no es válida';
     } elseif ($estado === 'completado' && !fechaBibliotecaValida($fechaFin)) {
         $error = 'La fecha de fin no es válida';
+    } elseif ($favorito && !cachePuedeMarcarFavorito($db, $idUsuario, (int) $juego['id'])) {
+        $error = 'Has alcanzado el límite de juegos favoritos';
     } else {
         if ($estado === 'pendiente') {
             $fechaInicio = '';
@@ -113,9 +115,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
                 ];
 
                 if ($modoEdicion) {
-                    cacheActualizarJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $datosBiblioteca);
+                    $guardadoBiblioteca = cacheActualizarJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $datosBiblioteca);
                 } else {
-                    cacheGuardarJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $datosBiblioteca);
+                    $guardadoBiblioteca = cacheGuardarJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $datosBiblioteca);
+                }
+
+                if (!$guardadoBiblioteca) {
+                    throw new RuntimeException('limite_favoritos');
                 }
 
                 if ($puntuacion !== '') {
@@ -132,9 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
                     $db->rollBack();
                 }
 
-                $error = $e->getCode() === '23000'
-                    ? 'Ese juego ya está en tu biblioteca'
-                    : 'No se ha podido guardar el juego ahora mismo';
+                if ($e instanceof RuntimeException && $e->getMessage() === 'limite_favoritos') {
+                    $error = 'Has alcanzado el límite de juegos favoritos';
+                } else {
+                    $error = $e->getCode() === '23000'
+                        ? 'Ese juego ya está en tu biblioteca'
+                        : 'No se ha podido guardar el juego ahora mismo';
+                }
             }
         }
     }
@@ -163,7 +173,7 @@ require '../includes/header.php';
         <div class="bloque-biblioteca">
             <section class="resumen-juego-biblioteca">
                 <div class="portada-resumen">
-                    <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                    <img src="<?= htmlspecialchars(urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
                 </div>
                 <div class="datos-resumen">
                     <p class="eyebrow">Juego seleccionado</p>

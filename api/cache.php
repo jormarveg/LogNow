@@ -3,6 +3,38 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/igdb.php';
 
+const LIMITE_FAVORITOS_USUARIO = 10;
+
+function cachePlataformaPermitida($nombre) {
+    $nombre = cacheTextoNormalizado($nombre);
+
+    if ($nombre === '') {
+        return false;
+    }
+
+    if (in_array($nombre, ['linux', 'android', 'ios', 'iphone', 'ipad', 'windows pc', 'pc (microsoft windows)'], true)) {
+        return true;
+    }
+
+    return str_contains($nombre, 'playstation')
+        || str_contains($nombre, 'xbox')
+        || str_contains($nombre, 'nintendo');
+}
+
+function cacheJuegoTienePlataformaPermitida($plataformas) {
+    if (!is_array($plataformas)) {
+        return false;
+    }
+
+    foreach ($plataformas as $plataforma) {
+        if (cachePlataformaPermitida($plataforma['name'] ?? $plataforma['nombre'] ?? '')) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function cachePuntuacionUsuarioEstrellas($puntuacion) {
     if ($puntuacion === null) {
         return null;
@@ -72,6 +104,25 @@ function cacheValorFechaIgdb($valor) {
     }
 
     return date('Y-m-d', $valor);
+}
+
+function cachePuntuacionIgdbVisible($puntuacion) {
+    if ($puntuacion === null || $puntuacion === '') {
+        return null;
+    }
+
+    return round(((float) $puntuacion) / 20, 1);
+}
+
+function cacheAsegurarColumnaPuntuacionIgdb(PDO $db) {
+    static $lista = false;
+
+    if ($lista) {
+        return;
+    }
+
+    $db->exec('ALTER TABLE VIDEOJUEGO ADD COLUMN IF NOT EXISTS puntuacion_igdb DECIMAL(4,1) NULL AFTER fecha_lanzamiento');
+    $lista = true;
 }
 
 function cacheGuardarDesarrolladora(PDO $db, $datos) {
@@ -244,10 +295,13 @@ function cacheDesarrolladoraJuego($juego) {
 }
 
 function cacheGuardarJuegoIgdb(PDO $db, $juego) {
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+
     $igdbId = (int) ($juego['id'] ?? 0);
     $titulo = cacheValorTexto($juego['name'] ?? '');
+    $plataformas = $juego['platforms'] ?? [];
 
-    if ($igdbId <= 0 || !$titulo) {
+    if ($igdbId <= 0 || !$titulo || !cacheJuegoTienePlataformaPermitida($plataformas)) {
         return null;
     }
 
@@ -269,22 +323,23 @@ function cacheGuardarJuegoIgdb(PDO $db, $juego) {
         igdbPortadaJuego($juego['cover'] ?? null),
         igdbBackgroundJuego($juego),
         cacheValorFechaIgdb($juego['first_release_date'] ?? 0),
+        cachePuntuacionIgdbVisible($juego['total_rating'] ?? null),
         $descripcion,
         $idDesarrolladora
     ];
 
     if ($existente) {
-        $update = $db->prepare('UPDATE VIDEOJUEGO SET titulo = ?, portada_url = ?, background_url = ?, fecha_lanzamiento = ?, descripcion = ?, id_desarrolladora = ?, fecha_cache = NOW() WHERE id = ?');
+        $update = $db->prepare('UPDATE VIDEOJUEGO SET titulo = ?, portada_url = ?, background_url = ?, fecha_lanzamiento = ?, puntuacion_igdb = ?, descripcion = ?, id_desarrolladora = ?, fecha_cache = NOW() WHERE id = ?');
         $update->execute(array_merge($datos, [$existente['id']]));
         $idVideojuego = (int) $existente['id'];
     } else {
-        $insert = $db->prepare('INSERT INTO VIDEOJUEGO (igdb_id, titulo, portada_url, background_url, fecha_lanzamiento, descripcion, id_desarrolladora, fecha_cache) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())');
+        $insert = $db->prepare('INSERT INTO VIDEOJUEGO (igdb_id, titulo, portada_url, background_url, fecha_lanzamiento, puntuacion_igdb, descripcion, id_desarrolladora, fecha_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())');
         $insert->execute(array_merge([$igdbId], $datos));
         $idVideojuego = (int) $db->lastInsertId();
     }
 
     cacheSyncGeneros($db, $idVideojuego, $juego['genres'] ?? []);
-    cacheSyncPlataformas($db, $idVideojuego, $juego['platforms'] ?? []);
+    cacheSyncPlataformas($db, $idVideojuego, $plataformas);
 
     return $idVideojuego;
 }
@@ -381,6 +436,32 @@ function cacheIdPlataformaPorNombre(PDO $db, $nombre) {
     $insert->execute([$nombre, $acronimo]);
 
     return (int) $db->lastInsertId();
+}
+
+function cacheContarFavoritosUsuario(PDO $db, $idUsuario) {
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM USUARIO_JUEGO
+                          WHERE id_usuario = ? AND favorito = 1');
+    $stmt->execute([(int) $idUsuario]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cachePuedeMarcarFavorito(PDO $db, $idUsuario, $idVideojuego = 0) {
+    if ($idVideojuego > 0) {
+        $stmt = $db->prepare('SELECT favorito
+                              FROM USUARIO_JUEGO
+                              WHERE id_usuario = ? AND id_videojuego = ?
+                              LIMIT 1');
+        $stmt->execute([(int) $idUsuario, (int) $idVideojuego]);
+        $actual = $stmt->fetchColumn();
+
+        if ($actual !== false && (int) $actual === 1) {
+            return true;
+        }
+    }
+
+    return cacheContarFavoritosUsuario($db, $idUsuario) < LIMITE_FAVORITOS_USUARIO;
 }
 
 function cacheCompletarPlataformasJuegoDetalle(PDO $db, $plataformas) {
@@ -567,6 +648,62 @@ function cacheListarResenasUsuario(PDO $db, $idUsuario, $limite = 12) {
     return $resenas;
 }
 
+function cacheFavoritosUsuario(PDO $db, $idUsuario, $limite = 6) {
+    $stmt = $db->prepare('SELECT
+                            v.igdb_id,
+                            v.titulo,
+                            v.portada_url
+                          FROM USUARIO_JUEGO uj
+                          INNER JOIN VIDEOJUEGO v ON v.id = uj.id_videojuego
+                          WHERE uj.id_usuario = ? AND uj.favorito = 1
+                          ORDER BY
+                              CASE
+                                  WHEN uj.estado = "jugando" THEN 0
+                                  WHEN uj.estado = "completado" THEN 1
+                                  WHEN uj.estado = "pendiente" THEN 2
+                                  ELSE 3
+                              END,
+                              v.titulo ASC
+                          LIMIT ' . (int) $limite);
+    $stmt->execute([(int) $idUsuario]);
+
+    return $stmt->fetchAll();
+}
+
+function cacheJuegosUsuarioEsteAno(PDO $db, $idUsuario, $ano = null) {
+    $ano = $ano ?: date('Y');
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM USUARIO_JUEGO
+                          WHERE id_usuario = ?
+                            AND estado = "completado"
+                            AND fecha_fin IS NOT NULL
+                            AND YEAR(fecha_fin) = ?');
+    $stmt->execute([(int) $idUsuario, (int) $ano]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cacheHistogramaUsuario(PDO $db, $idUsuario) {
+    $stmt = $db->prepare('SELECT
+                            SUM(CASE WHEN puntuacion <= 20 THEN 1 ELSE 0 END) AS estrella_1,
+                            SUM(CASE WHEN puntuacion > 20 AND puntuacion <= 40 THEN 1 ELSE 0 END) AS estrella_2,
+                            SUM(CASE WHEN puntuacion > 40 AND puntuacion <= 60 THEN 1 ELSE 0 END) AS estrella_3,
+                            SUM(CASE WHEN puntuacion > 60 AND puntuacion <= 80 THEN 1 ELSE 0 END) AS estrella_4,
+                            SUM(CASE WHEN puntuacion > 80 THEN 1 ELSE 0 END) AS estrella_5
+                          FROM RESENA
+                          WHERE id_usuario = ? AND activa = 1');
+    $stmt->execute([(int) $idUsuario]);
+    $datos = $stmt->fetch() ?: [];
+
+    return [
+        1 => (int) ($datos['estrella_1'] ?? 0),
+        2 => (int) ($datos['estrella_2'] ?? 0),
+        3 => (int) ($datos['estrella_3'] ?? 0),
+        4 => (int) ($datos['estrella_4'] ?? 0),
+        5 => (int) ($datos['estrella_5'] ?? 0)
+    ];
+}
+
 function cacheDetalleJuego(PDO $db, $igdbId, $idUsuario = 0, $horas = 72) {
     $juegoBase = cacheObtenerJuegoIgdb($db, $igdbId, $horas);
 
@@ -598,6 +735,10 @@ function cacheDetalleJuego(PDO $db, $igdbId, $idUsuario = 0, $horas = 72) {
 }
 
 function cacheGuardarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos) {
+    if (!empty($datos['favorito']) && !cachePuedeMarcarFavorito($db, $idUsuario, $idVideojuego)) {
+        return false;
+    }
+
     $stmt = $db->prepare('INSERT INTO USUARIO_JUEGO (
         id_usuario,
         id_videojuego,
@@ -624,6 +765,10 @@ function cacheGuardarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos)
 }
 
 function cacheActualizarJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $datos) {
+    if (!empty($datos['favorito']) && !cachePuedeMarcarFavorito($db, $idUsuario, $idVideojuego)) {
+        return false;
+    }
+
     $stmt = $db->prepare('UPDATE USUARIO_JUEGO
                           SET id_plataforma = ?,
                               estado = ?,
@@ -678,6 +823,10 @@ function cacheActualizarEstadoJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego
 }
 
 function cacheActualizarFavoritoJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego, $favorito) {
+    if ($favorito && !cachePuedeMarcarFavorito($db, $idUsuario, $idVideojuego)) {
+        return false;
+    }
+
     $stmt = $db->prepare('UPDATE USUARIO_JUEGO
                           SET favorito = ?
                           WHERE id_usuario = ? AND id_videojuego = ?');
@@ -812,7 +961,24 @@ function cacheResumenBibliotecaUsuario(PDO $db, $idUsuario) {
     ];
 }
 
-function cacheListarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '') {
+function cacheContarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '') {
+    $params = [(int) $idUsuario];
+    $whereEstado = '';
+
+    if ($estado !== '') {
+        $whereEstado = ' AND uj.estado = ?';
+        $params[] = $estado;
+    }
+
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM USUARIO_JUEGO uj
+                          WHERE uj.id_usuario = ?' . $whereEstado);
+    $stmt->execute($params);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cacheListarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '', $limite = 0, $offset = 0) {
     $params = [(int) $idUsuario];
     $whereEstado = '';
 
@@ -855,7 +1021,8 @@ function cacheListarBibliotecaUsuario(PDO $db, $idUsuario, $estado = '') {
                                   ELSE 3
                               END,
                               uj.favorito DESC,
-                              v.titulo ASC');
+                              v.titulo ASC'
+                              . ($limite > 0 ? ' LIMIT ' . (int) $limite . ' OFFSET ' . (int) $offset : ''));
     $stmt->execute($params);
     $juegos = $stmt->fetchAll();
 
@@ -925,19 +1092,30 @@ function cacheImportarJuegosIgdb(PDO $db, $pagina = 1, $cantidad = 20, $reinicia
 function cacheContarBusquedaLocal(PDO $db, $busqueda) {
     $busqueda = trim((string) $busqueda);
 
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+
     if ($busqueda === '') {
         return 0;
     }
 
     $stmt = $db->prepare('SELECT COUNT(*)
-                          FROM VIDEOJUEGO
-                          WHERE titulo LIKE ?');
+                          FROM VIDEOJUEGO v
+                          LEFT JOIN (
+                              SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
+                              FROM RESENA
+                              WHERE activa = 1
+                              GROUP BY id_videojuego
+                          ) r ON r.id_videojuego = v.id
+                          WHERE v.titulo LIKE ?
+                            AND COALESCE(r.puntuacion_media, v.puntuacion_igdb) IS NOT NULL');
     $stmt->execute(['%' . $busqueda . '%']);
 
     return (int) $stmt->fetchColumn();
 }
 
 function cacheBuscarJuegosLocal(PDO $db, $busqueda, $limite = 12, $offset = 0) {
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+
     $busqueda = trim((string) $busqueda);
 
     if ($busqueda === '') {
@@ -949,7 +1127,20 @@ function cacheBuscarJuegosLocal(PDO $db, $busqueda, $limite = 12, $offset = 0) {
     $coincidencia = '%' . $busqueda . '%';
     $inicio = $busqueda . '%';
 
-    $sql = 'SELECT v.id, v.igdb_id, v.titulo, v.portada_url, v.fecha_lanzamiento, r.puntuacion_media
+    $sql = 'SELECT
+                v.id,
+                v.igdb_id,
+                v.titulo,
+                v.portada_url,
+                v.fecha_lanzamiento,
+                v.puntuacion_igdb,
+                r.puntuacion_media AS puntuacion_local,
+                COALESCE(r.puntuacion_media, v.puntuacion_igdb) AS puntuacion_visible,
+                CASE
+                    WHEN r.puntuacion_media IS NOT NULL THEN "local"
+                    WHEN v.puntuacion_igdb IS NOT NULL THEN "igdb"
+                    ELSE "sin_datos"
+                END AS origen_puntuacion
             FROM VIDEOJUEGO v
             LEFT JOIN (
                 SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
@@ -958,6 +1149,7 @@ function cacheBuscarJuegosLocal(PDO $db, $busqueda, $limite = 12, $offset = 0) {
                 GROUP BY id_videojuego
             ) r ON r.id_videojuego = v.id
             WHERE v.titulo LIKE ?
+              AND COALESCE(r.puntuacion_media, v.puntuacion_igdb) IS NOT NULL
             ORDER BY
                 CASE
                     WHEN v.titulo LIKE ? THEN 0
@@ -1017,6 +1209,60 @@ function cacheImportarBusquedaIgdb(PDO $db, $busqueda, $pagina = 1, $cantidad = 
     ];
 }
 
+function cacheListarJuegosParaRefrescarPuntuacion(PDO $db, $soloVacias = true) {
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+
+    $where = 'WHERE igdb_id IS NOT NULL';
+
+    if ($soloVacias) {
+        $where .= ' AND puntuacion_igdb IS NULL';
+    }
+
+    $stmt = $db->query('SELECT id, igdb_id, titulo
+                        FROM VIDEOJUEGO
+                        ' . $where . '
+                        ORDER BY id ASC');
+
+    return $stmt->fetchAll();
+}
+
+function cacheRefrescarPuntuacionesIgdb(PDO $db, $tamanoLote = 25, $esperaMs = 300, $soloVacias = true) {
+    $juegos = cacheListarJuegosParaRefrescarPuntuacion($db, $soloVacias);
+    $tamanoLote = max(1, (int) $tamanoLote);
+    $esperaMs = max(0, (int) $esperaMs);
+    $actualizados = 0;
+    $fallidos = 0;
+    $total = count($juegos);
+    $procesados = 0;
+
+    foreach (array_chunk($juegos, $tamanoLote) as $lote) {
+        foreach ($lote as $juego) {
+            $resultado = cacheActualizarJuegoPorIgdbId($db, (int) $juego['igdb_id']);
+
+            if ($resultado) {
+                $actualizados++;
+            } else {
+                $fallidos++;
+            }
+
+            $procesados++;
+
+            if ($esperaMs > 0 && $procesados < $total) {
+                usleep($esperaMs * 1000);
+            }
+        }
+    }
+
+    return [
+        'total' => $total,
+        'actualizados' => $actualizados,
+        'fallidos' => $fallidos,
+        'tamano_lote' => $tamanoLote,
+        'espera_ms' => $esperaMs,
+        'solo_vacias' => $soloVacias
+    ];
+}
+
 function cacheConstruirFiltrosCatalogo($filtros) {
     $where = [];
     $params = [];
@@ -1048,7 +1294,7 @@ function cacheConstruirFiltrosCatalogo($filtros) {
 
 function cacheOrdenCatalogo($orden) {
     $opciones = [
-        'puntuacion' => 'COALESCE(r.puntuacion_media, -1) DESC, v.titulo ASC',
+        'puntuacion' => 'COALESCE(r.puntuacion_media, v.puntuacion_igdb, -1) DESC, v.titulo ASC',
         'nombre' => 'v.titulo ASC',
         'fecha' => 'v.fecha_lanzamiento DESC, v.titulo ASC'
     ];
@@ -1071,8 +1317,23 @@ function cacheContarJuegosCatalogo(PDO $db, $filtros = []) {
 }
 
 function cacheListarJuegosCatalogo(PDO $db, $filtros = [], $orden = 'puntuacion', $limite = 12, $offset = 0) {
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+
     $partes = cacheConstruirFiltrosCatalogo($filtros);
-    $sql = 'SELECT DISTINCT v.id, v.igdb_id, v.titulo, v.portada_url, v.fecha_lanzamiento, r.puntuacion_media
+    $sql = 'SELECT DISTINCT
+                v.id,
+                v.igdb_id,
+                v.titulo,
+                v.portada_url,
+                v.fecha_lanzamiento,
+                v.puntuacion_igdb,
+                r.puntuacion_media AS puntuacion_local,
+                COALESCE(r.puntuacion_media, v.puntuacion_igdb) AS puntuacion_visible,
+                CASE
+                    WHEN r.puntuacion_media IS NOT NULL THEN "local"
+                    WHEN v.puntuacion_igdb IS NOT NULL THEN "igdb"
+                    ELSE "sin_datos"
+                END AS origen_puntuacion
             FROM VIDEOJUEGO v
             LEFT JOIN (
                 SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
@@ -1101,8 +1362,9 @@ function cacheOpcionesGeneros(PDO $db) {
 
 function cacheOpcionesPlataformas(PDO $db) {
     $stmt = $db->query('SELECT id, nombre FROM PLATAFORMA ORDER BY nombre ASC');
+    $plataformas = $stmt->fetchAll();
 
-    return $stmt->fetchAll();
+    return array_values(array_filter($plataformas, static fn($plataforma) => cachePlataformaPermitida($plataforma['nombre'] ?? '')));
 }
 
 function cacheOpcionesAnos(PDO $db) {

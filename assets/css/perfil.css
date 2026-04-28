@@ -17,7 +17,8 @@ h3 {
 }
 
 .encabezado-perfil {
-    background: url("/assets/img/profile/banner.webp") no-repeat;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
 }
 
@@ -25,18 +26,48 @@ h3 {
     display: flex;
     align-items: center;
     gap: 1rem;
-    height: 7rem;
+    height: 10rem;
     padding: 1rem;
 }
 
 .foto-perfil {
-    width: 5rem;
+    width: 6rem;
+}
+
+.foto-perfil img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.85);
+}
+
+.datos-encabezado-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
 }
 
 .encabezado-perfil .nombre {
     font-size: 1.5rem;
     margin-bottom: 0;
     color: whitesmoke;
+}
+
+.nick-perfil {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.95rem;
+}
+
+.boton-editar-perfil {
+    width: fit-content;
+    margin-top: 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    color: white;
+    background: rgba(22, 38, 56, 0.25);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .profile-tabs {
@@ -74,12 +105,22 @@ h3 {
     padding: 0.25rem 1rem;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 section.principal {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    min-width: 0;
+}
+
+.exito-perfil {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
 }
 
 aside.sidebar {
@@ -180,29 +221,81 @@ aside.sidebar {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    min-width: 0;
 }
 
 .favoritos h2 {
     width: 100%;
 }
 
-.carousel {
-    gap: 1.5rem;
+.favoritos .carousel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
 }
 
 .favorito {
-    width: 30vw;
+    width: clamp(7rem, 30vw, 9rem);
     flex-shrink: 0;
+    scroll-snap-align: start;
 }
 
 .favorito p {
     display: none;
 }
 
+.cabecera-editar-perfil .texto-cabecera {
+    max-width: 34rem;
+}
+
+.bloque-editar-perfil {
+    align-items: start;
+}
+
+.resumen-perfil-actual {
+    align-items: center;
+}
+
+.vista-encabezado-actual {
+    width: 100%;
+    min-height: 9rem;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding: 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+}
+
+.avatar-resumen {
+    width: 6rem;
+}
+
+.avatar-resumen img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.form-editar-perfil input[type="file"] {
+    padding: 0.55rem 0.7rem;
+}
+
 @media (min-width: 768px) {
 
     .content-grid {
         padding: 0 2rem;
+    }
+
+    .boton-editar-perfil {
+        display: none;
     }
 
     .profile-tabs ul {
@@ -246,7 +339,15 @@ aside.sidebar {
     }
 
     .favorito {
-        width: 15vw;
+        width: clamp(8.5rem, 18vw, 10rem);
+    }
+
+    .resumen-perfil-actual {
+        grid-template-columns: 1fr;
+    }
+
+    .encabezado-perfil .container {
+        height: 12rem;
     }
 
 }
@@ -259,7 +360,11 @@ aside.sidebar {
     }
 
     .encabezado-perfil .container {
-        height: 10rem;
+        height: 15rem;
+    }
+
+    .foto-perfil {
+        width: 7.5rem;
     }
 
     .separador {
@@ -293,13 +398,7 @@ aside.sidebar {
     }
 
     .favorito {
-        width: 100%;
-    }
-
-    .favoritos .carousel{
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+        width: 10rem;
     }
 
     .bio h2, .puntuaciones h3{

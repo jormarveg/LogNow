@@ -22,6 +22,10 @@ if (favoritoForm.length) {
         $.post('/ajax/toggle-favorito.php', {
             id_videojuego: idVideojuego,
             favorito: nuevoFavorito
+        }).fail(function(xhr) {
+            if (xhr.responseJSON && xhr.responseJSON.mensaje) {
+                window.alert(xhr.responseJSON.mensaje);
+            }
         }).done(function(respuesta) {
             if (!respuesta || !respuesta.ok) {
                 return;

@@ -68,7 +68,7 @@ require '../includes/header.php';
         <div class="bloque-biblioteca bloque-resena">
             <section class="resumen-juego-biblioteca resumen-resena">
                 <div class="portada-resumen">
-                    <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                    <img src="<?= htmlspecialchars(urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
                 </div>
                 <div class="datos-resumen">
                     <p class="eyebrow">Juego seleccionado</p>

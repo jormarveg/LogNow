@@ -9,6 +9,8 @@ if (!estaLogueado()) {
 }
 
 $estadoFiltro = $_GET['estado'] ?? '';
+$paginaBibliotecaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
+$porPaginaBiblioteca = 12;
 $estadosValidos = ['jugando', 'completado', 'pendiente', 'abandonado'];
 
 if (!in_array($estadoFiltro, $estadosValidos, true)) {
@@ -17,7 +19,15 @@ if (!in_array($estadoFiltro, $estadosValidos, true)) {
 
 $idUsuario = (int) getUsuario()['id'];
 $resumenBiblioteca = cacheResumenBibliotecaUsuario($db, $idUsuario);
-$juegosBiblioteca = cacheListarBibliotecaUsuario($db, $idUsuario, $estadoFiltro);
+$totalJuegosBiblioteca = cacheContarBibliotecaUsuario($db, $idUsuario, $estadoFiltro);
+$totalPaginasBiblioteca = max(1, (int) ceil($totalJuegosBiblioteca / $porPaginaBiblioteca));
+
+if ($paginaBibliotecaActual > $totalPaginasBiblioteca) {
+    $paginaBibliotecaActual = $totalPaginasBiblioteca;
+}
+
+$offsetBiblioteca = ($paginaBibliotecaActual - 1) * $porPaginaBiblioteca;
+$juegosBiblioteca = cacheListarBibliotecaUsuario($db, $idUsuario, $estadoFiltro, $porPaginaBiblioteca, $offsetBiblioteca);
 $contadorFiltros = [
     '' => $resumenBiblioteca['total'],
     'jugando' => $resumenBiblioteca['jugando'],

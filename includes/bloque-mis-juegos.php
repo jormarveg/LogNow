@@ -43,7 +43,7 @@ $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
         <?php foreach ($juegosBiblioteca as $juego): ?>
             <article class="tarjeta-biblioteca">
                 <a class="portada-biblioteca" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">
-                    <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                    <img src="<?= htmlspecialchars(urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
                     <?php if (!empty($juego['favorito'])): ?>
                         <span class="favorito-biblioteca"><i class="fa-solid fa-heart"></i></span>
                     <?php endif; ?>
@@ -82,3 +82,23 @@ $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
         </div>
     <?php endif; ?>
 </section>
+
+<?php if (($totalPaginasBiblioteca ?? 1) > 1): ?>
+    <nav class="paginacion paginacion-biblioteca">
+        <?php if (($paginaBibliotecaActual ?? 1) > 1): ?>
+            <a href="<?= htmlspecialchars(urlBibliotecaPagina($baseBibliotecaUrl, $estadoFiltro, $paginaBibliotecaActual - 1)) ?>">Anterior</a>
+        <?php endif; ?>
+
+        <?php foreach (paginasBiblioteca($paginaBibliotecaActual, $totalPaginasBiblioteca) as $item): ?>
+            <?php if ($item === '...'): ?>
+                <span class="separador">...</span>
+            <?php else: ?>
+                <a href="<?= htmlspecialchars(urlBibliotecaPagina($baseBibliotecaUrl, $estadoFiltro, $item)) ?>"<?= $item === $paginaBibliotecaActual ? ' class="active"' : '' ?>><?= $item ?></a>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <?php if ($paginaBibliotecaActual < $totalPaginasBiblioteca): ?>
+            <a href="<?= htmlspecialchars(urlBibliotecaPagina($baseBibliotecaUrl, $estadoFiltro, $paginaBibliotecaActual + 1)) ?>">Siguiente</a>
+        <?php endif; ?>
+    </nav>
+<?php endif; ?>
