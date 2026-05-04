@@ -10,6 +10,25 @@ if (!$juego) {
     http_response_code(404);
 }
 
+if (
+    $juego
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && estaLogueado()
+    && !empty($juego['usuario_juego'])
+) {
+    $nuevoEstado = $_POST['estado_juego'] ?? '';
+    $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
+
+    if (isset($_POST['toggle_favorito'])) {
+        cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], !$juego['usuario_juego']['favorito']);
+    } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
+        cacheActualizarEstadoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
+    }
+
+    header('Location: /juego.php?id=' . $idIgdb);
+    exit;
+}
+
 function fechaBonita($fecha, $abreviada = false) {
     if (!$fecha) {
         return null;
@@ -68,10 +87,10 @@ function estrellasJuego($puntuacion) {
 }
 
 $estados = [
-    'completado' => ['icono' => 'fa-check', 'texto' => 'Completado'],
+    'completado' => ['icono' => 'fa-check', 'texto' => 'Complet.'],
     'jugando' => ['icono' => 'fa-gamepad', 'texto' => 'Jugando'],
     'pendiente' => ['icono' => 'fa-calendar-days', 'texto' => 'Pendiente'],
-    'abandonado' => ['icono' => 'fa-ban', 'texto' => 'Abandonado']
+    'abandonado' => ['icono' => 'fa-ban', 'texto' => 'Aband.']
 ];
 
 $background = $juego['background_url'] ?? '/assets/img/profile/banner.webp';
@@ -90,6 +109,8 @@ $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
 $pagina = 'catalogo';
 $css = ['resenas.css', 'juego.css'];
+$js = ['juego.js'];
+$usarJquery = true;
 require '../includes/header.php';
 ?>
 
@@ -99,9 +120,20 @@ require '../includes/header.php';
             <div class="portada-juego">
                 <img src="<?= htmlspecialchars($portada) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
                 <?php if (estaLogueado()): ?>
-                    <span class="favorito-juego<?= $favorito ? ' active' : '' ?>">
-                        <i class="fa-solid fa-heart"></i>
-                    </span>
+                    <?php if ($estadoActual): ?>
+                        <form class="favorito-form" method="POST">
+                            <input type="hidden" name="toggle_favorito" value="1">
+                            <input type="hidden" name="id_videojuego" value="<?= (int) $juego['id'] ?>">
+                            <input type="hidden" name="favorito" value="<?= $favorito ? '1' : '0' ?>">
+                            <button type="submit" class="favorito-juego<?= $favorito ? ' active' : '' ?>" aria-label="<?= $favorito ? 'Quitar de favoritos' : 'Marcar como favorito' ?>">
+                                <i class="<?= $favorito ? 'fa-solid' : 'fa-regular' ?> fa-heart"></i>
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <span class="favorito-juego" aria-hidden="true">
+                            <i class="fa-regular fa-heart"></i>
+                        </span>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
             <div class="datos-principales">
@@ -118,20 +150,33 @@ require '../includes/header.php';
     </section>
 
     <main class="container">
-        <?php if ($mensajeBiblioteca === 'ok'): ?>
-            <p class="mensaje-juego exito">Juego añadido correctamente a tu biblioteca.</p>
-        <?php elseif ($mensajeBiblioteca === 'existe'): ?>
-            <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
-        <?php endif; ?>
-
         <div class="content-grid">
+            <?php if ($mensajeBiblioteca === 'ok'): ?>
+                <p class="mensaje-juego exito">Juego añadido correctamente a tu biblioteca.</p>
+            <?php elseif ($mensajeBiblioteca === 'editado'): ?>
+                <p class="mensaje-juego exito">Datos del juego actualizados correctamente.</p>
+            <?php elseif ($mensajeBiblioteca === 'existe'): ?>
+                <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
+            <?php endif; ?>
+
             <aside class="sidebar">
                 <nav class="estados-juego">
                     <?php foreach ($estados as $clave => $estado): ?>
-                        <div class="estado<?= $estadoActual === $clave ? ' active' : '' ?>">
-                            <i class="fa-solid <?= $estado['icono'] ?>"></i>
-                            <span><?= $estado['texto'] ?></span>
-                        </div>
+                        <?php if (estaLogueado() && $estadoActual): ?>
+                            <form class="estado-form" method="POST">
+                                <input type="hidden" name="id_videojuego" value="<?= (int) $juego['id'] ?>">
+                                <input type="hidden" name="estado_juego" value="<?= $clave ?>">
+                                <button type="submit" class="estado estado-boton<?= $estadoActual === $clave ? ' active' : '' ?>">
+                                    <i class="fa-solid <?= $estado['icono'] ?>"></i>
+                                    <span><?= $estado['texto'] ?></span>
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="estado<?= $estadoActual === $clave ? ' active' : '' ?>">
+                                <i class="fa-solid <?= $estado['icono'] ?>"></i>
+                                <span><?= $estado['texto'] ?></span>
+                            </div>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </nav>
 
@@ -151,7 +196,7 @@ require '../includes/header.php';
                             <?php if (!$estadoActual): ?>
                                 <a class="cta-biblioteca" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>">Añadir a mi biblioteca</a>
                             <?php else: ?>
-                                <a class="cta-biblioteca secundaria" href="/perfil.php?tab=juegos">Ver mi biblioteca</a>
+                                <a class="cta-biblioteca secundaria" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>&editar=1">Editar</a>
                             <?php endif; ?>
                         <?php else: ?>
                             <p class="numero-puntuacion">N/D</p>
@@ -231,7 +276,9 @@ require '../includes/header.php';
                                         </div>
                                         <p class="fecha"><?= fechaBonita($resena['fecha_publicacion'], true) ?></p>
                                     </div>
-                                    <p class="texto"><?= nl2br(htmlspecialchars($resena['comentario'] ?: 'Sin comentario.')) ?></p>
+                                    <?php if (!empty(trim((string) $resena['comentario']))): ?>
+                                        <p class="texto"><?= nl2br(htmlspecialchars($resena['comentario'])) ?></p>
+                                    <?php endif; ?>
                                     <p class="username"><?= htmlspecialchars($resena['nick']) ?></p>
                                 </article>
                             <?php endforeach; ?>

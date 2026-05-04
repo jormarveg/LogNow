@@ -16,6 +16,9 @@
         </div>
     </div>
 </footer>
+<?php if (!empty($usarJquery)): ?>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<?php endif; ?>
 <?php if (isset($js) && !empty($js)): ?>
     <?php foreach ($js as $archivo): ?>
         <script src="/assets/js/<?= $archivo ?>"></script>

@@ -64,6 +64,24 @@ h3 {
     border: 1px solid #f2c8d3;
 }
 
+.favorito-form {
+    margin: 0;
+}
+
+button.favorito-juego {
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button.favorito-juego.cargando {
+    pointer-events: none;
+}
+
+button.favorito-juego.pulso {
+    transform: scale(1.14);
+}
+
 .favorito-juego.active {
     background: #d65a7c;
     color: white;
@@ -107,11 +125,25 @@ aside.sidebar {
     text-align: center;
 }
 
+.estado-form {
+    margin: 0;
+}
+
 .estado {
     min-width: 0;
     color: #4b5c6b;
     padding: 0.45rem 0.25rem 0.55rem 0.25rem;
     border-bottom: 4px solid transparent;
+}
+
+.estado-boton {
+    width: 100%;
+    background: none;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
 }
 
 .estado i {
@@ -122,7 +154,7 @@ aside.sidebar {
 
 .estado span {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     line-height: 1.1;
     overflow-wrap: anywhere;
 }
@@ -130,6 +162,20 @@ aside.sidebar {
 .estado.active {
     color: var(--primary);
     border-bottom-color: var(--primary);
+}
+
+.estado-boton:hover,
+.estado-boton:focus-visible {
+    color: var(--primary);
+    outline: none;
+}
+
+.estado-boton.cargando {
+    pointer-events: none;
+}
+
+.estado-boton.pulso {
+    transform: scale(1.03);
 }
 
 .puntuaciones {
@@ -191,7 +237,7 @@ aside.sidebar {
 }
 
 .mensaje-juego {
-    margin: 1.25rem 0 0 0;
+    margin: 0 0 1rem 0;
     padding: 0.85rem 1rem;
     border-radius: 6px;
     font-size: 0.95rem;
@@ -303,7 +349,13 @@ section.principal {
 }
 
 .resenas-juego .carousel {
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scrollbar-width: none;
 }
 
 .resenas-juego .mini-portada {
@@ -315,6 +367,8 @@ section.principal {
 }
 
 .resenas-juego .mini-portada img {
+    width: 100%;
+    height: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 999px;
@@ -322,7 +376,55 @@ section.principal {
 
 .resenas-juego .elemento-carousel {
     height: auto;
-    min-height: 15rem;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 4.8rem 1fr;
+    grid-template-rows: auto auto;
+    align-items: start;
+    gap: 1rem;
+    padding: 0 0 1rem 0;
+    border: none;
+    border-bottom: 1px solid var(--bordes);
+}
+
+.resenas-juego .elemento-carousel:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.resenas-juego .nombre-puntuacion,
+.resenas-juego .username {
+    display: none;
+}
+
+.resenas-juego .puntuacion-tablet {
+    display: flex;
+    grid-column: 2;
+    align-items: start;
+    gap: 1rem;
+}
+
+.resenas-juego .titulo-puntuacion-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.resenas-juego .titulo-plataforma {
+    font-size: 1.05rem;
+}
+
+.resenas-juego .fecha {
+    color: #999;
+    white-space: nowrap;
+}
+
+.resenas-juego .texto {
+    grid-column: 2;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
 }
 
 .sin-resenas,
@@ -369,13 +471,37 @@ section.principal {
     }
 
     .resenas-juego .carousel {
-        display: flex;
-        flex-direction: column;
         gap: 1.5rem;
     }
 
     .resenas-juego .elemento-carousel {
-        min-height: 0;
+        grid-template-columns: 7rem 1fr;
+        gap: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .resenas-juego .titulo-puntuacion-wrapper {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem 1rem;
+        align-items: center;
+    }
+
+    .resenas-juego .titulo-plataforma {
+        grid-column: 1;
+        font-size: 1.1rem;
+    }
+
+    .resenas-juego .titulo-puntuacion-wrapper .estrellas {
+        grid-column: 1;
+    }
+
+    .resenas-juego .fecha {
+        align-self: start;
+    }
+
+    .resenas-juego .texto {
+        font-size: 1.05rem;
     }
 }
 
@@ -402,6 +528,10 @@ section.principal {
         padding: 5.5rem 0 0 0;
     }
 
+    .mensaje-juego {
+        grid-column: 1 / -1;
+    }
+
     .separador {
         display: none;
     }
@@ -425,7 +555,7 @@ section.principal {
     }
 
     .estado span {
-        font-size: 0.75rem;
+        font-size: 0.68rem;
     }
 
     .numero-puntuacion {
@@ -441,19 +571,15 @@ section.principal {
     }
 
     .descripcion-juego {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
 
     .resenas-juego .carousel {
-        display: flex;
-        flex-direction: column;
+        gap: 1.75rem;
     }
 
     .resenas-juego .elemento-carousel {
-        border: none;
-        border-bottom: 1px solid var(--bordes);
-        padding-left: 0;
-        padding-right: 0;
+        grid-template-columns: 7rem 1fr;
     }
 
     .resenas-juego .elemento-carousel:last-child {

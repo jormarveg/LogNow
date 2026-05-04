@@ -168,7 +168,7 @@
         color: var(--puntuacion);
     }
 
-    .estrellas i:last-of-type {
+    .estrellas .vacia {
         color: var(--bordes);
     }
 

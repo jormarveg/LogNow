@@ -79,6 +79,23 @@
     font-size: 0.95rem;
 }
 
+.label-puntuacion {
+    margin-bottom: 0.45rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.label-tiempo {
+    margin-bottom: 0.45rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.campo-puntuacion {
+    display: grid;
+    justify-items: center;
+}
+
 .campo input,
 .campo select {
     width: 100%;
@@ -116,6 +133,70 @@
 
 .oculto {
     display: none;
+}
+
+.selector-puntuacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    width: 100%;
+}
+
+.estrella-puntuacion {
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: #cfd6dd;
+    line-height: 1;
+    transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.estrella-puntuacion:hover,
+.estrella-puntuacion:focus-visible {
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.estrella-puntuacion.activa {
+    color: #f2b01e;
+}
+
+.fila-puntuacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.texto-puntuacion {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #4b5c6b;
+    text-align: center;
+}
+
+.limpiar-puntuacion {
+    border: none;
+    background: none;
+    color: var(--primary);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.bloque-tiempo {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.grupo-tiempo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
 }
 
 .check-favorito {
@@ -316,6 +397,12 @@
     padding-top: 0.85rem;
 }
 
+.acciones-tarjeta-biblioteca {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
 .nota-biblioteca {
     color: var(--puntuacion);
     font-weight: 600;
@@ -364,6 +451,15 @@
 
     .grid-formulario {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .campo-puntuacion {
+        grid-column: 1 / -1;
+    }
+
+    .bloque-tiempo {
+        grid-column: 1 / -1;
     }
 
     .acciones-formulario {
