@@ -96,7 +96,7 @@ function igdbObtenerToken() {
 }
 
 function igdbCamposJuego() {
-    return 'fields id,name,first_release_date,summary,cover.image_id,cover.url,artworks.image_id,artworks.url,screenshots.image_id,screenshots.url,genres.id,genres.name,platforms.id,platforms.name,involved_companies.company.id,involved_companies.company.name,involved_companies.developer;';
+    return 'fields id,name,first_release_date,summary,total_rating,cover.image_id,cover.url,artworks.image_id,artworks.url,screenshots.image_id,screenshots.url,genres.id,genres.name,platforms.id,platforms.name,involved_companies.company.id,involved_companies.company.name,involved_companies.developer;';
 }
 
 function igdbEscaparTexto($texto) {
@@ -227,7 +227,7 @@ function igdbBuscarJuegos($busqueda, $pagina = 1, $tamano = 20) {
 
     return igdbRequest('games', igdbCamposJuego()
         . ' search "' . $busqueda . '";'
-        . ' where category = 0 & version_parent = null;'
+        . ' where parent_game = null & cover != null & total_rating != null;'
         . ' limit ' . $tamano . ';'
         . ' offset ' . $offset . ';');
 }

@@ -130,14 +130,17 @@ require '../includes/header.php';
             <?php foreach ($juegos as $juego): ?>
                 <a class="juego" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">
                     <div class="portada">
-                        <img src="<?= htmlspecialchars($juego['portada_url'] ?: '/assets/img/covers/expedition33.jpg') ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                        <img src="<?= htmlspecialchars(urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
                         <div class="titulo">
                             <p><?= htmlspecialchars($juego['titulo']) ?></p>
                         </div>
                     </div>
-                    <div class="puntuacion">
+                    <div class="puntuacion puntuacion-<?= htmlspecialchars($juego['origen_puntuacion']) ?>">
                         <i class="fa-solid fa-star"></i>
-                        <span><?= $juego['puntuacion_media'] !== null ? number_format((float) $juego['puntuacion_media'], 1) : 'N/D' ?></span>
+                        <span><?= $juego['puntuacion_visible'] !== null ? number_format((float) $juego['puntuacion_visible'], 1) : 'N/D' ?></span>
+                        <?php if ($juego['origen_puntuacion'] === 'igdb'): ?>
+                            <small>IGDB</small>
+                        <?php endif; ?>
                     </div>
                 </a>
             <?php endforeach; ?>
