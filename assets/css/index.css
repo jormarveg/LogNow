@@ -3,28 +3,105 @@
 }
 
 .tendencias {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    gap: 1rem;
+    border-bottom: 2px solid var(--bordes);
+    padding-bottom: 2rem;
 }
 
+.tendencias .carousel-wrapper {
+    min-width: 0;
+}
 
-.tendencias .carousel .portada {
-    width: 35vw;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
+#carouselTendencias {
+    --f-carousel-gap: 1rem;
+    --f-carousel-slide-width: calc(50% - 0.5rem);
+    --f-button-width: 3rem;
+    --f-button-height: 3rem;
+    --f-button-color: #fff;
+    --f-button-bg: rgba(30, 35, 48, 0.88);
+    --f-button-hover-color: var(--azul);
+    --f-button-active-color: var(--azul);
+}
+
+.tendencias .elemento-carousel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.tendencias .portada {
+    position: relative;
     overflow: hidden;
-    border-radius: 4px;
+    border-radius: 0.35rem;
+    aspect-ratio: 2 / 3;
+    background: #d6d6d6;
 }
 
-.tendencias .carousel .elemento-carousel {
-    display: flex;
-    flex-direction: column;
+.tendencias .portada a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tendencias .portada img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+}
+
+.tendencias .elemento-carousel:hover .portada img,
+.tendencias .elemento-carousel:focus-within .portada img {
+    transform: scale(1.04);
+}
+
+.tendencias .portada .puntuacion {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--puntuacion);
+    border: 1px solid rgba(245, 181, 0, 0.32);
+    font-weight: 600;
+    box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.16);
 }
 
-.tendencias .flecha, .tendencias .titulo-puntuacion {
-    display: none;
+.tendencias .portada .puntuacion,
+.tendencias .portada .puntuacion i,
+.tendencias .portada .puntuacion span {
+    color: var(--puntuacion);
+}
+
+.tendencias .titulo-juego {
+    color: var(--texto-principal);
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.tendencias .titulo-juego:hover {
+    color: var(--azul);
+}
+
+.tendencias .f-carousel__nav .f-button {
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.28);
+}
+
+.tendencias .f-carousel__nav .f-button svg {
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.78));
+}
+
+.tendencias .f-carousel__nav .f-button svg path {
+    stroke: #fff !important;
+    stroke-width: 3.2 !important;
+    fill: none !important;
 }
 
 
@@ -34,61 +111,21 @@
         display: block;
     }
 
-    .tendencias .titulo-mobile, .tendencias .puntuacion {
+    .tendencias .titulo-mobile {
         display: none;
     }
 
-    .tendencias .flecha {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 3.8rem;
-        color: #999;
-    }
-
-    .tendencias .titulo-puntuacion {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-
-    .tendencias .estrellas i {
-        font-size: 0.9rem;
-    }
-
-    .tendencias .carousel-wrapper {
-        display: flex;
-        margin: 0 -1rem;
-    }
-
-    .tendencias .carousel {
-        gap: 3rem;
-    }
-
-    .tendencias {
-        border-bottom: 2px solid var(--bordes);
-        padding-bottom: 2rem;
-    }
-
-    .tendencias .carousel .portada {
-        width: 11rem;
-        aspect-ratio: 2 / 3;
-        object-fit: cover;
-        overflow: hidden;
-        border-radius: 4px;
+    #carouselTendencias {
+        --f-carousel-gap: 1.25rem;
+        --f-carousel-slide-width: calc(33.333% - 0.85rem);
     }
 
 }
 
 @media (min-width: 992px) {
-    .tendencias .flecha {
-        display: none;
-    }
-
-    .tendencias .carousel-wrapper {
-        align-self: center;
+    #carouselTendencias {
+        --f-carousel-gap: 1.5rem;
+        --f-carousel-slide-width: calc(20% - 1.2rem);
     }
 
     .redes-sociales i {

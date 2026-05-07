@@ -125,6 +125,17 @@ function cacheAsegurarColumnaPuntuacionIgdb(PDO $db) {
     $lista = true;
 }
 
+function cacheAsegurarColumnaFechaRegistroBiblioteca(PDO $db) {
+    static $lista = false;
+
+    if ($lista) {
+        return;
+    }
+
+    $db->exec('ALTER TABLE USUARIO_JUEGO ADD COLUMN IF NOT EXISTS fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER favorito');
+    $lista = true;
+}
+
 function cacheGuardarDesarrolladora(PDO $db, $datos) {
     $compania = $datos['company'] ?? $datos;
     $nombre = cacheValorTexto($compania['name'] ?? '');
@@ -618,6 +629,73 @@ function cacheResenasRecientesInicio(PDO $db, $limite = 4) {
     }
 
     return $resenas;
+}
+
+function cacheJuegosTendenciaInicio(PDO $db, $limite = 8) {
+    cacheAsegurarColumnaPuntuacionIgdb($db);
+    cacheAsegurarColumnaFechaRegistroBiblioteca($db);
+
+    $limite = max(1, (int) $limite);
+    $sqlPuntuaciones = 'SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
+                        FROM RESENA
+                        WHERE activa = 1
+                        GROUP BY id_videojuego';
+
+    $stmt = $db->prepare('SELECT
+                            v.id,
+                            v.igdb_id,
+                            v.titulo,
+                            v.portada_url,
+                            COALESCE(r.puntuacion_media, v.puntuacion_igdb) AS puntuacion_visible,
+                            COUNT(uj.id) AS altas_recientes,
+                            MAX(uj.fecha_registro) AS ultima_alta
+                          FROM USUARIO_JUEGO uj
+                          INNER JOIN VIDEOJUEGO v ON v.id = uj.id_videojuego
+                          LEFT JOIN (' . $sqlPuntuaciones . ') r ON r.id_videojuego = v.id
+                          WHERE uj.fecha_registro >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                            AND v.portada_url IS NOT NULL
+                            AND TRIM(v.portada_url) <> ""
+                            AND COALESCE(r.puntuacion_media, v.puntuacion_igdb) IS NOT NULL
+                          GROUP BY v.id, v.igdb_id, v.titulo, v.portada_url, r.puntuacion_media, v.puntuacion_igdb
+                          ORDER BY altas_recientes DESC, ultima_alta DESC, puntuacion_visible DESC, v.titulo ASC
+                          LIMIT ' . $limite);
+    $stmt->execute();
+    $juegos = $stmt->fetchAll();
+
+    if (count($juegos) < $limite) {
+        $faltan = $limite - count($juegos);
+        $idsExcluidos = array_column($juegos, 'id');
+        $whereExcluidos = '';
+        $params = [];
+
+        if ($idsExcluidos) {
+            $whereExcluidos = ' AND v.id NOT IN (' . implode(', ', array_fill(0, count($idsExcluidos), '?')) . ')';
+            $params = array_map('intval', $idsExcluidos);
+        }
+
+        $stmt = $db->prepare('SELECT
+                                v.id,
+                                v.igdb_id,
+                                v.titulo,
+                                v.portada_url,
+                                COALESCE(r.puntuacion_media, v.puntuacion_igdb) AS puntuacion_visible
+                              FROM VIDEOJUEGO v
+                              LEFT JOIN (' . $sqlPuntuaciones . ') r ON r.id_videojuego = v.id
+                              WHERE v.portada_url IS NOT NULL
+                                AND TRIM(v.portada_url) <> ""
+                                AND COALESCE(r.puntuacion_media, v.puntuacion_igdb) IS NOT NULL' . $whereExcluidos . '
+                              ORDER BY puntuacion_visible DESC, v.titulo ASC
+                              LIMIT ' . $faltan);
+        $stmt->execute($params);
+
+        $juegos = array_merge($juegos, $stmt->fetchAll());
+    }
+
+    foreach ($juegos as &$juego) {
+        $juego['puntuacion_visible'] = isset($juego['puntuacion_visible']) ? (float) $juego['puntuacion_visible'] : null;
+    }
+
+    return $juegos;
 }
 
 function cacheListarResenasUsuario(PDO $db, $idUsuario, $limite = 12) {

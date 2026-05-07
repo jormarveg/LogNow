@@ -93,6 +93,7 @@ CREATE TABLE USUARIO_JUEGO (
     fecha_inicio DATE,
     fecha_fin DATE,
     favorito BOOLEAN DEFAULT FALSE,
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(id_usuario, id_videojuego),
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id) ON DELETE CASCADE,
     FOREIGN KEY (id_videojuego) REFERENCES VIDEOJUEGO(id) ON DELETE CASCADE,

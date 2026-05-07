@@ -75,83 +75,50 @@ function partesTextoInicioResena($texto, $limite = 110) {
 }
 
 $resenasRecientes = cacheResenasRecientesInicio($db, 4);
+$juegosTendencia = cacheJuegosTendenciaInicio($db, 8);
 $titulo = 'Inicio — LogNow!';
 $css = ['resenas.css', 'index.css'];
+$cssExterno = [
+    'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/carousel/carousel.css',
+    'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.arrows.css'
+];
+$jsExterno = [
+    'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.umd.js',
+    'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.arrows.umd.js'
+];
+$js = ['carrusel.js'];
+$usarJquery = true;
 $pagina = 'inicio';
 require 'includes/header.php';
 ?>
 
 <main class="container">
-    <section class="tendencias">
-        <h2 class="titulo-mobile">Tendencias</h2>
-        <h2 class="titulo-tablet">Juegos en tendencia</h2>
-        <div class="carousel-wrapper">
-            <button class="flecha prev"><i class="fa-solid fa-angle-left"></i></button>
-            <div class="carousel">
-                <div class="elemento-carousel">
-                    <div class="portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.3</span></div>
-                    <div class="titulo-puntuacion">
-                        <span>Juego 1</span>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="elemento-carousel">
-                    <div class="portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.6</span></div>
-                    <div class="titulo-puntuacion">
-                        <span>Juego 2</span>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="elemento-carousel">
-                    <div class="portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.8</span></div>
-                    <div class="titulo-puntuacion">
-                        <span>Juego 3</span>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="elemento-carousel">
-                    <div class="portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.1</span></div>
-                    <div class="titulo-puntuacion">
-                        <span>Juego 4</span>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="elemento-carousel">
-                    <div class="portada"><img src="/assets/img/covers/expedition33.jpg" alt="Portada"></div>
-                    <div class="puntuacion"><i class="fa-solid fa-star"></i><span>4.4</span></div>
-                    <div class="titulo-puntuacion">
-                        <span>Juego 5</span>
-                        <div class="estrellas">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span></span>
-                        </div>
-                    </div>
+    <?php if ($juegosTendencia): ?>
+        <section class="tendencias">
+            <h2 class="titulo-mobile">Tendencias</h2>
+            <h2 class="titulo-tablet">Juegos en tendencia</h2>
+            <div class="carousel-wrapper">
+                <div id="carouselTendencias" class="f-carousel carousel-tendencias">
+                    <?php foreach ($juegosTendencia as $juegoTendencia): ?>
+                        <article class="f-carousel__slide elemento-carousel">
+                            <div class="portada">
+                                <a href="/juego.php?id=<?= (int) $juegoTendencia['igdb_id'] ?>" aria-label="Ver ficha de <?= htmlspecialchars($juegoTendencia['titulo']) ?>">
+                                    <img src="<?= htmlspecialchars(urlPortadaJuego($juegoTendencia['portada_url'] ?? '', $juegoTendencia['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juegoTendencia['titulo']) ?>">
+                                </a>
+                                <div class="puntuacion">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span><?= puntuacionInicioVisible($juegoTendencia['puntuacion_visible']) ?></span>
+                                </div>
+                            </div>
+                            <div class="titulo-puntuacion">
+                                <a class="titulo-juego" href="/juego.php?id=<?= (int) $juegoTendencia['igdb_id'] ?>"><?= htmlspecialchars($juegoTendencia['titulo']) ?></a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
             </div>
-            <button class="flecha next"><i class="fa-solid fa-angle-right"></i></button>
-        </div>
-    </section>
+        </section>
+    <?php endif; ?>
 
     <section class="resenas-recientes">
         <h2>Reseñas recientes</h2>

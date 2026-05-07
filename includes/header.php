@@ -7,6 +7,11 @@
     <title><?= $titulo ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap">
+    <?php if (isset($cssExterno) && !empty($cssExterno)): ?>
+        <?php foreach ($cssExterno as $archivo): ?>
+            <link rel="stylesheet" href="<?= htmlspecialchars($archivo) ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
     <link rel="stylesheet" href="/assets/css/main.css">
     <?php foreach ($css as $archivo): ?>
         <link rel="stylesheet" href="/assets/css/<?= $archivo ?>">
@@ -36,7 +41,6 @@
             </ul>
         </nav>
         <?php if (estaLogueado()): ?>
-            <a href="/catalogo.php" class="btnAgregar"><i class="fa-solid fa-plus"></i><span>Registrar juego</span></a>
             <a href="/logout.php" class="btn-salir"><i class="fa-solid fa-right-from-bracket"></i></a>
         <?php endif; ?>
         <div class="info">

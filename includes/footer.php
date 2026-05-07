@@ -19,6 +19,11 @@
 <?php if (!empty($usarJquery)): ?>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <?php endif; ?>
+<?php if (isset($jsExterno) && !empty($jsExterno)): ?>
+    <?php foreach ($jsExterno as $archivo): ?>
+        <script src="<?= htmlspecialchars($archivo) ?>"></script>
+    <?php endforeach; ?>
+<?php endif; ?>
 <?php if (isset($js) && !empty($js)): ?>
     <?php foreach ($js as $archivo): ?>
         <script src="/assets/js/<?= $archivo ?>"></script>
