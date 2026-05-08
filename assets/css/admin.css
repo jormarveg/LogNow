@@ -1,0 +1,460 @@
+.admin-page {
+    gap: 1rem;
+}
+
+.admin-sidebar {
+    border: 1px solid var(--bordes);
+    background: #f7f9fa;
+    padding: 1rem;
+}
+
+.admin-sidebar h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.admin-sidebar ul {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    overflow-x: auto;
+}
+
+.admin-sidebar a {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--bordes);
+    background: white;
+    border-radius: 6px;
+    color: #4b5c6b;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-sidebar li.active a {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.admin-volver {
+    width: fit-content;
+    margin-top: 1rem;
+}
+
+.admin-content {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.admin-cabecera {
+    border-bottom: 2px solid var(--bordes);
+    padding-bottom: 1rem;
+}
+
+.admin-cabecera h1 {
+    margin-bottom: 0.35rem;
+}
+
+.admin-cabecera p {
+    color: #5e6d7a;
+    max-width: 44rem;
+}
+
+.admin-columnas {
+    display: grid;
+    gap: 1rem;
+}
+
+.admin-bloque {
+    border: 1px solid var(--bordes);
+    background: white;
+    padding: 1rem;
+}
+
+.admin-titulo-bloque {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.admin-titulo-bloque h2 {
+    margin-bottom: 0;
+    font-size: 1.35rem;
+}
+
+.admin-titulo-bloque a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.enlace-admin:hover,
+.enlace-admin-juego:hover {
+    color: var(--primary);
+}
+
+.lista-admin {
+    display: grid;
+}
+
+.lista-admin article {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #e1e7ed;
+}
+
+.lista-admin article:first-child {
+    padding-top: 0;
+}
+
+.lista-admin article:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.lista-admin article > div:first-child {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.lista-admin span,
+.tabla-admin td span {
+    color: #6f7d8c;
+    font-size: 0.9rem;
+}
+
+.estado-cuenta {
+    width: fit-content;
+    height: fit-content;
+    border-radius: 999px;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.estado-activo {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.estado-inactivo {
+    background: #fde8e8;
+    color: #c84a4a;
+}
+
+.puntuacion-admin,
+.dato-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.15rem 0.45rem;
+    color: var(--puntuacion);
+    border: 1px solid var(--puntuacion);
+    border-radius: 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.dato-admin {
+    color: #6f7d8c;
+    border-color: var(--bordes);
+}
+
+.lista-admin .puntuacion-admin span {
+    color: var(--puntuacion);
+}
+
+.admin-vacio {
+    border: 2px dashed var(--bordes);
+    padding: 1.2rem;
+    text-align: center;
+    color: #5e6d7a;
+}
+
+.mensaje-admin {
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.mensaje-ok {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.mensaje-error {
+    background: #fde8e8;
+    color: #c84a4a;
+}
+
+.admin-filtros {
+    display: grid;
+    gap: 0.75rem;
+    border: 1px solid var(--bordes);
+    background: #f7f9fa;
+    padding: 1rem;
+}
+
+.admin-filtros label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-weight: 600;
+}
+
+.admin-filtros span {
+    color: #4b5c6b;
+}
+
+.admin-filtros input,
+.admin-filtros select,
+.admin-filtros button,
+.boton-limpiar,
+.boton-pdf,
+.boton-estado,
+.boton-eliminar {
+    min-height: 2.55rem;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.admin-filtros input,
+.admin-filtros select {
+    border: 1px solid var(--bordes);
+    background: white;
+    padding: 0 0.75rem;
+}
+
+.admin-filtros button {
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 0 1rem;
+    cursor: pointer;
+}
+
+.boton-limpiar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--bordes);
+    color: #4b5c6b;
+    background: white;
+    font-weight: 600;
+    padding: 0 1rem;
+}
+
+.boton-pdf {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--bordes);
+    color: #4b5c6b;
+    background: white;
+    font-weight: 600;
+    padding: 0 1.1rem;
+    white-space: nowrap;
+}
+
+.boton-pdf:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.tabla-admin-wrapper {
+    overflow-x: auto;
+}
+
+.tabla-admin {
+    width: 100%;
+    min-width: 46rem;
+    border-collapse: collapse;
+}
+
+.tabla-admin th,
+.tabla-admin td {
+    text-align: left;
+    padding: 0.85rem;
+    border-bottom: 1px solid #e1e7ed;
+    vertical-align: middle;
+}
+
+.tabla-admin th {
+    color: #4b5c6b;
+    font-size: 0.9rem;
+}
+
+.tabla-admin tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-admin td > strong,
+.tabla-admin td > span {
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.tabla-admin td > span:last-child {
+    margin-bottom: 0;
+}
+
+.estado-admin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.boton-estado {
+    border: 1px solid var(--bordes);
+    background: white;
+    color: #4b5c6b;
+    font-weight: 600;
+    padding: 0 0.75rem;
+    cursor: pointer;
+}
+
+.boton-eliminar {
+    border: 1px solid #c84a4a;
+    background: #fde8e8;
+    color: #a63a3a;
+    font-weight: 600;
+    padding: 0 0.75rem;
+    cursor: pointer;
+}
+
+.boton-estado:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.reportes-admin {
+    display: grid;
+    gap: 1rem;
+}
+
+.reporte-admin {
+    display: grid;
+    gap: 0.85rem;
+    border-bottom: 1px solid #e1e7ed;
+    padding-bottom: 1rem;
+}
+
+.reporte-admin:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.cabecera-reporte-admin {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.cabecera-reporte-admin h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+}
+
+.cabecera-reporte-admin p {
+    color: #6f7d8c;
+    font-size: 0.9rem;
+}
+
+.detalle-reporte-admin {
+    border: 1px solid var(--bordes);
+    background: #f7f9fa;
+    display: grid;
+}
+
+.detalle-reporte-admin > div {
+    padding: 0.85rem;
+}
+
+.detalle-reporte-admin > div + div {
+    border-top: 1px solid var(--bordes);
+}
+
+.detalle-reporte-admin h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+    color: #4b5c6b;
+}
+
+.detalle-reporte-admin p {
+    line-height: 1.55;
+}
+
+.acciones-reporte-admin {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.paginacion-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.paginacion-admin a {
+    min-width: 2.6rem;
+    text-align: center;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--bordes);
+    background: white;
+}
+
+.paginacion-admin .separador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.paginacion-admin a.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+@media (min-width: 768px) {
+    .admin-filtros {
+        grid-template-columns: 1.5fr 1fr 1fr auto auto auto;
+        align-items: end;
+    }
+}
+
+@media (min-width: 992px) {
+    .admin-page {
+        display: grid;
+        grid-template-columns: 12rem minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .admin-sidebar ul {
+        display: grid;
+        overflow-x: visible;
+    }
+
+    .admin-columnas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-bloque-ancho {
+        grid-column: 1 / -1;
+    }
+}

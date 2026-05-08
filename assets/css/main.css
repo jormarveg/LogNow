@@ -117,6 +117,17 @@ header .info {
     justify-content: center;
 }
 
+.contenido-info .session-info {
+    text-align: center;
+    border-bottom: 0.2rem solid var(--bordes);
+}
+
+.contenido-info .session-info a {
+    display: block;
+    padding: 0.85rem 0.5rem;
+    font-weight: 600;
+}
+
 .contenido-info .copy {
     padding: 1.5rem 0;
     font-size: 0.8rem;

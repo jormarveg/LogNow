@@ -33,7 +33,7 @@
                     <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/perfil.php?tab=juegos">Mis juegos</a></li>
                     <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                     <?php if (esAdmin()): ?>
-                        <li><a href="/admin/">Admin</a></li>
+                        <li<?= $pagina === 'admin' ? ' class="active"' : '' ?>><a href="/admin/">Admin</a></li>
                     <?php endif; ?>
                 <?php else: ?>
                     <li<?= $pagina === 'login' ? ' class="active"' : '' ?>><a href="/login.php">Iniciar sesión</a></li>
@@ -52,6 +52,11 @@
                     <li><a href="#">Contacto</a></li>
                 </ul>
                 <?php if (estaLogueado()): ?>
+                    <?php if (esAdmin()): ?>
+                        <div class="session-info">
+                            <a href="/admin/">Panel admin</a>
+                        </div>
+                    <?php endif; ?>
                     <div class="session-info">
                         <a href="/logout.php">Cerrar sesión</a>
                     </div>
