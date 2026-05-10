@@ -4,8 +4,36 @@ require '../includes/auth.php';
 require '../includes/biblioteca_helpers.php';
 require '../includes/perfil_helpers.php';
 
-if (!estaLogueado()) {
-    header('Location: /login.php');
+$nick = trim((string) ($_GET['nick'] ?? ''));
+$datosUsuario = preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nick) ? $usuarioModel->obtenerPorNick($nick) : null;
+
+if ($datosUsuario && (int) $datosUsuario['activo'] !== 1 && !esAdmin()) {
+    $datosUsuario = null;
+}
+
+if ($datosUsuario && estaLogueado() && (int) $datosUsuario['id'] === (int) getUsuario()['id']) {
+    header('Location: /perfil.php');
+    exit;
+}
+
+if (!$datosUsuario) {
+    http_response_code(404);
+
+    $titulo = 'Usuario no encontrado — LogNow!';
+    $css = ['perfil.css', 'biblioteca.css'];
+    $pagina = 'usuario';
+    require '../includes/header.php';
+    ?>
+    <main class="container">
+        <div class="panel-vacio perfil-no-encontrado">
+            <h1>Usuario no encontrado</h1>
+            <p>No existe ningún perfil público con ese nick.</p>
+            <a class="boton-secundario" href="/">Volver al inicio</a>
+        </div>
+    </main>
+    <?php
+    require '../includes/nav_inferior.php';
+    require '../includes/footer.php';
     exit;
 }
 
@@ -13,7 +41,7 @@ $tab = $_GET['tab'] ?? 'perfil';
 $tabsValidas = ['perfil', 'juegos', 'resenas'];
 
 if (!in_array($tab, $tabsValidas, true)) {
-    header('Location: /perfil.php');
+    header('Location: ' . urlUsuarioPublico($datosUsuario['nick']));
     exit;
 }
 
@@ -26,13 +54,7 @@ if (!in_array($estadoFiltro, $estadosValidos, true)) {
     $estadoFiltro = '';
 }
 
-$datosUsuario = $usuarioModel->obtenerPorId(getUsuario()['id']);
-
-if (!$datosUsuario) {
-    cerrarSesion();
-}
-
-$idUsuario = (int) getUsuario()['id'];
+$idUsuario = (int) $datosUsuario['id'];
 $datosPerfil = datosPerfilUsuario($db, $idUsuario, $estadoFiltro, $paginaBibliotecaActual, $porPaginaBiblioteca);
 $resumenBiblioteca = $datosPerfil['resumenBiblioteca'];
 $totalJuegosBiblioteca = $datosPerfil['totalJuegosBiblioteca'];
@@ -47,12 +69,12 @@ $histogramaUsuario = $datosPerfil['histogramaUsuario'];
 $maximoHistograma = $datosPerfil['maximoHistograma'];
 $contadorFiltros = $datosPerfil['contadorFiltros'];
 $filtros = $datosPerfil['filtros'];
-$perfilPropio = true;
-$urlPerfilBase = '/perfil.php';
+$perfilPropio = false;
+$urlPerfilBase = urlUsuarioPublico($datosUsuario['nick']);
 
-$titulo = 'Perfil — LogNow!';
+$titulo = htmlspecialchars($datosUsuario['nombre']) . ' — LogNow!';
 $css = ['resenas.css', 'perfil.css', 'biblioteca.css'];
-$pagina = $tab === 'juegos' ? 'mis-juegos' : 'perfil';
+$pagina = 'usuario';
 require '../includes/header.php';
 require '../includes/perfil-vista.php';
 require '../includes/nav_inferior.php';

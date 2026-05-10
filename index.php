@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/api/cache.php';
+require_once __DIR__ . '/includes/perfil_helpers.php';
 
 function fechaInicioBonita($fecha) {
     if (!$fecha) {
@@ -146,7 +147,7 @@ require 'includes/header.php';
                                 </p>
                                 <div class="meta-resena-inline">
                                     <div class="estrellas"><?= estrellasInicio($resena['puntuacion_estrellas']) ?></div>
-                                    <span>por <?= htmlspecialchars($resena['nick']) ?></span>
+                                    <span>por <a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></span>
                                 </div>
                             </div>
                             <p class="fecha"><?= fechaInicioBonita($resena['fecha_publicacion']) ?></p>
@@ -157,7 +158,7 @@ require 'includes/header.php';
                                 <span class="completo"><?= htmlspecialchars($textoCompleto) ?></span>
                             <?php endif; ?>
                         </p>
-                        <p class="username"><?= htmlspecialchars($resena['nick']) ?></p>
+                        <p class="username"><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></p>
                     </article>
                 <?php endforeach; ?>
             </div>

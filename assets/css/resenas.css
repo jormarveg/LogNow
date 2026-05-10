@@ -112,6 +112,18 @@
     font-size: 0.95rem;
 }
 
+.resenas-recientes .username a,
+.resenas-recientes .meta-resena-inline a,
+.resenas-recientes .autor-resena a {
+    transition: color 0.2s ease;
+}
+
+.resenas-recientes .username a:hover,
+.resenas-recientes .meta-resena-inline a:hover,
+.resenas-recientes .autor-resena a:hover {
+    color: var(--primary);
+}
+
 .resenas-recientes .texto {
     font-size: 0.95rem;
     align-self: start;

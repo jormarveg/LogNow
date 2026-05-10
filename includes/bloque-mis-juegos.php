@@ -1,13 +1,23 @@
 <?php
 $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
+$bibliotecaEyebrow = $bibliotecaEyebrow ?? 'Biblioteca personal';
+$bibliotecaTitulo = $bibliotecaTitulo ?? 'Mis juegos';
+$bibliotecaTexto = $bibliotecaTexto ?? 'Consulta tu biblioteca, filtra por estado y revisa rápido lo que tienes en marcha.';
+$bibliotecaMostrarAccion = $bibliotecaMostrarAccion ?? true;
+$bibliotecaAccionTexto = $bibliotecaAccionTexto ?? 'Registrar otro juego';
+$bibliotecaVaciaTitulo = $bibliotecaVaciaTitulo ?? 'Tu biblioteca está vacía';
+$bibliotecaVaciaTexto = $bibliotecaVaciaTexto ?? 'Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.';
+$bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.';
 ?>
 <section class="cabecera-biblioteca">
     <div>
-        <p class="eyebrow">Biblioteca personal</p>
-        <h2>Mis juegos</h2>
-        <p class="texto-cabecera">Consulta tu biblioteca, filtra por estado y revisa rápido lo que tienes en marcha.</p>
+        <p class="eyebrow"><?= htmlspecialchars($bibliotecaEyebrow) ?></p>
+        <h2><?= htmlspecialchars($bibliotecaTitulo) ?></h2>
+        <p class="texto-cabecera"><?= htmlspecialchars($bibliotecaTexto) ?></p>
     </div>
-    <a class="boton-principal" href="/catalogo.php">Registrar otro juego</a>
+    <?php if ($bibliotecaMostrarAccion): ?>
+        <a class="boton-principal" href="/catalogo.php"><?= htmlspecialchars($bibliotecaAccionTexto) ?></a>
+    <?php endif; ?>
 </section>
 
 <section class="tarjetas-resumen">
@@ -73,12 +83,14 @@ $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
         <div class="panel-vacio">
             <?php if ($resumenBiblioteca['total'] > 0): ?>
                 <h2>No hay juegos con ese filtro</h2>
-                <p>Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.</p>
+                <p><?= htmlspecialchars($bibliotecaFiltroVacioTexto) ?></p>
             <?php else: ?>
-                <h2>Tu biblioteca está vacía</h2>
-                <p>Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.</p>
+                <h2><?= htmlspecialchars($bibliotecaVaciaTitulo) ?></h2>
+                <p><?= htmlspecialchars($bibliotecaVaciaTexto) ?></p>
             <?php endif; ?>
-            <a class="boton-secundario" href="/catalogo.php">Ir al catálogo</a>
+            <?php if ($bibliotecaMostrarAccion): ?>
+                <a class="boton-secundario" href="/catalogo.php">Ir al catálogo</a>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 </section>

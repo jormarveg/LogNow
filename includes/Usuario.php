@@ -32,6 +32,12 @@ class Usuario {
         return $stmt->fetch();
     }
 
+    public function obtenerPorNick($nick) {
+        $stmt = $this->db->prepare('SELECT * FROM USUARIO WHERE nick = ?');
+        $stmt->execute([$nick]);
+        return $stmt->fetch();
+    }
+
     public function existeNickDeOtroUsuario($idUsuario, $nick) {
         $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE nick = ? AND id <> ?');
         $stmt->execute([$nick, $idUsuario]);
