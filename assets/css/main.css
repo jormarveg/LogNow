@@ -259,8 +259,8 @@ footer {
     header nav ul {
         list-style: none;
         display: flex;
-        gap: 2.5rem;
-        font-size: 1.2rem;
+        gap: 1.4rem;
+        font-size: 1.05rem;
     }
 
     header nav a:hover {
@@ -339,6 +339,11 @@ footer {
     .container {
         max-width: 1200px;
         margin: 0 auto;
+    }
+
+    header nav ul {
+        gap: 2rem;
+        font-size: 1.2rem;
     }
 
     header .btnAgregar span{

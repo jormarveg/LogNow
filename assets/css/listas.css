@@ -1,0 +1,300 @@
+.cabecera-listas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+}
+
+.texto-cabecera {
+    max-width: 42rem;
+    color: #5e6d7a;
+}
+
+.boton-principal-listas,
+.boton-secundario-listas,
+.acciones-formulario-lista button,
+.acciones-formulario-lista a {
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+.boton-principal-listas,
+.acciones-formulario-lista button {
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+}
+
+.boton-secundario-listas,
+.acciones-formulario-lista a {
+    border: 2px solid var(--bordes);
+    background: #f7f9fa;
+    color: #4b5c6b;
+}
+
+.mensaje-listas {
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.mensaje-listas.exito {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.mensaje-listas.error {
+    background: #fde8e8;
+    color: #c84a4a;
+}
+
+.grid-listas {
+    display: grid;
+    gap: 1rem;
+}
+
+.tarjeta-lista,
+.formulario-lista,
+.panel-vacio-listas,
+.resumen-lista article,
+.tarjeta-juego-lista {
+    border: 1px solid rgba(195, 207, 217, 0.59);
+    background: white;
+}
+
+.tarjeta-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.tarjeta-lista h2 {
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.meta-lista {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.descripcion-lista {
+    color: #5e6d7a;
+    line-height: 1.5;
+}
+
+.pie-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.pie-lista > span {
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.acciones-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.acciones-lista a,
+.acciones-lista button,
+.contenido-juego-lista button {
+    border: 1px solid var(--bordes);
+    border-radius: 999px;
+    background: #f7f9fa;
+    color: #4b5c6b;
+    padding: 0.55rem 0.8rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.acciones-lista button,
+.contenido-juego-lista button {
+    color: #c84a4a;
+}
+
+.panel-vacio-listas {
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.panel-vacio-listas p {
+    max-width: 34rem;
+    margin: 0 auto 1rem auto;
+    color: #5e6d7a;
+}
+
+.formulario-lista {
+    padding: 1rem;
+}
+
+.formulario-lista form {
+    display: grid;
+    gap: 1rem;
+}
+
+.campo-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.campo-lista label {
+    font-weight: 600;
+}
+
+.campo-lista input,
+.campo-lista textarea {
+    width: 100%;
+    border: 2px solid var(--bordes);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+.campo-lista textarea {
+    min-height: 8rem;
+    resize: vertical;
+}
+
+.campo-lista input:focus,
+.campo-lista textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.acciones-formulario-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.acciones-cabecera-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.resumen-lista {
+    display: grid;
+    gap: 1rem;
+}
+
+.resumen-lista article {
+    padding: 1rem;
+}
+
+.resumen-lista span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.resumen-lista p {
+    margin-top: 0.35rem;
+    color: #6f7d8c;
+    font-weight: 600;
+}
+
+.grid-juegos-lista {
+    display: grid;
+    gap: 1rem;
+}
+
+.tarjeta-juego-lista {
+    overflow: hidden;
+}
+
+.portada-juego-lista {
+    display: block;
+    aspect-ratio: 2 / 3;
+    background: #dfe6ed;
+}
+
+.portada-juego-lista img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.contenido-juego-lista {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+
+.contenido-juego-lista h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.contenido-juego-lista p {
+    color: #6f7d8c;
+    font-weight: 600;
+}
+
+.contenido-juego-lista form {
+    margin-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .cabecera-listas {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .grid-listas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pie-lista {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .acciones-formulario-lista,
+    .acciones-cabecera-lista {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .resumen-lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-juegos-lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .grid-listas {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-juegos-lista {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}

@@ -32,6 +32,9 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
         <ul>
             <li<?= $tab === 'perfil' ? ' class="active"' : '' ?>><a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'perfil')) ?>"><i class="fa-solid fa-user"></i>Perfil</a></li>
             <li<?= $tab === 'juegos' ? ' class="active"' : '' ?>><a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'juegos')) ?>"><i class="fa-solid fa-gamepad"></i><?= $perfilPropio ? 'Tus juegos' : 'Juegos' ?></a></li>
+            <?php if ($perfilPropio): ?>
+                <li<?= $tab === 'listas' ? ' class="active"' : '' ?>><a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'listas')) ?>"><i class="fa-solid fa-list"></i>Tus listas</a></li>
+            <?php endif; ?>
             <li<?= $tab === 'resenas' ? ' class="active"' : '' ?>><a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'resenas')) ?>"><i class="fa-solid fa-message"></i><?= $perfilPropio ? 'Tus reseñas' : 'Reseñas' ?></a></li>
             <?php if ($perfilPropio): ?>
                 <li><a class="editar" href="/editar-perfil.php">Editar perfil</a></li>
@@ -142,13 +145,51 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
                 $baseBibliotecaUrl = urlPerfilTab($urlPerfilBase, 'juegos');
                 $bibliotecaEyebrow = $perfilPropio ? 'Biblioteca personal' : 'Biblioteca de @' . $nickPerfil;
                 $bibliotecaTitulo = $perfilPropio ? 'Mis juegos' : 'Juegos';
-                $bibliotecaTexto = $perfilPropio ? 'Consulta tu biblioteca, filtra por estado y revisa rápido lo que tienes en marcha.' : 'Consulta los juegos que tiene guardados este usuario y su estado.';
+                $bibliotecaTexto = $perfilPropio ? 'Revisa tus juegos guardados y filtra por estado.' : 'Consulta los juegos guardados por este usuario.';
                 $bibliotecaMostrarAccion = $perfilPropio;
                 $bibliotecaVaciaTitulo = $perfilPropio ? 'Tu biblioteca está vacía' : 'Esta biblioteca está vacía';
                 $bibliotecaVaciaTexto = $perfilPropio ? 'Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.' : 'Este usuario todavía no ha registrado juegos en su biblioteca.';
                 $bibliotecaFiltroVacioTexto = $perfilPropio ? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.' : 'Prueba a cambiar el estado seleccionado para ver el resto de su biblioteca.';
                 require __DIR__ . '/bloque-mis-juegos.php';
                 ?>
+            <?php elseif ($tab === 'listas' && $perfilPropio): ?>
+                <section class="cabecera-listas cabecera-listas-perfil">
+                    <div>
+                        <p class="eyebrow">Listas personales</p>
+                        <h2>Tus listas</h2>
+                        <p class="texto-cabecera">Crea y revisa tus colecciones de juegos desde tu perfil.</p>
+                    </div>
+                    <a class="boton-principal-listas" href="/crear-lista.php">Crear lista</a>
+                </section>
+
+                <?php if ($listasPerfil ?? []): ?>
+                    <section class="grid-listas">
+                        <?php foreach ($listasPerfil as $listaPerfil): ?>
+                            <article class="tarjeta-lista">
+                                <div>
+                                    <p class="meta-lista"><?= listaFechaBonita($listaPerfil['fecha_creacion']) ?></p>
+                                    <h2><a href="/lista.php?id=<?= (int) $listaPerfil['id'] ?>"><?= htmlspecialchars($listaPerfil['nombre']) ?></a></h2>
+                                    <p class="descripcion-lista">
+                                        <?= htmlspecialchars((string) ($listaPerfil['descripcion'] ?: 'Sin descripción')) ?>
+                                    </p>
+                                </div>
+
+                                <div class="pie-lista">
+                                    <span><?= listaTotalJuegosTexto($listaPerfil['total_juegos']) ?></span>
+                                    <div class="acciones-lista">
+                                        <a href="/lista.php?id=<?= (int) $listaPerfil['id'] ?>">Ver</a>
+                                        <a href="/crear-lista.php?id=<?= (int) $listaPerfil['id'] ?>">Editar</a>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </section>
+                <?php else: ?>
+                    <section class="panel-vacio-listas">
+                        <h2>Todavía no tienes listas</h2>
+                        <a class="boton-secundario-listas" href="/crear-lista.php">Crear una lista</a>
+                    </section>
+                <?php endif; ?>
             <?php else: ?>
                 <section class="resenas-recientes">
                     <h2><?= $textoResenasTitulo ?></h2>

@@ -3,6 +3,7 @@ require '../api/cache.php';
 require '../includes/auth.php';
 require '../includes/biblioteca_helpers.php';
 require '../includes/perfil_helpers.php';
+require '../includes/listas_helpers.php';
 
 if (!estaLogueado()) {
     header('Location: /login.php');
@@ -10,7 +11,7 @@ if (!estaLogueado()) {
 }
 
 $tab = $_GET['tab'] ?? 'perfil';
-$tabsValidas = ['perfil', 'juegos', 'resenas'];
+$tabsValidas = ['perfil', 'juegos', 'listas', 'resenas'];
 
 if (!in_array($tab, $tabsValidas, true)) {
     header('Location: /perfil.php');
@@ -47,12 +48,13 @@ $histogramaUsuario = $datosPerfil['histogramaUsuario'];
 $maximoHistograma = $datosPerfil['maximoHistograma'];
 $contadorFiltros = $datosPerfil['contadorFiltros'];
 $filtros = $datosPerfil['filtros'];
+$listasPerfil = listasUsuario($db, $idUsuario);
 $perfilPropio = true;
 $urlPerfilBase = '/perfil.php';
 
 $titulo = 'Perfil — LogNow!';
-$css = ['resenas.css', 'perfil.css', 'biblioteca.css'];
-$pagina = $tab === 'juegos' ? 'mis-juegos' : 'perfil';
+$css = ['resenas.css', 'perfil.css', 'biblioteca.css', 'listas.css'];
+$pagina = $tab === 'juegos' ? 'mis-juegos' : ($tab === 'listas' ? 'listas' : 'perfil');
 require '../includes/header.php';
 require '../includes/perfil-vista.php';
 require '../includes/nav_inferior.php';

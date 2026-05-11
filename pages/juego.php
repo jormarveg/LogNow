@@ -2,6 +2,7 @@
 require '../api/cache.php';
 require '../includes/auth.php';
 require '../includes/perfil_helpers.php';
+require '../includes/listas_helpers.php';
 
 $idIgdb = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $idUsuario = estaLogueado() ? (int) getUsuario()['id'] : 0;
@@ -9,6 +10,19 @@ $juego = $idIgdb > 0 ? cacheDetalleJuego($db, $idIgdb, $idUsuario) : null;
 
 if (!$juego) {
     http_response_code(404);
+}
+
+if (
+    $juego
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && estaLogueado()
+    && ($_POST['accion'] ?? '') === 'anadir_lista'
+) {
+    $idLista = (int) ($_POST['id_lista'] ?? 0);
+    $resultadoLista = $idLista > 0 ? listaAnadirJuego($db, $idUsuario, $idLista, (int) $juego['id']) : 'error';
+
+    header('Location: /juego.php?id=' . $idIgdb . '&lista=' . $resultadoLista);
+    exit;
 }
 
 if (
@@ -116,6 +130,8 @@ $maxHistograma = max($histograma);
 $mensajeBiblioteca = $_GET['biblioteca'] ?? '';
 $mensajeResena = $_GET['resena'] ?? '';
 $mensajeFavorito = $_GET['favorito'] ?? '';
+$mensajeLista = $_GET['lista'] ?? '';
+$listasUsuario = estaLogueado() && $juego ? listasUsuario($db, $idUsuario) : [];
 $generos = $juego ? implode(' · ', $juego['generos']) : '';
 $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
@@ -171,10 +187,20 @@ require '../includes/header.php';
                 <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
             <?php elseif ($mensajeResena === 'ok'): ?>
                 <p class="mensaje-juego exito">Reseña publicada correctamente.</p>
-            <?php elseif ($mensajeResena === 'editada'): ?>
+            <?php elseif ($mensajeResena === 'actualizada'): ?>
                 <p class="mensaje-juego exito">Reseña actualizada correctamente.</p>
+            <?php elseif ($mensajeResena === 'eliminada'): ?>
+                <p class="mensaje-juego exito">Reseña eliminada correctamente.</p>
+            <?php elseif ($mensajeBiblioteca === 'quitado'): ?>
+                <p class="mensaje-juego exito">Juego quitado de tu biblioteca.</p>
             <?php elseif ($mensajeFavorito === 'limite'): ?>
                 <p class="mensaje-juego aviso">Has alcanzado el límite de juegos favoritos.</p>
+            <?php elseif ($mensajeLista === 'ok'): ?>
+                <p class="mensaje-juego exito">Juego añadido correctamente a la lista.</p>
+            <?php elseif ($mensajeLista === 'existe'): ?>
+                <p class="mensaje-juego aviso">Ese juego ya estaba guardado en esa lista.</p>
+            <?php elseif ($mensajeLista === 'error'): ?>
+                <p class="mensaje-juego aviso">No se ha podido añadir el juego a la lista.</p>
             <?php endif; ?>
 
             <aside class="sidebar">
@@ -243,6 +269,28 @@ require '../includes/header.php';
                         <p class="total-resenas"><?= $totalResenas ?> reseñas</p>
                     </div>
                 </section>
+
+                <?php if (estaLogueado()): ?>
+                    <section class="listas-juego">
+                        <h2>Listas</h2>
+                        <?php if ($listasUsuario): ?>
+                            <p>Guarda este juego en una de tus listas personales.</p>
+                            <form method="POST">
+                                <input type="hidden" name="accion" value="anadir_lista">
+                                <label for="id_lista_juego">Lista</label>
+                                <select id="id_lista_juego" name="id_lista" required>
+                                    <?php foreach ($listasUsuario as $listaUsuario): ?>
+                                        <option value="<?= (int) $listaUsuario['id'] ?>"><?= htmlspecialchars($listaUsuario['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="submit">Añadir</button>
+                            </form>
+                            <a href="/perfil.php?tab=listas">Ver mis listas</a>
+                        <?php else: ?>
+                            <p>Crea una lista desde tu perfil para guardar este juego.</p>
+                        <?php endif; ?>
+                    </section>
+                <?php endif; ?>
             </aside>
 
             <hr class="separador">

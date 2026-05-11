@@ -31,6 +31,7 @@
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
                 <?php if (estaLogueado()): ?>
                     <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/perfil.php?tab=juegos">Mis juegos</a></li>
+                    <li<?= $pagina === 'listas' ? ' class="active"' : '' ?>><a href="/perfil.php?tab=listas">Listas</a></li>
                     <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                     <?php if (esAdmin()): ?>
                         <li<?= $pagina === 'admin' ? ' class="active"' : '' ?>><a href="/admin/">Admin</a></li>
@@ -52,6 +53,9 @@
                     <li><a href="#">Contacto</a></li>
                 </ul>
                 <?php if (estaLogueado()): ?>
+                    <div class="session-info">
+                        <a href="/perfil.php?tab=listas">Mis listas</a>
+                    </div>
                     <?php if (esAdmin()): ?>
                         <div class="session-info">
                             <a href="/admin/">Panel admin</a>
