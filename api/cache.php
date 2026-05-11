@@ -581,7 +581,7 @@ function cacheResenaUsuario(PDO $db, $idUsuario, $idVideojuego) {
 }
 
 function cacheResenasJuego(PDO $db, $idVideojuego, $limite = 6) {
-    $stmt = $db->prepare('SELECT r.comentario, r.puntuacion, r.fecha_publicacion, u.nick, u.nombre, u.avatar, p.nombre AS plataforma
+    $stmt = $db->prepare('SELECT r.id, r.id_usuario, r.comentario, r.puntuacion, r.fecha_publicacion, u.nick, u.nombre, u.avatar, p.nombre AS plataforma
                           FROM RESENA r
                           INNER JOIN USUARIO u ON u.id = r.id_usuario
                           LEFT JOIN USUARIO_JUEGO uj ON uj.id_usuario = r.id_usuario AND uj.id_videojuego = r.id_videojuego

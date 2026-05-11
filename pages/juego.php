@@ -1,6 +1,7 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/perfil_helpers.php';
 
 $idIgdb = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $idUsuario = estaLogueado() ? (int) getUsuario()['id'] : 0;
@@ -277,12 +278,13 @@ require '../includes/header.php';
                     <?php if (!empty($juego['resenas'])): ?>
                         <div class="carousel">
                             <?php foreach ($juego['resenas'] as $resena): ?>
+                                <?php $puedeReportar = estaLogueado() && (int) $resena['id_usuario'] !== $idUsuario; ?>
                                 <article class="elemento-carousel mini-resena">
                                     <div class="mini-portada">
                                         <img src="<?= htmlspecialchars($resena['avatar'] ?: '/assets/img/profile/user.webp') ?>" alt="Avatar de <?= htmlspecialchars($resena['nick']) ?>">
                                     </div>
                                     <div class="nombre-puntuacion">
-                                        <h4><?= htmlspecialchars($resena['nick']) ?></h4>
+                                        <h4><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></h4>
                                         <div class="puntuacion">
                                             <i class="fa-solid fa-star"></i>
                                             <span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span>
@@ -298,7 +300,7 @@ require '../includes/header.php';
                                             </p>
                                             <div class="meta-resena-linea">
                                                 <div class="estrellas"><?= estrellasJuego($resena['puntuacion_estrellas']) ?></div>
-                                                <p class="autor-resena">por <strong><?= htmlspecialchars($resena['nick']) ?></strong></p>
+                                                <p class="autor-resena">por <strong><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></strong></p>
                                             </div>
                                         </div>
                                         <p class="fecha"><?= fechaBonita($resena['fecha_publicacion'], true) ?></p>
@@ -306,7 +308,10 @@ require '../includes/header.php';
                                     <?php if (!empty(trim((string) $resena['comentario']))): ?>
                                         <p class="texto"><?= nl2br(htmlspecialchars($resena['comentario'])) ?></p>
                                     <?php endif; ?>
-                                    <p class="username"><?= htmlspecialchars($resena['nick']) ?></p>
+                                    <?php if ($puedeReportar): ?>
+                                        <button class="boton-reportar-resena" type="button" data-id-resena="<?= (int) $resena['id'] ?>">Reportar</button>
+                                    <?php endif; ?>
+                                    <p class="username"><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></p>
                                 </article>
                             <?php endforeach; ?>
                         </div>
@@ -319,6 +324,25 @@ require '../includes/header.php';
             </section>
         </div>
     </main>
+    <?php if (estaLogueado()): ?>
+        <div class="modal-reporte" id="modalReporte" hidden>
+            <div class="modal-reporte-fondo"></div>
+            <div class="modal-reporte-panel" role="dialog" aria-modal="true" aria-labelledby="tituloReporte">
+                <form id="formReporte">
+                    <input type="hidden" name="id_resena" id="idResenaReporte">
+                    <h2 id="tituloReporte">Reportar reseña</h2>
+                    <p class="texto-modal-reporte">Cuéntanos brevemente por qué quieres reportar este comentario.</p>
+                    <label for="motivoReporte">Motivo</label>
+                    <textarea id="motivoReporte" name="motivo" minlength="5" maxlength="255" required></textarea>
+                    <p class="mensaje-reporte" id="mensajeReporte"></p>
+                    <div class="acciones-reporte">
+                        <button type="button" class="boton-cancelar-reporte">Cancelar</button>
+                        <button type="submit" class="boton-enviar-reporte">Reportar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php endif; ?>
 <?php else: ?>
     <main class="container">
         <section class="juego-vacio">

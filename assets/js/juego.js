@@ -1,5 +1,8 @@
 const favoritoForm = $('.favorito-form');
 const estadoForms = $('.estado-form');
+const modalReporte = $('#modalReporte');
+const formReporte = $('#formReporte');
+let botonReporteActivo = null;
 
 if (favoritoForm.length) {
     favoritoForm.on('submit', function(e) {
@@ -89,6 +92,81 @@ if (estadoForms.length) {
             }, 260);
         }).always(function() {
             boton.removeClass('cargando');
+        });
+    });
+}
+
+if (modalReporte.length) {
+    const idResenaReporte = $('#idResenaReporte');
+    const motivoReporte = $('#motivoReporte');
+    const mensajeReporte = $('#mensajeReporte');
+    const botonEnviarReporte = formReporte.find('.boton-enviar-reporte');
+
+    function abrirModalReporte(boton) {
+        botonReporteActivo = boton;
+        idResenaReporte.val(boton.attr('data-id-resena'));
+        motivoReporte.val('');
+        mensajeReporte.removeClass('ok error').text('');
+        botonEnviarReporte.prop('disabled', false).text('Reportar');
+        modalReporte.prop('hidden', false);
+        motivoReporte.trigger('focus');
+    }
+
+    function cerrarModalReporte() {
+        modalReporte.prop('hidden', true);
+        botonReporteActivo = null;
+    }
+
+    $('.boton-reportar-resena').on('click', function() {
+        abrirModalReporte($(this));
+    });
+
+    $('.boton-cancelar-reporte, .modal-reporte-fondo').on('click', function() {
+        cerrarModalReporte();
+    });
+
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && !modalReporte.prop('hidden')) {
+            cerrarModalReporte();
+        }
+    });
+
+    formReporte.on('submit', function(e) {
+        e.preventDefault();
+
+        const motivo = motivoReporte.val().trim();
+
+        if (motivo.length < 5 || motivo.length > 255) {
+            mensajeReporte.removeClass('ok').addClass('error').text('Escribe un motivo entre 5 y 255 caracteres.');
+            return;
+        }
+
+        botonEnviarReporte.prop('disabled', true).text('Enviando...');
+        mensajeReporte.removeClass('ok error').text('');
+
+        $.post('/ajax/reportar.php', {
+            id_resena: idResenaReporte.val(),
+            motivo: motivo
+        }).done(function(respuesta) {
+            if (!respuesta || !respuesta.ok) {
+                mensajeReporte.addClass('error').text('No se ha podido enviar el reporte.');
+                botonEnviarReporte.prop('disabled', false).text('Reportar');
+                return;
+            }
+
+            mensajeReporte.addClass('ok').text(respuesta.mensaje);
+
+            if (botonReporteActivo) {
+                botonReporteActivo.prop('disabled', true).text('Reportado');
+            }
+
+            window.setTimeout(function() {
+                cerrarModalReporte();
+            }, 900);
+        }).fail(function(xhr) {
+            const mensaje = xhr.responseJSON && xhr.responseJSON.mensaje ? xhr.responseJSON.mensaje : 'No se ha podido enviar el reporte.';
+            mensajeReporte.addClass('error').text(mensaje);
+            botonEnviarReporte.prop('disabled', false).text('Reportar');
         });
     });
 }
