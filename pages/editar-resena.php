@@ -32,18 +32,29 @@ $puntuacion = (string) (int) ($resenaUsuario['puntuacion'] ?? 0);
 $comentario = trim((string) ($resenaUsuario['comentario'] ?? ''));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
-    $puntuacion = trim((string) ($_POST['puntuacion'] ?? ''));
-    $comentario = trim((string) ($_POST['comentario'] ?? ''));
+    $accion = $_POST['accion'] ?? 'guardar';
 
-    if (!ctype_digit($puntuacion) || !cachePuntuacionResenaValida((int) $puntuacion)) {
-        $error = 'Selecciona una puntuación válida';
-    } elseif (!cacheComentarioResenaValido($comentario)) {
-        $error = 'El comentario debe tener entre 20 y 2000 caracteres';
-    } elseif (!cacheActualizarResenaUsuario($db, $idUsuario, (int) $juego['id'], (int) $puntuacion, $comentario)) {
-        $error = 'No se ha podido actualizar la reseña ahora mismo';
+    if ($accion === 'eliminar_resena') {
+        if (cacheEliminarResenaUsuario($db, $idUsuario, (int) $juego['id'])) {
+            header('Location: /juego.php?id=' . $idIgdb . '&resena=eliminada');
+            exit;
+        }
+
+        $error = 'No se ha podido eliminar la reseña ahora mismo';
     } else {
-        header('Location: /juego.php?id=' . $idIgdb . '&resena=editada');
-        exit;
+        $puntuacion = trim((string) ($_POST['puntuacion'] ?? ''));
+        $comentario = trim((string) ($_POST['comentario'] ?? ''));
+
+        if (!ctype_digit($puntuacion) || !cachePuntuacionResenaValida((int) $puntuacion)) {
+            $error = 'Selecciona una puntuación válida';
+        } elseif (!cacheComentarioResenaValido($comentario)) {
+            $error = 'El comentario debe tener entre 20 y 2000 caracteres';
+        } elseif (!cacheActualizarResenaUsuario($db, $idUsuario, (int) $juego['id'], (int) $puntuacion, $comentario)) {
+            $error = 'No se ha podido actualizar la reseña ahora mismo';
+        } else {
+            header('Location: /juego.php?id=' . $idIgdb . '&resena=actualizada');
+            exit;
+        }
     }
 }
 
@@ -127,6 +138,12 @@ require '../includes/header.php';
                         <button type="submit">Guardar cambios</button>
                         <a class="boton-secundario" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>">Cancelar</a>
                     </div>
+                </form>
+
+                <form method="POST" class="form-eliminar-resena">
+                    <input type="hidden" name="id" value="<?= (int) $juego['igdb_id'] ?>">
+                    <input type="hidden" name="accion" value="eliminar_resena">
+                    <button type="submit">Eliminar reseña</button>
                 </form>
             </section>
         </div>

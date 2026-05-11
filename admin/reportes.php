@@ -48,7 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $paginaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
 $porPagina = 8;
-$stmtTotal = $db->query("SELECT COUNT(*) FROM REPORTE WHERE estado = 'pendiente'");
+$stmtTotal = $db->query("SELECT COUNT(*)
+                         FROM REPORTE rep
+                         INNER JOIN RESENA r ON r.id = rep.id_resena
+                         WHERE rep.estado = 'pendiente' AND r.activa = 1");
 $totalReportes = (int) $stmtTotal->fetchColumn();
 $totalPaginas = max(1, (int) ceil($totalReportes / $porPagina));
 
@@ -67,7 +70,7 @@ $stmtReportes = $db->prepare("SELECT rep.id, rep.id_resena, rep.motivo, rep.fech
                               INNER JOIN USUARIO autor ON autor.id = r.id_usuario
                               INNER JOIN USUARIO reporta ON reporta.id = rep.id_usuario
                               INNER JOIN VIDEOJUEGO v ON v.id = r.id_videojuego
-                              WHERE rep.estado = 'pendiente'
+                              WHERE rep.estado = 'pendiente' AND r.activa = 1
                               ORDER BY rep.fecha DESC, rep.id DESC
                               LIMIT $porPagina OFFSET $offset");
 $stmtReportes->execute();

@@ -62,7 +62,18 @@ if ($juego && !empty($juego['usuario_juego']) && $modoEdicion && $_SERVER['REQUE
     $favorito = !empty($juego['usuario_juego']['favorito']);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') === 'quitar_biblioteca') {
+    if (!$modoEdicion || empty($juego['usuario_juego'])) {
+        $error = 'Ese juego no está en tu biblioteca';
+    } elseif (cacheQuitarJuegoBiblioteca($db, $idUsuario, (int) $juego['id'])) {
+        header('Location: /juego.php?id=' . $idIgdb . '&biblioteca=quitado');
+        exit;
+    } else {
+        $error = 'No se ha podido quitar el juego de tu biblioteca';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') !== 'quitar_biblioteca') {
     $estado = $_POST['estado'] ?? 'pendiente';
     $idPlataforma = (int) ($_POST['plataforma'] ?? 0);
     $puntuacion = trim((string) ($_POST['puntuacion'] ?? ''));
@@ -283,6 +294,14 @@ require '../includes/header.php';
                         <a class="boton-secundario" href="/perfil.php?tab=juegos">Ver mi biblioteca</a>
                     </div>
                 </form>
+                <?php if ($modoEdicion): ?>
+                    <form method="POST" class="form-quitar-biblioteca">
+                        <input type="hidden" name="id" value="<?= (int) $juego['igdb_id'] ?>">
+                        <input type="hidden" name="editar" value="1">
+                        <input type="hidden" name="accion" value="quitar_biblioteca">
+                        <button type="submit">Quitar de mi biblioteca</button>
+                    </form>
+                <?php endif; ?>
             </section>
         </div>
     <?php else: ?>
