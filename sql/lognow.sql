@@ -84,7 +84,7 @@ CREATE TABLE USUARIO_JUEGO (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_videojuego INT NOT NULL,
-    id_plataforma INT NOT NULL,
+    id_plataforma INT,
     estado ENUM('jugando', 'completado', 'pendiente', 'abandonado') NOT NULL,
     horas_jugadas INT DEFAULT 0,
     minutos_jugados INT DEFAULT 0,
@@ -95,7 +95,7 @@ CREATE TABLE USUARIO_JUEGO (
     UNIQUE(id_usuario, id_videojuego),
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id) ON DELETE CASCADE,
     FOREIGN KEY (id_videojuego) REFERENCES VIDEOJUEGO(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_plataforma) REFERENCES PLATAFORMA(id) ON DELETE RESTRICT
+    FOREIGN KEY (id_plataforma) REFERENCES PLATAFORMA(id) ON DELETE SET NULL
 );
 
 CREATE TABLE RESENA (
@@ -106,8 +106,9 @@ CREATE TABLE RESENA (
     comentario TEXT,
     fecha_publicacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     activa BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_videojuego) REFERENCES VIDEOJUEGO(id) ON DELETE CASCADE
+    UNIQUE(id_usuario, id_videojuego),
+    INDEX idx_resena_videojuego (id_videojuego),
+    FOREIGN KEY (id_usuario, id_videojuego) REFERENCES USUARIO_JUEGO(id_usuario, id_videojuego) ON DELETE CASCADE
 );
 
 CREATE TABLE LISTA_VIDEOJUEGO (
