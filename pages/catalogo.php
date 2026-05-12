@@ -9,14 +9,28 @@ $filtroGenero = isset($_GET['genero']) ? (int) $_GET['genero'] : 0;
 $filtroPlataforma = isset($_GET['plataforma']) ? (int) $_GET['plataforma'] : 0;
 $filtroAnio = isset($_GET['anio']) ? (int) $_GET['anio'] : 0;
 $orden = $_GET['orden'] ?? 'puntuacion';
+$direccion = $_GET['direccion'] ?? 'normal';
 $paginaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
 $porPagina = 18;
+
+if (!in_array($orden, ['puntuacion', 'nombre', 'fecha'], true)) {
+    $orden = 'puntuacion';
+}
+
+if (!in_array($direccion, ['normal', 'inversa'], true)) {
+    $direccion = 'normal';
+}
 
 $filtros = [
     'genero' => $filtroGenero,
     'plataforma' => $filtroPlataforma,
     'anio' => $filtroAnio
 ];
+$filtrosActivos = $filtroGenero > 0
+    || $filtroPlataforma > 0
+    || $filtroAnio > 0
+    || $orden !== 'puntuacion'
+    || $direccion !== 'normal';
 
 $generos = cacheOpcionesGeneros($db);
 $plataformas = cacheOpcionesPlataformas($db);
@@ -29,7 +43,7 @@ if ($paginaActual > $totalPaginas) {
 }
 
 $offset = ($paginaActual - 1) * $porPagina;
-$juegos = cacheListarJuegosCatalogo($db, $filtros, $orden, $porPagina, $offset);
+$juegos = cacheListarJuegosCatalogo($db, $filtros, $orden, $porPagina, $offset, $direccion);
 
 function urlCatalogo($cambios = []) {
     $params = $_GET;
@@ -80,50 +94,64 @@ require '../includes/header.php';
     <h1>Todos los juegos</h1>
     <section class="encabezado">
         <p><?= number_format($totalJuegos, 0, ',', '.') ?> juegos</p>
-        <form method="GET" class="filtros-catalogo">
-            <label>
-                <span><i class="fa-solid fa-filter"></i> Género</span>
-                <select name="genero">
-                    <option value="0">Todos</option>
-                    <?php foreach ($generos as $genero): ?>
-                        <option value="<?= $genero['id'] ?>"<?= $filtroGenero === (int) $genero['id'] ? ' selected' : '' ?>>
-                            <?= htmlspecialchars($genero['nombre']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+        <div class="filtros-catalogo-wrapper">
+            <input class="control-filtros-catalogo" type="checkbox" id="toggle-filtros-catalogo" autocomplete="off"<?= $filtrosActivos ? ' checked' : '' ?>>
+            <label class="boton-filtros-catalogo" for="toggle-filtros-catalogo">
+                <span><i class="fa-solid fa-filter"></i> Filtros</span>
+                <i class="fa-solid fa-chevron-down"></i>
             </label>
-            <label>
-                <span>Plataforma</span>
-                <select name="plataforma">
-                    <option value="0">Todas</option>
-                    <?php foreach ($plataformas as $plataforma): ?>
-                        <option value="<?= $plataforma['id'] ?>"<?= $filtroPlataforma === (int) $plataforma['id'] ? ' selected' : '' ?>>
-                            <?= htmlspecialchars($plataforma['nombre']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <label>
-                <span>Año</span>
-                <select name="anio">
-                    <option value="0">Todos</option>
-                    <?php foreach ($anios as $item): ?>
-                        <option value="<?= $item['anio'] ?>"<?= $filtroAnio === (int) $item['anio'] ? ' selected' : '' ?>>
-                            <?= $item['anio'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <label>
-                <span>Ordenar por</span>
-                <select name="orden">
-                    <option value="puntuacion"<?= $orden === 'puntuacion' ? ' selected' : '' ?>>Puntuación</option>
-                    <option value="nombre"<?= $orden === 'nombre' ? ' selected' : '' ?>>Nombre</option>
-                    <option value="fecha"<?= $orden === 'fecha' ? ' selected' : '' ?>>Fecha</option>
-                </select>
-            </label>
-            <button type="submit">Aplicar</button>
-        </form>
+            <form method="GET" class="filtros-catalogo">
+                <label>
+                    <span><i class="fa-solid fa-filter"></i> Género</span>
+                    <select name="genero">
+                        <option value="0">Todos</option>
+                        <?php foreach ($generos as $genero): ?>
+                            <option value="<?= $genero['id'] ?>"<?= $filtroGenero === (int) $genero['id'] ? ' selected' : '' ?>>
+                                <?= htmlspecialchars($genero['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <label>
+                    <span>Plataforma</span>
+                    <select name="plataforma">
+                        <option value="0">Todas</option>
+                        <?php foreach ($plataformas as $plataforma): ?>
+                            <option value="<?= $plataforma['id'] ?>"<?= $filtroPlataforma === (int) $plataforma['id'] ? ' selected' : '' ?>>
+                                <?= htmlspecialchars($plataforma['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <label>
+                    <span>Año</span>
+                    <select name="anio">
+                        <option value="0">Todos</option>
+                        <?php foreach ($anios as $item): ?>
+                            <option value="<?= $item['anio'] ?>"<?= $filtroAnio === (int) $item['anio'] ? ' selected' : '' ?>>
+                                <?= $item['anio'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <label>
+                    <span>Ordenar por</span>
+                    <select name="orden">
+                        <option value="puntuacion"<?= $orden === 'puntuacion' ? ' selected' : '' ?>>Puntuación</option>
+                        <option value="nombre"<?= $orden === 'nombre' ? ' selected' : '' ?>>Nombre</option>
+                        <option value="fecha"<?= $orden === 'fecha' ? ' selected' : '' ?>>Fecha</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Orden</span>
+                    <select name="direccion">
+                        <option value="normal"<?= $direccion === 'normal' ? ' selected' : '' ?>>Normal</option>
+                        <option value="inversa"<?= $direccion === 'inversa' ? ' selected' : '' ?>>Inversa</option>
+                    </select>
+                </label>
+                <button type="submit">Aplicar</button>
+            </form>
+        </div>
     </section>
     <section class="juegos">
         <?php if ($juegos): ?>

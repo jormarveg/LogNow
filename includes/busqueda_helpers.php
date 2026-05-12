@@ -117,7 +117,6 @@ function htmlResultadosBusqueda($juegos, $busqueda, $longitud) {
     elseif ($busqueda !== '' && $longitud >= BUSQUEDA_MINIMA_JUEGOS): ?>
         <div class="sin-resultados">
             <p>No se ha encontrado ningún juego con ese nombre.</p>
-            <p>Prueba con otro título o con una palabra más corta.</p>
         </div>
     <?php elseif ($busqueda !== ''): ?>
         <div class="sin-resultados">
@@ -125,8 +124,7 @@ function htmlResultadosBusqueda($juegos, $busqueda, $longitud) {
         </div>
     <?php else: ?>
         <div class="sin-resultados">
-            <p>Escribe el nombre de un juego para empezar.</p>
-            <p>También puedes probar con una palabra clave.</p>
+            <p>Escribe el nombre de un juego para buscar.</p>
         </div>
     <?php endif;
 

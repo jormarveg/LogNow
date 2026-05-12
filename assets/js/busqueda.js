@@ -8,11 +8,12 @@ if (paginaBusqueda.length) {
     const resultadosBusqueda = $('#resultados-busqueda');
     const paginacionBusqueda = $('#paginacion-busqueda');
     const contenidoBusqueda = $('#busqueda-contenido');
+    const formImportarIgdb = $('#form-importar-igdb');
+    const inputImportarIgdb = formImportarIgdb.find('input[name="q"]');
     const formulariosBusqueda = $('.buscar, .formulario-busqueda-movil');
     const inputsBusqueda = $('input[name="q"]');
     const tiempoMaximoBusqueda = 10000;
     let solicitudLocal = null;
-    let solicitudIgdb = null;
     let claveBusquedaActiva = '';
 
     function textoLimpio(texto) {
@@ -25,12 +26,6 @@ if (paginaBusqueda.length) {
 
     function limpiarEstadoBusqueda() {
         estadoBusqueda.text('');
-    }
-
-    function limpiarEstadoSiNoHayPeticiones() {
-        if (!solicitudLocal && !solicitudIgdb) {
-            limpiarEstadoBusqueda();
-        }
     }
 
     function actualizarUrlBusqueda(busqueda, pagina, reemplazar = false) {
@@ -83,54 +78,18 @@ if (paginaBusqueda.length) {
         actualizarBloque(paginacionBusqueda, respuesta.html_paginacion);
         mostrarAvisoBusqueda(respuesta.aviso, respuesta.clase_aviso || '');
         paginaBusqueda.attr('data-busqueda-pagina', String(respuesta.pagina_actual));
+        inputImportarIgdb.val(respuesta.busqueda);
+        formImportarIgdb.prop('hidden', textoLimpio(respuesta.busqueda).length < minimoBusqueda);
     }
 
     function terminarBusqueda() {
         contenidoBusqueda.removeClass('cargando');
     }
 
-    function cargarBusquedaIgdb(busqueda, claveEsperada) {
-        if (solicitudIgdb) {
-            solicitudIgdb.abort();
-        }
-
-        solicitudIgdb = $.ajax({
-            url: '/ajax/buscar-juegos.php',
-            dataType: 'json',
-            timeout: tiempoMaximoBusqueda,
-            data: {
-                q: busqueda,
-                p: 1,
-                modo: 'igdb'
-            }
-        }).done(function(respuesta) {
-            if (!respuesta || !respuesta.ok || claveBusquedaActiva !== claveEsperada) {
-                return;
-            }
-
-            aplicarRespuestaBusqueda(respuesta);
-        }).fail(function() {
-            if (claveBusquedaActiva !== claveEsperada) {
-                return;
-            }
-
-            console.error('IGDB no responde');
-            limpiarEstadoSiNoHayPeticiones();
-        }).always(function() {
-            solicitudIgdb = null;
-            limpiarEstadoSiNoHayPeticiones();
-        });
-    }
-
     function cargarBusquedaLocal(busqueda, pagina) {
         if (solicitudLocal) {
             solicitudLocal.abort();
             solicitudLocal = null;
-        }
-
-        if (solicitudIgdb) {
-            solicitudIgdb.abort();
-            solicitudIgdb = null;
         }
 
         const clave = busqueda + '|' + pagina;
@@ -146,8 +105,7 @@ if (paginaBusqueda.length) {
             timeout: tiempoMaximoBusqueda,
             data: {
                 q: busqueda,
-                p: pagina,
-                modo: 'local'
+                p: pagina
             }
         }).done(function(respuesta) {
             if (!respuesta || !respuesta.ok || claveBusquedaActiva !== clave) {
@@ -157,12 +115,7 @@ if (paginaBusqueda.length) {
             aplicarRespuestaBusqueda(respuesta);
 
             actualizarUrlBusqueda(busqueda, respuesta.pagina_actual);
-
-            if (textoLimpio(busqueda) !== '' && busqueda.length >= minimoBusqueda && respuesta.pagina_actual === 1) {
-                cargarBusquedaIgdb(busqueda, clave);
-            } else {
-                limpiarEstadoBusqueda();
-            }
+            limpiarEstadoBusqueda();
         }).fail(function() {
             if (claveBusquedaActiva !== clave) {
                 return;
@@ -175,7 +128,7 @@ if (paginaBusqueda.length) {
             if (claveBusquedaActiva === clave) {
                 terminarBusqueda();
             }
-            limpiarEstadoSiNoHayPeticiones();
+            limpiarEstadoBusqueda();
         });
     }
 
@@ -192,8 +145,4 @@ if (paginaBusqueda.length) {
     const paginaInicial = Number(paginaBusqueda.data('busqueda-pagina')) || 1;
 
     claveBusquedaActiva = busquedaInicial + '|' + paginaInicial;
-
-    if (busquedaInicial !== '' && busquedaInicial.length >= minimoBusqueda && paginaInicial === 1) {
-        cargarBusquedaIgdb(busquedaInicial, claveBusquedaActiva);
-    }
 }
