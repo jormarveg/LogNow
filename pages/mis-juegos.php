@@ -43,6 +43,14 @@ $filtros = [
     'abandonado' => 'Abandonados'
 ];
 $baseBibliotecaUrl = '/mis-juegos.php';
+$bibliotecaEyebrow = 'Biblioteca personal';
+$bibliotecaTitulo = 'Mis juegos';
+$bibliotecaTexto = 'Consulta tu biblioteca y filtra por estado.';
+$bibliotecaMostrarAccion = true;
+$bibliotecaAccionTexto = 'Registrar otro juego';
+$bibliotecaVaciaTitulo = 'Tu biblioteca está vacía';
+$bibliotecaVaciaTexto = 'Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.';
+$bibliotecaFiltroVacioTexto = 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.';
 
 $titulo = 'Mis juegos — LogNow!';
 $css = ['biblioteca.css'];

@@ -183,6 +183,7 @@
         grid-row: 1;
         display: flex;
         align-items: start;
+        gap: 1rem;
     }
 
     .resenas-recientes .texto {
@@ -194,6 +195,8 @@
     }
 
     .resenas-recientes .titulo-puntuacion-wrapper {
+        flex: 1;
+        min-width: 0;
         display: grid;
         grid-template-columns:1fr;
         align-content: start;
@@ -203,6 +206,7 @@
     .resenas-recientes .titulo-plataforma {
         grid-column: 1/-1;
         font-size: 1.1rem;
+        overflow-wrap: anywhere;
     }
 
     .resenas-recientes .meta-resena-inline {
@@ -217,10 +221,11 @@
     }
 
     .resenas-recientes .puntuacion-tablet .fecha {
-        flex-grow: 1;
+        flex: 0 0 auto;
         text-align: right;
         color: #999;
         margin-top: 0;
+        white-space: nowrap;
     }
 
 

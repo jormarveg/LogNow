@@ -2,7 +2,7 @@
 $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
 $bibliotecaEyebrow = $bibliotecaEyebrow ?? 'Biblioteca personal';
 $bibliotecaTitulo = $bibliotecaTitulo ?? 'Mis juegos';
-$bibliotecaTexto = $bibliotecaTexto ?? 'Consulta tu biblioteca, filtra por estado y revisa rápido lo que tienes en marcha.';
+$bibliotecaTexto = $bibliotecaTexto ?? 'Consulta tu biblioteca y filtra por estado.';
 $bibliotecaMostrarAccion = $bibliotecaMostrarAccion ?? true;
 $bibliotecaAccionTexto = $bibliotecaAccionTexto ?? 'Registrar otro juego';
 $bibliotecaVaciaTitulo = $bibliotecaVaciaTitulo ?? 'Tu biblioteca está vacía';
