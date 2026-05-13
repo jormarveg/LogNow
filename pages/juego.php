@@ -29,28 +29,76 @@ if (
     $juego
     && $_SERVER['REQUEST_METHOD'] === 'POST'
     && estaLogueado()
-    && !empty($juego['usuario_juego'])
+    && ($_POST['accion'] ?? '') !== 'anadir_lista'
 ) {
-        $nuevoEstado = $_POST['estado_juego'] ?? '';
-        $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
+    $accion = $_POST['accion'] ?? '';
+    $destino = '/juego.php?id=' . $idIgdb;
+    $nuevoEstado = $_POST['estado_juego'] ?? '';
+    $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
 
-        if (isset($_POST['toggle_favorito'])) {
-            $nuevoFavorito = !$juego['usuario_juego']['favorito'];
-            $actualizadoFavorito = cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoFavorito);
-            $destino = '/juego.php?id=' . $idIgdb;
+    if (isset($_POST['toggle_favorito']) && !empty($juego['usuario_juego'])) {
+        $nuevoFavorito = !$juego['usuario_juego']['favorito'];
+        $actualizadoFavorito = cacheActualizarFavoritoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoFavorito);
 
-            if (!$actualizadoFavorito && $nuevoFavorito) {
-                $destino .= '&favorito=limite';
-            }
-
-            header('Location: ' . $destino);
-            exit;
-        } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
-            cacheActualizarEstadoJuegoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
+        if (!$actualizadoFavorito && $nuevoFavorito) {
+            $destino .= '&favorito=limite';
         }
 
-        header('Location: /juego.php?id=' . $idIgdb);
+        header('Location: ' . $destino);
         exit;
+    } elseif ($accion === 'puntuar_juego') {
+        $puntuacion = trim((string) ($_POST['puntuacion'] ?? ''));
+
+        if ($puntuacion !== '' && (!ctype_digit($puntuacion) || !cachePuntuacionResenaValida((int) $puntuacion))) {
+            header('Location: ' . $destino . '&puntuacion=error');
+            exit;
+        }
+
+        try {
+            $db->beginTransaction();
+
+            if ($puntuacion !== '' && empty($juego['usuario_juego'])) {
+                $resultadoEstado = cacheGuardarEstadoRapidoBiblioteca($db, $idUsuario, (int) $juego['id'], 'completado');
+
+                if ($resultadoEstado === 'error') {
+                    throw new RuntimeException('biblioteca');
+                }
+            }
+
+            if ($puntuacion !== '' && !cacheGuardarPuntuacionUsuario($db, $idUsuario, (int) $juego['id'], (int) $puntuacion)) {
+                throw new RuntimeException('puntuacion');
+            }
+
+            if ($puntuacion === '' && !cacheLimpiarPuntuacionUsuario($db, $idUsuario, (int) $juego['id'])) {
+                throw new RuntimeException('puntuacion');
+            }
+
+            $db->commit();
+            header('Location: ' . $destino . '&puntuacion=ok');
+            exit;
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+
+            header('Location: ' . $destino . '&puntuacion=error');
+            exit;
+        }
+    } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
+        $resultadoEstado = cacheGuardarEstadoRapidoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
+
+        if ($resultadoEstado === 'creado') {
+            $destino .= '&biblioteca=ok';
+        } elseif ($resultadoEstado === 'error') {
+            $destino .= '&biblioteca=error';
+        }
+
+        header('Location: ' . $destino);
+        exit;
+    }
+
+    header('Location: ' . $destino);
+    exit;
 }
 
 function fechaBonita($fecha, $abreviada = false) {
@@ -75,7 +123,7 @@ function fechaBonita($fecha, $abreviada = false) {
 
 function puntuacionVisible($puntuacion) {
     if ($puntuacion === null) {
-        return 'N/D';
+        return '';
     }
 
     $puntuacion = (float) $puntuacion;
@@ -123,12 +171,14 @@ $estadoActual = $juego['usuario_juego']['estado'] ?? '';
 $favorito = !empty($juego['usuario_juego']['favorito']);
 $puntuacionUsuario = $juego['usuario_juego']['puntuacion_usuario'] ?? null;
 $plataformaUsuario = $juego['usuario_juego']['plataforma'] ?? '';
+$puntuacionFormulario = $puntuacionUsuario !== null ? (string) (int) round(((float) $puntuacionUsuario) * 20) : '';
 $puntuacionMedia = $juego['resumen_resenas']['media'] ?? null;
 $totalResenas = $juego['resumen_resenas']['total'] ?? 0;
 $histograma = $juego['histograma'] ?? [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 $maxHistograma = max($histograma);
 $mensajeBiblioteca = $_GET['biblioteca'] ?? '';
 $mensajeResena = $_GET['resena'] ?? '';
+$mensajePuntuacion = $_GET['puntuacion'] ?? '';
 $mensajeFavorito = $_GET['favorito'] ?? '';
 $mensajeLista = $_GET['lista'] ?? '';
 $listasUsuario = estaLogueado() && $juego ? listasUsuario($db, $idUsuario) : [];
@@ -137,7 +187,7 @@ $plataformas = $juego ? implode(' · ', $juego['plataformas']) : '';
 $titulo = $juego ? $juego['titulo'] . ' — LogNow!' : 'Juego no encontrado — LogNow!';
 $pagina = 'catalogo';
 $css = ['resenas.css', 'juego.css'];
-$js = ['juego.js'];
+$js = ['puntuacion.js', 'juego.js'];
 $usarJquery = true;
 require '../includes/header.php';
 ?>
@@ -185,12 +235,18 @@ require '../includes/header.php';
                 <p class="mensaje-juego exito">Datos del juego actualizados correctamente.</p>
             <?php elseif ($mensajeBiblioteca === 'existe'): ?>
                 <p class="mensaje-juego aviso">Ese juego ya estaba guardado en tu biblioteca.</p>
+            <?php elseif ($mensajeBiblioteca === 'error'): ?>
+                <p class="mensaje-juego aviso">No se ha podido actualizar tu biblioteca.</p>
             <?php elseif ($mensajeResena === 'ok'): ?>
                 <p class="mensaje-juego exito">Reseña publicada correctamente.</p>
             <?php elseif ($mensajeResena === 'actualizada'): ?>
                 <p class="mensaje-juego exito">Reseña actualizada correctamente.</p>
             <?php elseif ($mensajeResena === 'eliminada'): ?>
                 <p class="mensaje-juego exito">Reseña eliminada correctamente.</p>
+            <?php elseif ($mensajePuntuacion === 'ok'): ?>
+                <p class="mensaje-juego exito">Puntuación guardada correctamente.</p>
+            <?php elseif ($mensajePuntuacion === 'error'): ?>
+                <p class="mensaje-juego aviso">No se ha podido guardar la puntuación.</p>
             <?php elseif ($mensajeBiblioteca === 'quitado'): ?>
                 <p class="mensaje-juego exito">Juego quitado de tu biblioteca.</p>
             <?php elseif ($mensajeFavorito === 'limite'): ?>
@@ -206,7 +262,7 @@ require '../includes/header.php';
             <aside class="sidebar">
                 <nav class="estados-juego">
                     <?php foreach ($estados as $clave => $estado): ?>
-                        <?php if (estaLogueado() && $estadoActual): ?>
+                        <?php if (estaLogueado()): ?>
                             <form class="estado-form" method="POST">
                                 <input type="hidden" name="id_videojuego" value="<?= (int) $juego['id'] ?>">
                                 <input type="hidden" name="estado_juego" value="<?= $clave ?>">
@@ -228,27 +284,37 @@ require '../includes/header.php';
                     <div class="tu-puntuacion">
                         <h2>Tu puntuación</h2>
                         <?php if (estaLogueado()): ?>
-                            <p class="numero-puntuacion"><?= $puntuacionUsuario !== null ? puntuacionVisible($puntuacionUsuario) : 'N/D' ?></p>
-                            <div class="estrellas"><?= estrellasJuego($puntuacionUsuario) ?></div>
-                            <p class="nota-usuario">
-                                <?php if ($plataformaUsuario): ?>
+                            <?php if ($puntuacionUsuario !== null): ?>
+                                <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionUsuario) ?></p>
+                            <?php endif; ?>
+                            <form class="form-puntuacion-juego" method="POST">
+                                <input type="hidden" name="accion" value="puntuar_juego">
+                                <input type="hidden" name="id_videojuego" value="<?= (int) $juego['id'] ?>">
+                                <div class="selector-puntuacion" id="selector-puntuacion">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <span class="estrella-puntuacion" data-estrella="<?= $i ?>" tabindex="0" role="button" aria-label="<?= $i ?> estrellas">
+                                            <i class="fa-regular fa-star"></i>
+                                        </span>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="fila-puntuacion">
+                                    <p class="texto-puntuacion" id="texto-puntuacion">Sin puntuar</p>
+                                    <button type="button" class="limpiar-puntuacion" id="limpiar-puntuacion">Quitar</button>
+                                </div>
+                                <input type="hidden" id="puntuacion" name="puntuacion" value="<?= htmlspecialchars($puntuacionFormulario) ?>">
+                                <p class="mensaje-puntuacion-juego" aria-live="polite"></p>
+                            </form>
+                            <?php if ($puntuacionUsuario !== null && $plataformaUsuario): ?>
+                                <p class="nota-usuario">
                                     En <?= htmlspecialchars($plataformaUsuario) ?>
-                                <?php else: ?>
-                                    <?= $puntuacionUsuario !== null ? 'Con reseña guardada' : 'Sin puntuar todavía' ?>
-                                <?php endif; ?>
-                            </p>
+                                </p>
+                            <?php endif; ?>
                             <?php if (!$estadoActual): ?>
-                                <a class="cta-biblioteca" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>">Añadir a mi biblioteca</a>
+                                <a class="cta-biblioteca" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>">Añadir a biblioteca</a>
                             <?php else: ?>
                                 <a class="cta-biblioteca secundaria" href="/registrar-juego.php?id=<?= (int) $juego['igdb_id'] ?>&editar=1">Editar</a>
                             <?php endif; ?>
                         <?php else: ?>
-                            <p class="numero-puntuacion">N/D</p>
-                            <div class="estrellas">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fa-solid fa-star vacia"></i>
-                                <?php endfor; ?>
-                            </div>
                             <p class="nota-usuario">Inicia sesión para guardar tu estado y tu puntuación</p>
                             <a class="cta-biblioteca secundaria" href="/login.php">Iniciar sesión</a>
                         <?php endif; ?>
@@ -256,17 +322,21 @@ require '../includes/header.php';
 
                     <div class="media-juego">
                         <h3>Puntuación media</h3>
-                        <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionMedia) ?></p>
-                        <div class="grafica">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <?php $altura = $maxHistograma > 0 ? max(10, (int) round(($histograma[$i] / $maxHistograma) * 100)) : 0; ?>
-                                <div class="barra"<?= $altura > 0 ? ' style="height: ' . $altura . '%"' : '' ?>></div>
-                            <?php endfor; ?>
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <span><?= $i ?> <i class="fa-solid fa-star"></i></span>
-                            <?php endfor; ?>
-                        </div>
-                        <p class="total-resenas"><?= $totalResenas ?> reseñas</p>
+                        <?php if ($puntuacionMedia !== null): ?>
+                            <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionMedia) ?></p>
+                            <div class="grafica">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <?php $altura = $maxHistograma > 0 ? max(10, (int) round(($histograma[$i] / $maxHistograma) * 100)) : 0; ?>
+                                    <div class="barra"<?= $altura > 0 ? ' style="height: ' . $altura . '%"' : '' ?>></div>
+                                <?php endfor; ?>
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <span><?= $i ?> <i class="fa-solid fa-star"></i></span>
+                                <?php endfor; ?>
+                            </div>
+                            <p class="total-resenas"><?= $totalResenas === 1 ? '1 puntuación' : $totalResenas . ' puntuaciones' ?></p>
+                        <?php else: ?>
+                            <p class="total-resenas">Sin puntuaciones todavía</p>
+                        <?php endif; ?>
                     </div>
                 </section>
 

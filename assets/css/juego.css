@@ -117,6 +117,7 @@ aside.sidebar {
     flex-direction: column;
     gap: 1rem;
     align-self: start;
+    order: 3;
 }
 
 .estados-juego {
@@ -223,11 +224,84 @@ aside.sidebar {
     text-stroke: 1px var(--bordes);
 }
 
+.form-puntuacion-juego {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+}
+
+.selector-puntuacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    width: 100%;
+}
+
+.estrella-puntuacion {
+    cursor: pointer;
+    font-size: 1.65rem;
+    color: #cfd6dd;
+    line-height: 1;
+    transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.estrella-puntuacion:hover,
+.estrella-puntuacion:focus-visible {
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.estrella-puntuacion.activa {
+    color: var(--puntuacion);
+}
+
+.fila-puntuacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.texto-puntuacion {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #4b5c6b;
+}
+
+.limpiar-puntuacion {
+    border: none;
+    background: none;
+    color: var(--primary);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
 .nota-usuario,
 .total-resenas {
     color: #6f7d8c;
     font-size: 0.95rem;
     margin-top: 0.75rem;
+}
+
+.mensaje-puntuacion-juego {
+    min-height: 1.2rem;
+    margin: 0;
+    color: #6f7d8c;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.mensaje-puntuacion-juego.ok {
+    color: #237a3d;
+}
+
+.mensaje-puntuacion-juego.error {
+    color: #c23b32;
 }
 
 .cta-biblioteca {
@@ -306,6 +380,7 @@ aside.sidebar {
     padding: 0.85rem 1rem;
     border-radius: 6px;
     font-size: 0.95rem;
+    order: 0;
 }
 
 .mensaje-juego.exito {
@@ -357,12 +432,19 @@ aside.sidebar {
     outline: none;
     width: 10rem;
     margin: 1rem auto;
+    order: 2;
 }
 
 section.principal {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    display: contents;
+}
+
+.informacion-juego {
+    order: 1;
+}
+
+.resenas-juego {
+    order: 4;
 }
 
 .metadatos-juego {
@@ -710,7 +792,27 @@ section.principal {
     .metadatos-juego {
         flex-direction: row;
         justify-content: space-between;
-        align-items: start;
+        align-items: center;
+    }
+
+    aside.sidebar {
+        order: 0;
+    }
+
+    .separador {
+        order: 0;
+    }
+
+    section.principal {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        order: 0;
+    }
+
+    .informacion-juego,
+    .resenas-juego {
+        order: 0;
     }
 
     .datos-juego {
@@ -824,8 +926,9 @@ section.principal {
         justify-self: center;
     }
 
-    .principal {
+    section.principal {
         padding: 0 2rem 1rem 2rem;
+        grid-column: 2;
     }
 
     .descripcion-juego {

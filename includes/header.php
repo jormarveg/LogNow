@@ -12,9 +12,12 @@
             <link rel="stylesheet" href="<?= htmlspecialchars($archivo) ?>">
         <?php endforeach; ?>
     <?php endif; ?>
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <?php $versionMain = filemtime(__DIR__ . '/../assets/css/main.css'); ?>
+    <link rel="stylesheet" href="/assets/css/main.css?v=<?= $versionMain ?>">
     <?php foreach ($css as $archivo): ?>
-        <link rel="stylesheet" href="/assets/css/<?= $archivo ?>">
+        <?php $rutaCss = __DIR__ . '/../assets/css/' . $archivo; ?>
+        <?php $versionCss = file_exists($rutaCss) ? filemtime($rutaCss) : time(); ?>
+        <link rel="stylesheet" href="/assets/css/<?= $archivo ?>?v=<?= $versionCss ?>">
     <?php endforeach; ?>
 </head>
 <body>
@@ -31,7 +34,6 @@
                 <li<?= $pagina === 'catalogo' ? ' class="active"' : '' ?>><a href="/catalogo.php">Juegos</a></li>
                 <?php if (estaLogueado()): ?>
                     <li<?= in_array($pagina, ['mis-juegos', 'registrar-juego'], true) ? ' class="active"' : '' ?>><a href="/perfil.php?tab=juegos">Mis juegos</a></li>
-                    <li<?= $pagina === 'listas' ? ' class="active"' : '' ?>><a href="/perfil.php?tab=listas">Listas</a></li>
                     <li<?= $pagina === 'perfil' ? ' class="active"' : '' ?>><a href="/perfil.php">Perfil</a></li>
                     <?php if (esAdmin()): ?>
                         <li<?= $pagina === 'admin' ? ' class="active"' : '' ?>><a href="/admin/">Admin</a></li>
@@ -53,9 +55,6 @@
                     <li><a href="#">Contacto</a></li>
                 </ul>
                 <?php if (estaLogueado()): ?>
-                    <div class="session-info">
-                        <a href="/perfil.php?tab=listas">Mis listas</a>
-                    </div>
                     <?php if (esAdmin()): ?>
                         <div class="session-info">
                             <a href="/admin/">Panel admin</a>

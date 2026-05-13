@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego) {
 $titulo = $juego ? ('Escribir reseña — ' . $juego['titulo'] . ' — LogNow!') : 'Juego no encontrado — LogNow!';
 $css = ['biblioteca.css', 'escribir-resena.css'];
 $pagina = 'mis-juegos';
-$js = ['resena-form.js'];
+$js = ['puntuacion.js', 'resena-form.js'];
 require '../includes/header.php';
 ?>
 

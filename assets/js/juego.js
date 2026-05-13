@@ -2,7 +2,103 @@ const favoritoForm = $('.favorito-form');
 const estadoForms = $('.estado-form');
 const modalReporte = $('#modalReporte');
 const formReporte = $('#formReporte');
+const formPuntuacionJuego = $('.form-puntuacion-juego');
 let botonReporteActivo = null;
+let puntuacionGuardada = $('#puntuacion').val() || '';
+let puntuacionPendiente = null;
+let selectorPuntuacionJuego = null;
+
+selectorPuntuacionJuego = iniciarSelectorPuntuacion({
+    alCambiar: function(input) {
+        if (!formPuntuacionJuego.length) {
+            return;
+        }
+
+        guardarPuntuacionJuego(input.value);
+    }
+});
+
+function guardarPuntuacionJuego(puntuacion) {
+    const mensaje = formPuntuacionJuego.find('.mensaje-puntuacion-juego');
+    const idVideojuego = formPuntuacionJuego.find('input[name="id_videojuego"]').val();
+
+    if (puntuacion === puntuacionGuardada) {
+        return;
+    }
+
+    if (formPuntuacionJuego.hasClass('cargando')) {
+        puntuacionPendiente = puntuacion;
+        return;
+    }
+
+    formPuntuacionJuego.addClass('cargando');
+    puntuacionPendiente = null;
+    mensaje.removeClass('ok error').text('Guardando...');
+
+    $.post('/ajax/puntuar-juego.php', {
+        id_videojuego: idVideojuego,
+        puntuacion: puntuacion
+    }).done(function(respuesta) {
+        if (!respuesta || !respuesta.ok) {
+            mensaje.addClass('error').text('No se ha podido guardar.');
+            return;
+        }
+
+        puntuacionGuardada = respuesta.puntuacion;
+        $('#puntuacion').val(respuesta.puntuacion);
+
+        if (selectorPuntuacionJuego) {
+            selectorPuntuacionJuego.pintar(respuesta.puntuacion);
+        }
+
+        actualizarPuntuacionVisible(respuesta);
+        mensaje.removeClass('ok error').text('');
+
+        if (respuesta.creado) {
+            window.setTimeout(function() {
+                window.location.reload();
+            }, 300);
+        }
+    }).fail(function(xhr) {
+        const respuesta = xhr.responseJSON || {};
+        $('#puntuacion').val(puntuacionGuardada);
+
+        if (selectorPuntuacionJuego) {
+            selectorPuntuacionJuego.pintar(puntuacionGuardada);
+        }
+
+        mensaje.addClass('error').text(respuesta.mensaje || 'No se ha podido guardar.');
+    }).always(function() {
+        formPuntuacionJuego.removeClass('cargando');
+
+        if (puntuacionPendiente !== null && puntuacionPendiente !== puntuacionGuardada) {
+            guardarPuntuacionJuego(puntuacionPendiente);
+        }
+    });
+}
+
+function actualizarPuntuacionVisible(respuesta) {
+    const caja = formPuntuacionJuego.closest('.tu-puntuacion');
+    let numero = caja.find('.numero-puntuacion');
+
+    if (respuesta.puntuacion === '') {
+        numero.remove();
+        return;
+    }
+
+    if (!numero.length) {
+        numero = $('<p class="numero-puntuacion"></p>');
+        caja.find('h2').after(numero);
+    }
+
+    numero.text(respuesta.puntuacion_visible);
+}
+
+if (formPuntuacionJuego.length) {
+    formPuntuacionJuego.on('submit', function(e) {
+        e.preventDefault();
+    });
+}
 
 if (favoritoForm.length) {
     favoritoForm.on('submit', function(e) {
@@ -75,6 +171,11 @@ if (estadoForms.length) {
             estado: estado
         }).done(function(respuesta) {
             if (!respuesta || !respuesta.ok) {
+                return;
+            }
+
+            if (respuesta.creado) {
+                window.location.reload();
                 return;
             }
 

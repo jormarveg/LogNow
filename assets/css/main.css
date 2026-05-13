@@ -263,6 +263,10 @@ footer {
         font-size: 1.05rem;
     }
 
+    header nav a {
+        white-space: nowrap;
+    }
+
     header nav a:hover {
         color: var(--primary);
     }

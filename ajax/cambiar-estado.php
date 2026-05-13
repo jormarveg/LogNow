@@ -35,9 +35,9 @@ if ($idVideojuego <= 0 || !in_array($estado, $estadosValidos, true)) {
     exit;
 }
 
-$actualizado = cacheActualizarEstadoJuegoBiblioteca($db, (int) getUsuario()['id'], $idVideojuego, $estado);
+$resultado = cacheGuardarEstadoRapidoBiblioteca($db, (int) getUsuario()['id'], $idVideojuego, $estado);
 
-if (!$actualizado) {
+if ($resultado === 'error') {
     http_response_code(500);
     echo json_encode([
         'ok' => false,
@@ -48,5 +48,6 @@ if (!$actualizado) {
 
 echo json_encode([
     'ok' => true,
-    'estado' => $estado
+    'estado' => $estado,
+    'creado' => $resultado === 'creado'
 ]);

@@ -26,7 +26,9 @@
 <?php endif; ?>
 <?php if (isset($js) && !empty($js)): ?>
     <?php foreach ($js as $archivo): ?>
-        <script src="/assets/js/<?= $archivo ?>"></script>
+        <?php $rutaJs = __DIR__ . '/../assets/js/' . $archivo; ?>
+        <?php $versionJs = file_exists($rutaJs) ? filemtime($rutaJs) : time(); ?>
+        <script src="/assets/js/<?= $archivo ?>?v=<?= $versionJs ?>"></script>
     <?php endforeach; ?>
 <?php endif; ?>
 </body>

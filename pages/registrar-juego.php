@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
 
     if (!isset($estados[$estado])) {
         $error = 'Selecciona un estado válido';
-    } elseif ($idPlataforma <= 0 || !in_array($idPlataforma, $plataformasValidas, true)) {
+    } elseif ($idPlataforma > 0 && !in_array($idPlataforma, $plataformasValidas, true)) {
         $error = 'Selecciona una plataforma válida para este juego';
     } elseif ($puntuacion !== '' && (!ctype_digit($puntuacion) || !cachePuntuacionResenaValida((int) $puntuacion))) {
         $error = 'Selecciona una puntuación válida';
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
 $titulo = $juego ? (($modoEdicion ? 'Editar juego' : 'Registrar juego') . ' — LogNow!') : 'Juego no encontrado — LogNow!';
 $css = ['biblioteca.css'];
 $pagina = 'registrar-juego';
-$js = ['biblioteca.js'];
+$js = ['puntuacion.js', 'biblioteca.js'];
 require '../includes/header.php';
 ?>
 
@@ -226,8 +226,8 @@ require '../includes/header.php';
 
                         <div class="campo">
                             <label for="plataforma">Plataforma</label>
-                            <select id="plataforma" name="plataforma" required>
-                                <option value="0">Selecciona una plataforma</option>
+                            <select id="plataforma" name="plataforma">
+                                <option value="0">Sin especificar</option>
                                 <?php foreach ($plataformas as $plataforma): ?>
                                     <option value="<?= (int) $plataforma['id'] ?>"<?= $idPlataforma === (int) $plataforma['id'] ? ' selected' : '' ?>>
                                         <?= htmlspecialchars($plataforma['nombre']) ?>
@@ -295,15 +295,28 @@ require '../includes/header.php';
                     </div>
                 </form>
                 <?php if ($modoEdicion): ?>
-                    <form method="POST" class="form-quitar-biblioteca">
+                    <form method="POST" class="form-quitar-biblioteca" id="form-quitar-biblioteca">
                         <input type="hidden" name="id" value="<?= (int) $juego['igdb_id'] ?>">
                         <input type="hidden" name="editar" value="1">
                         <input type="hidden" name="accion" value="quitar_biblioteca">
-                        <button type="submit">Quitar de mi biblioteca</button>
+                        <button type="button" class="abrir-modal-quitar">Quitar de mi biblioteca</button>
                     </form>
                 <?php endif; ?>
             </section>
         </div>
+        <?php if ($modoEdicion): ?>
+            <div class="modal-quitar-biblioteca" id="modalQuitarBiblioteca" hidden>
+                <div class="modal-quitar-fondo"></div>
+                <div class="modal-quitar-panel" role="dialog" aria-modal="true" aria-labelledby="tituloQuitarBiblioteca">
+                    <h2 id="tituloQuitarBiblioteca">Quitar de mi biblioteca</h2>
+                    <p>Se eliminarán tu estado, tu puntuación y tu reseña de este juego.</p>
+                    <div class="acciones-modal-quitar">
+                        <button type="button" class="boton-cancelar-quitar">Cancelar</button>
+                        <button type="button" class="boton-confirmar-quitar">Quitar de mi biblioteca</button>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
     <?php else: ?>
         <section class="panel-vacio">
             <h1>Juego no encontrado</h1>

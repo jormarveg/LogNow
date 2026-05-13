@@ -68,10 +68,6 @@ if (formBiblioteca) {
     const fechaFinInput = document.getElementById('fecha_fin');
     const campoFechaInicio = document.querySelector('.campo-fecha-inicio');
     const campoFechaFin = document.querySelector('.campo-fecha-fin');
-    const selectorPuntuacion = document.getElementById('selector-puntuacion');
-    const textoPuntuacion = document.getElementById('texto-puntuacion');
-    const limpiarPuntuacion = document.getElementById('limpiar-puntuacion');
-    const botonesPuntuacion = selectorPuntuacion ? selectorPuntuacion.querySelectorAll('.estrella-puntuacion[data-estrella]') : [];
 
     function actualizarCamposFecha() {
         if (estadoInput.value === 'pendiente') {
@@ -102,46 +98,14 @@ if (formBiblioteca) {
         return true;
     }
 
-    function textoEstrellas(valor) {
-        if (valor === '' || valor === '0' || valor === 0) {
-            return 'Sin puntuar';
+    function validarPlataforma() {
+        if (plataformaInput.value === '0') {
+            limpiarBiblioteca(plataformaInput);
+        } else {
+            mostrarOkBiblioteca(plataformaInput);
         }
 
-        const estrellas = parseInt(valor, 10) / 20;
-
-        return estrellas.toLocaleString('es-ES', {
-            minimumFractionDigits: Number.isInteger(estrellas) ? 0 : 1,
-            maximumFractionDigits: 1
-        }) + ' estrellas';
-    }
-
-    function iconoPuntuacion(indice, valor) {
-        const puntos = indice * 20;
-        const medio = puntos - 10;
-
-        if (valor >= puntos) {
-            return 'fa-solid fa-star';
-        }
-
-        if (valor === medio) {
-            return 'fa-solid fa-star-half-stroke';
-        }
-
-        return 'fa-regular fa-star';
-    }
-
-    function pintarPuntuacion(valor) {
-        const numero = parseInt(valor || '0', 10);
-
-        textoPuntuacion.textContent = textoEstrellas(numero);
-
-        botonesPuntuacion.forEach(function(boton) {
-            const estrella = parseInt(boton.dataset.estrella, 10);
-            const icono = boton.querySelector('i');
-
-            icono.className = iconoPuntuacion(estrella, numero);
-            boton.classList.toggle('activa', numero >= (estrella * 20) - 10);
-        });
+        return true;
     }
 
     function validarPuntuacion() {
@@ -225,7 +189,7 @@ if (formBiblioteca) {
     });
 
     plataformaInput.addEventListener('change', function() {
-        validarSelect(plataformaInput);
+        validarPlataforma();
     });
 
     [horasInput, minutosInput].forEach(function(input) {
@@ -247,58 +211,12 @@ if (formBiblioteca) {
         });
     });
 
-    if (selectorPuntuacion) {
-        botonesPuntuacion.forEach(function(boton) {
-            boton.addEventListener('mousemove', function(e) {
-                const estrella = parseInt(boton.dataset.estrella, 10);
-                const rect = boton.getBoundingClientRect();
-                const mitadIzquierda = e.clientX - rect.left < rect.width / 2;
-                const valor = mitadIzquierda ? (estrella * 20) - 10 : estrella * 20;
-
-                pintarPuntuacion(valor);
-            });
-
-            boton.addEventListener('focus', function() {
-                pintarPuntuacion(parseInt(boton.dataset.estrella, 10) * 20);
-            });
-
-            boton.addEventListener('click', function(e) {
-                const estrella = parseInt(boton.dataset.estrella, 10);
-                const rect = boton.getBoundingClientRect();
-                const mitadIzquierda = e.clientX - rect.left < rect.width / 2;
-
-                puntuacionInput.value = mitadIzquierda ? String((estrella * 20) - 10) : String(estrella * 20);
-                pintarPuntuacion(puntuacionInput.value);
-                validarPuntuacion();
-            });
-
-            boton.addEventListener('keydown', function(e) {
-                const estrella = parseInt(boton.dataset.estrella, 10);
-
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    puntuacionInput.value = String(estrella * 20);
-                    pintarPuntuacion(puntuacionInput.value);
-                    validarPuntuacion();
-                }
-            });
-        });
-
-        selectorPuntuacion.addEventListener('mouseleave', function() {
-            pintarPuntuacion(puntuacionInput.value);
-        });
-    }
-
-    if (limpiarPuntuacion) {
-        limpiarPuntuacion.addEventListener('click', function() {
-            puntuacionInput.value = '';
-            pintarPuntuacion('');
-            validarPuntuacion();
-        });
-    }
-
     actualizarCamposFecha();
-    pintarPuntuacion(puntuacionInput.value);
+    iniciarSelectorPuntuacion({
+        alCambiar: function() {
+            validarPuntuacion();
+        }
+    });
 
     formBiblioteca.addEventListener('submit', function(e) {
         let valido = true;
@@ -307,9 +225,7 @@ if (formBiblioteca) {
             valido = false;
         }
 
-        if (!validarSelect(plataformaInput)) {
-            valido = false;
-        }
+        validarPlataforma();
 
         if (!validarPuntuacion()) {
             valido = false;
@@ -337,6 +253,40 @@ if (formBiblioteca) {
 
         if (!valido) {
             e.preventDefault();
+        }
+    });
+}
+
+const modalQuitarBiblioteca = document.getElementById('modalQuitarBiblioteca');
+const formQuitarBiblioteca = document.getElementById('form-quitar-biblioteca');
+
+if (modalQuitarBiblioteca && formQuitarBiblioteca) {
+    const abrirModalQuitar = formQuitarBiblioteca.querySelector('.abrir-modal-quitar');
+    const cancelarQuitar = modalQuitarBiblioteca.querySelector('.boton-cancelar-quitar');
+    const confirmarQuitar = modalQuitarBiblioteca.querySelector('.boton-confirmar-quitar');
+    const fondoQuitar = modalQuitarBiblioteca.querySelector('.modal-quitar-fondo');
+
+    function abrirModal() {
+        modalQuitarBiblioteca.hidden = false;
+        confirmarQuitar.focus();
+    }
+
+    function cerrarModal() {
+        modalQuitarBiblioteca.hidden = true;
+        abrirModalQuitar.focus();
+    }
+
+    abrirModalQuitar.addEventListener('click', abrirModal);
+    cancelarQuitar.addEventListener('click', cerrarModal);
+    fondoQuitar.addEventListener('click', cerrarModal);
+
+    confirmarQuitar.addEventListener('click', function() {
+        formQuitarBiblioteca.submit();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modalQuitarBiblioteca.hidden) {
+            cerrarModal();
         }
     });
 }
