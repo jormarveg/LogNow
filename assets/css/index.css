@@ -2,36 +2,48 @@
     display: none;
 }
 
-.tendencias {
+.seccion-juegos-home {
     display: grid;
     gap: 1rem;
+}
+
+.tendencias {
+    border-bottom: 2px solid var(--bordes);
+    padding: 1rem 2rem;
+}
+
+.resenas-home {
     border-bottom: 2px solid var(--bordes);
     padding-bottom: 2rem;
 }
 
-.tendencias .carousel-wrapper {
+.seccion-juegos-home .carousel-wrapper {
     min-width: 0;
 }
 
-#carouselTendencias {
+.carousel-juegos-home {
     --f-carousel-gap: 1rem;
     --f-carousel-slide-width: calc(50% - 0.5rem);
-    --f-button-width: 3rem;
-    --f-button-height: 3rem;
-    --f-button-color: #fff;
-    --f-button-bg: rgba(30, 35, 48, 0.88);
-    --f-button-hover-color: var(--azul);
-    --f-button-active-color: var(--azul);
+    --f-arrow-width: 3.35rem;
+    --f-arrow-height: 3.35rem;
+    --f-arrow-svg-width: 1.55rem;
+    --f-arrow-svg-height: 1.55rem;
+    --f-arrow-svg-stroke-width: 2.2;
+    --f-arrow-border-radius: 999px;
+    --f-arrow-color: #fff;
+    --f-arrow-bg: rgba(30, 35, 48, 0.88);
+    --f-arrow-hover-color: var(--azul);
+    --f-arrow-active-color: var(--azul);
 }
 
-.tendencias .elemento-carousel {
+.seccion-juegos-home .elemento-carousel {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     min-width: 0;
 }
 
-.tendencias .portada {
+.seccion-juegos-home .portada {
     position: relative;
     overflow: hidden;
     border-radius: 0.35rem;
@@ -39,25 +51,25 @@
     background: #d6d6d6;
 }
 
-.tendencias .portada a {
+.seccion-juegos-home .portada a {
     display: block;
     width: 100%;
     height: 100%;
 }
 
-.tendencias .portada img {
+.seccion-juegos-home .portada img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.25s ease;
 }
 
-.tendencias .elemento-carousel:hover .portada img,
-.tendencias .elemento-carousel:focus-within .portada img {
+.seccion-juegos-home .elemento-carousel:hover .portada img,
+.seccion-juegos-home .elemento-carousel:focus-within .portada img {
     transform: scale(1.04);
 }
 
-.tendencias .portada .puntuacion {
+.seccion-juegos-home .portada .puntuacion {
     position: absolute;
     left: 0.75rem;
     bottom: 0.75rem;
@@ -73,49 +85,58 @@
     box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.16);
 }
 
-.tendencias .portada .puntuacion,
-.tendencias .portada .puntuacion i,
-.tendencias .portada .puntuacion span {
+.seccion-juegos-home .portada .puntuacion,
+.seccion-juegos-home .portada .puntuacion i,
+.seccion-juegos-home .portada .puntuacion span {
     color: var(--puntuacion);
 }
 
-.tendencias .titulo-juego {
+.seccion-juegos-home .titulo-juego {
     color: var(--texto-principal);
     font-weight: 700;
     line-height: 1.25;
 }
 
-.tendencias .titulo-juego:hover {
+.seccion-juegos-home .titulo-juego:hover {
     color: var(--azul);
 }
 
-.tendencias .f-carousel__nav .f-button {
+.seccion-juegos-home .f-button.is-arrow {
     border: 1px solid rgba(255, 255, 255, 0.92);
-    box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.28);
+    box-shadow: 0 0.22rem 0.7rem rgba(0, 0, 0, 0.24);
 }
 
-.tendencias .f-carousel__nav .f-button svg {
+.seccion-juegos-home .f-button.is-arrow svg {
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.78));
 }
 
-.tendencias .f-carousel__nav .f-button svg path {
+.seccion-juegos-home .f-button.is-arrow svg path {
     stroke: #fff !important;
     stroke-width: 3.2 !important;
     fill: none !important;
 }
 
+.panel-vacio-juegos-home {
+    border: 1px dashed var(--bordes);
+    border-radius: 12px;
+    padding: 1.1rem 1rem;
+    background: #f7f9fb;
+    color: #5d6d7d;
+    text-align: center;
+}
+
 
 @media (min-width: 768px) {
 
-    .tendencias .titulo-tablet {
+    .seccion-juegos-home .titulo-tablet {
         display: block;
     }
 
-    .tendencias .titulo-mobile {
+    .seccion-juegos-home .titulo-mobile {
         display: none;
     }
 
-    #carouselTendencias {
+    .carousel-juegos-home {
         --f-carousel-gap: 1.25rem;
         --f-carousel-slide-width: calc(33.333% - 0.85rem);
     }
@@ -123,7 +144,7 @@
 }
 
 @media (min-width: 992px) {
-    #carouselTendencias {
+    .carousel-juegos-home {
         --f-carousel-gap: 1.5rem;
         --f-carousel-slide-width: calc(20% - 1.2rem);
     }
