@@ -25,10 +25,6 @@ main{
     border-bottom: none;
 }
 
-.estado-busqueda-ajax{
-    display: none;
-}
-
 .filtros-catalogo{
     display: grid;
     gap: 0.55rem;
@@ -266,6 +262,88 @@ main{
     display: grid;
 }
 
+.tabs-busqueda{
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--bordes);
+}
+
+.tabs-busqueda a{
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--bordes);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    background: #f7f9fb;
+    color: #4b5c6b;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tabs-busqueda a.active{
+    background: white;
+    color: var(--primary);
+    border-color: var(--bordes);
+    position: relative;
+    top: 2px;
+}
+
+.usuarios-busqueda{
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+
+.usuario-busqueda{
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    border: 1px solid var(--bordes);
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: white;
+}
+
+.usuario-busqueda:hover{
+    border-color: var(--primary);
+}
+
+.usuario-busqueda img{
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.datos-usuario-busqueda,
+.stats-usuario-busqueda{
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.datos-usuario-busqueda strong,
+.datos-usuario-busqueda span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.datos-usuario-busqueda strong{
+    color: #1f2c38;
+}
+
+.datos-usuario-busqueda span,
+.stats-usuario-busqueda{
+    color: #607080;
+    font-size: 0.85rem;
+}
+
+.stats-usuario-busqueda{
+    grid-column: 2;
+    gap: 0.15rem;
+}
+
 
 .paginacion{
     display: flex;
@@ -328,6 +406,24 @@ main{
     .juegos{
         grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
         gap: 2rem;
+    }
+
+    .usuarios-busqueda{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .usuario-busqueda{
+        grid-template-columns: 3.25rem 1fr auto;
+    }
+
+    .usuario-busqueda img{
+        width: 3.25rem;
+        height: 3.25rem;
+    }
+
+    .stats-usuario-busqueda{
+        grid-column: auto;
+        text-align: right;
     }
 }
 
