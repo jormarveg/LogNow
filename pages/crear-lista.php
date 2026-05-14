@@ -54,7 +54,7 @@ require '../includes/header.php';
         <section class="panel-vacio-listas">
             <h1>Lista no encontrada</h1>
             <p>No hemos encontrado esa lista entre tus listas personales.</p>
-            <a class="boton-secundario-listas" href="/mis-listas.php">Volver a mis listas</a>
+            <a class="boton-secundario-listas" href="/perfil.php?tab=listas">Volver a mis listas</a>
         </section>
     <?php else: ?>
         <section class="cabecera-listas">
@@ -65,7 +65,7 @@ require '../includes/header.php';
                     <?= $modoEdicion ? 'Actualiza el nombre y la descripción de esta colección.' : 'Crea una colección sencilla y luego añade juegos desde sus fichas.' ?>
                 </p>
             </div>
-            <a class="boton-secundario-listas" href="<?= $modoEdicion ? '/lista.php?id=' . (int) $idLista : '/mis-listas.php' ?>">Volver</a>
+            <a class="boton-secundario-listas" href="<?= $modoEdicion ? '/lista.php?id=' . (int) $idLista : '/perfil.php?tab=listas' ?>">Volver</a>
         </section>
 
         <section class="formulario-lista">
@@ -90,7 +90,7 @@ require '../includes/header.php';
 
                 <div class="acciones-formulario-lista">
                     <button type="submit"><?= $modoEdicion ? 'Guardar cambios' : 'Crear lista' ?></button>
-                    <a href="<?= $modoEdicion ? '/lista.php?id=' . (int) $idLista : '/mis-listas.php' ?>">Cancelar</a>
+                    <a href="<?= $modoEdicion ? '/lista.php?id=' . (int) $idLista : '/perfil.php?tab=listas' ?>">Cancelar</a>
                 </div>
             </form>
         </section>

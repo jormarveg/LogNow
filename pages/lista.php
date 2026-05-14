@@ -40,7 +40,7 @@ require '../includes/header.php';
         <section class="panel-vacio-listas">
             <h1>Lista no encontrada</h1>
             <p>No hemos encontrado esa lista entre tus listas personales.</p>
-            <a class="boton-secundario-listas" href="/mis-listas.php">Volver a mis listas</a>
+            <a class="boton-secundario-listas" href="/perfil.php?tab=listas">Volver a mis listas</a>
         </section>
     <?php else: ?>
         <section class="cabecera-listas">
@@ -52,7 +52,7 @@ require '../includes/header.php';
                 </p>
             </div>
             <div class="acciones-cabecera-lista">
-                <a class="boton-secundario-listas" href="/mis-listas.php">Mis listas</a>
+                <a class="boton-secundario-listas" href="/perfil.php?tab=listas">Mis listas</a>
                 <a class="boton-principal-listas" href="/crear-lista.php?id=<?= (int) $lista['id'] ?>">Editar</a>
             </div>
         </section>

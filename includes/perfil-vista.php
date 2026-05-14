@@ -10,6 +10,7 @@ $textoFavoritosAyuda = $perfilPropio ? 'Marca juegos de tu biblioteca como favor
 $textoResenasTitulo = $perfilPropio ? 'Tus reseñas recientes' : 'Reseñas recientes';
 $textoResenasVacio = $perfilPropio ? 'Todavía no has publicado reseñas' : 'Todavía no ha publicado reseñas';
 $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde un juego guardado en biblioteca, aparecerá aquí.' : 'Cuando publique una reseña, aparecerá aquí.';
+$textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 'Todavía no ha puntuado juegos.';
 ?>
 
 <section class="encabezado-perfil" style="background-image: url('<?= htmlspecialchars(urlEncabezadoUsuario($datosUsuario['encabezado'] ?? '')) ?>');">
@@ -37,7 +38,7 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
             <?php endif; ?>
             <li<?= $tab === 'resenas' ? ' class="active"' : '' ?>><a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'resenas')) ?>"><i class="fa-solid fa-message"></i><?= $perfilPropio ? 'Tus reseñas' : 'Reseñas' ?></a></li>
             <?php if ($perfilPropio): ?>
-                <li><a class="editar" href="/editar-perfil.php">Editar perfil</a></li>
+                <li class="tab-editar"><a class="editar" href="/editar-perfil.php">Editar perfil</a></li>
             <?php endif; ?>
         </ul>
     </div>
@@ -64,18 +65,22 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
 
             <section class="puntuaciones">
                 <h3><?= $perfilPropio ? 'Tus puntuaciones' : 'Puntuaciones' ?></h3>
-                <div class="grafica">
-                    <div class="barra barra1" style="height: <?= alturaBarraPerfil($histogramaUsuario[1], $maximoHistograma) ?>%;"></div>
-                    <div class="barra barra2" style="height: <?= alturaBarraPerfil($histogramaUsuario[2], $maximoHistograma) ?>%;"></div>
-                    <div class="barra barra3" style="height: <?= alturaBarraPerfil($histogramaUsuario[3], $maximoHistograma) ?>%;"></div>
-                    <div class="barra barra4" style="height: <?= alturaBarraPerfil($histogramaUsuario[4], $maximoHistograma) ?>%;"></div>
-                    <div class="barra barra5" style="height: <?= alturaBarraPerfil($histogramaUsuario[5], $maximoHistograma) ?>%;"></div>
-                    <span>1 <i class="fa-solid fa-star"></i></span>
-                    <span>2 <i class="fa-solid fa-star"></i></span>
-                    <span>3 <i class="fa-solid fa-star"></i></span>
-                    <span>4 <i class="fa-solid fa-star"></i></span>
-                    <span>5 <i class="fa-solid fa-star"></i></span>
-                </div>
+                <?php if ($maximoHistograma > 0): ?>
+                    <div class="grafica">
+                        <div class="barra barra1" style="height: <?= alturaBarraPerfil($histogramaUsuario[1], $maximoHistograma) ?>%;"></div>
+                        <div class="barra barra2" style="height: <?= alturaBarraPerfil($histogramaUsuario[2], $maximoHistograma) ?>%;"></div>
+                        <div class="barra barra3" style="height: <?= alturaBarraPerfil($histogramaUsuario[3], $maximoHistograma) ?>%;"></div>
+                        <div class="barra barra4" style="height: <?= alturaBarraPerfil($histogramaUsuario[4], $maximoHistograma) ?>%;"></div>
+                        <div class="barra barra5" style="height: <?= alturaBarraPerfil($histogramaUsuario[5], $maximoHistograma) ?>%;"></div>
+                        <span>1 <i class="fa-solid fa-star"></i></span>
+                        <span>2 <i class="fa-solid fa-star"></i></span>
+                        <span>3 <i class="fa-solid fa-star"></i></span>
+                        <span>4 <i class="fa-solid fa-star"></i></span>
+                        <span>5 <i class="fa-solid fa-star"></i></span>
+                    </div>
+                <?php else: ?>
+                    <p class="puntuaciones-vacias"><?= $textoPuntuacionesVacias ?></p>
+                <?php endif; ?>
             </section>
         </aside>
         <hr class="separador">
@@ -147,8 +152,9 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
                 $bibliotecaTitulo = $perfilPropio ? 'Mis juegos' : 'Juegos';
                 $bibliotecaTexto = $perfilPropio ? 'Revisa tus juegos guardados y filtra por estado.' : 'Consulta los juegos guardados por este usuario.';
                 $bibliotecaMostrarAccion = $perfilPropio;
+                $bibliotecaMostrarAccionVacia = false;
                 $bibliotecaVaciaTitulo = $perfilPropio ? 'Tu biblioteca está vacía' : 'Esta biblioteca está vacía';
-                $bibliotecaVaciaTexto = $perfilPropio ? 'Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.' : 'Este usuario todavía no ha registrado juegos en su biblioteca.';
+                $bibliotecaVaciaTexto = $perfilPropio ? 'Todavía no has registrado ningún juego.' : 'Este usuario todavía no ha registrado juegos.';
                 $bibliotecaFiltroVacioTexto = $perfilPropio ? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.' : 'Prueba a cambiar el estado seleccionado para ver el resto de su biblioteca.';
                 require __DIR__ . '/bloque-mis-juegos.php';
                 ?>
@@ -161,6 +167,10 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
                     </div>
                     <a class="boton-principal-listas" href="/crear-lista.php">Crear lista</a>
                 </section>
+
+                <?php if (($mensajeLista ?? '') === 'borrada'): ?>
+                    <p class="mensaje-listas exito">Lista borrada correctamente.</p>
+                <?php endif; ?>
 
                 <?php if ($listasPerfil ?? []): ?>
                     <section class="grid-listas">
@@ -179,6 +189,11 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
                                     <div class="acciones-lista">
                                         <a href="/lista.php?id=<?= (int) $listaPerfil['id'] ?>">Ver</a>
                                         <a href="/crear-lista.php?id=<?= (int) $listaPerfil['id'] ?>">Editar</a>
+                                        <form method="POST">
+                                            <input type="hidden" name="accion" value="borrar">
+                                            <input type="hidden" name="id_lista" value="<?= (int) $listaPerfil['id'] ?>">
+                                            <button type="submit">Borrar</button>
+                                        </form>
                                     </div>
                                 </div>
                             </article>
@@ -187,7 +202,6 @@ $textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde 
                 <?php else: ?>
                     <section class="panel-vacio-listas">
                         <h2>Todavía no tienes listas</h2>
-                        <a class="boton-secundario-listas" href="/crear-lista.php">Crear una lista</a>
                     </section>
                 <?php endif; ?>
             <?php else: ?>
