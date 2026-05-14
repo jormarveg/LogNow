@@ -4,9 +4,10 @@ $bibliotecaEyebrow = $bibliotecaEyebrow ?? 'Biblioteca personal';
 $bibliotecaTitulo = $bibliotecaTitulo ?? 'Mis juegos';
 $bibliotecaTexto = $bibliotecaTexto ?? 'Consulta tu biblioteca y filtra por estado.';
 $bibliotecaMostrarAccion = $bibliotecaMostrarAccion ?? true;
+$bibliotecaMostrarAccionVacia = $bibliotecaMostrarAccionVacia ?? $bibliotecaMostrarAccion;
 $bibliotecaAccionTexto = $bibliotecaAccionTexto ?? 'Registrar otro juego';
 $bibliotecaVaciaTitulo = $bibliotecaVaciaTitulo ?? 'Tu biblioteca está vacía';
-$bibliotecaVaciaTexto = $bibliotecaVaciaTexto ?? 'Todavía no has registrado ningún juego. Empieza desde el catálogo y guarda el primero.';
+$bibliotecaVaciaTexto = $bibliotecaVaciaTexto ?? 'Todavía no has registrado ningún juego.';
 $bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.';
 ?>
 <section class="cabecera-biblioteca">
@@ -65,7 +66,9 @@ $bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar e
                         <span class="estado-biblioteca estado-<?= htmlspecialchars($juego['estado']) ?>"><?= textoEstadoBiblioteca($juego['estado']) ?></span>
                     </div>
 
-                    <p class="plataforma-biblioteca"><?= htmlspecialchars($juego['plataforma']) ?></p>
+                    <?php if (!empty($juego['plataforma'])): ?>
+                        <p class="plataforma-biblioteca"><?= htmlspecialchars($juego['plataforma']) ?></p>
+                    <?php endif; ?>
 
                     <div class="meta-biblioteca">
                         <p><?= tiempoBiblioteca($juego['horas_jugadas'], $juego['minutos_jugados']) ?></p>
@@ -88,7 +91,7 @@ $bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar e
                 <h2><?= htmlspecialchars($bibliotecaVaciaTitulo) ?></h2>
                 <p><?= htmlspecialchars($bibliotecaVaciaTexto) ?></p>
             <?php endif; ?>
-            <?php if ($bibliotecaMostrarAccion): ?>
+            <?php if ($bibliotecaMostrarAccionVacia): ?>
                 <a class="boton-secundario" href="/catalogo.php">Ir al catálogo</a>
             <?php endif; ?>
         </div>
