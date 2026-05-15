@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/api/cache.php';
+require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/perfil_helpers.php';
 
 function fechaInicioBonita($fecha) {
@@ -75,8 +76,45 @@ function partesTextoInicioResena($texto, $limite = 110) {
     return [rtrim($corto) . '...', ltrim($resto)];
 }
 
+function htmlCarruselInicioJuegos($idCarrusel, $juegos) {
+    ob_start(); ?>
+    <div class="carousel-wrapper">
+        <div id="<?= htmlspecialchars($idCarrusel) ?>" class="f-carousel carousel-juegos-home">
+            <?php foreach ($juegos as $juego): ?>
+                <article class="f-carousel__slide elemento-carousel">
+                    <div class="portada">
+                        <a href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>" aria-label="Ver ficha de <?= htmlspecialchars($juego['titulo']) ?>">
+                            <img src="<?= htmlspecialchars(urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juego['titulo']) ?>">
+                        </a>
+                        <div class="puntuacion">
+                            <i class="fa-solid fa-star"></i>
+                            <span><?= puntuacionInicioVisible($juego['puntuacion_visible']) ?></span>
+                        </div>
+                    </div>
+                    <div class="titulo-puntuacion">
+                        <a class="titulo-juego" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>"><?= htmlspecialchars($juego['titulo']) ?></a>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+
+    return trim((string) ob_get_clean());
+}
+
 $resenasRecientes = cacheResenasRecientesInicio($db, 4);
-$juegosTendencia = cacheJuegosTendenciaInicio($db, 8);
+$juegosTendencia = cacheJuegosTendenciaInicio($db, 10);
+$recomendacionesInicio = [];
+$totalBibliotecaInicio = 0;
+
+if (estaLogueado()) {
+    $idUsuarioInicio = (int) (getUsuario()['id'] ?? 0);
+    $resumenInicio = cacheResumenBibliotecaUsuario($db, $idUsuarioInicio);
+    $totalBibliotecaInicio = (int) ($resumenInicio['total'] ?? 0);
+    $recomendacionesInicio = cacheRecomendacionesInicio($db, $idUsuarioInicio, 10);
+}
+
 $titulo = 'Inicio — LogNow!';
 $css = ['resenas.css', 'index.css'];
 $cssExterno = [
@@ -95,33 +133,14 @@ require 'includes/header.php';
 
 <main class="container">
     <?php if ($juegosTendencia): ?>
-        <section class="tendencias">
+        <section class="tendencias seccion-juegos-home">
             <h2 class="titulo-mobile">Tendencias</h2>
             <h2 class="titulo-tablet">Juegos en tendencia</h2>
-            <div class="carousel-wrapper">
-                <div id="carouselTendencias" class="f-carousel carousel-tendencias">
-                    <?php foreach ($juegosTendencia as $juegoTendencia): ?>
-                        <article class="f-carousel__slide elemento-carousel">
-                            <div class="portada">
-                                <a href="/juego.php?id=<?= (int) $juegoTendencia['igdb_id'] ?>" aria-label="Ver ficha de <?= htmlspecialchars($juegoTendencia['titulo']) ?>">
-                                    <img src="<?= htmlspecialchars(urlPortadaJuego($juegoTendencia['portada_url'] ?? '', $juegoTendencia['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($juegoTendencia['titulo']) ?>">
-                                </a>
-                                <div class="puntuacion">
-                                    <i class="fa-solid fa-star"></i>
-                                    <span><?= puntuacionInicioVisible($juegoTendencia['puntuacion_visible']) ?></span>
-                                </div>
-                            </div>
-                            <div class="titulo-puntuacion">
-                                <a class="titulo-juego" href="/juego.php?id=<?= (int) $juegoTendencia['igdb_id'] ?>"><?= htmlspecialchars($juegoTendencia['titulo']) ?></a>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </div>
+            <?= htmlCarruselInicioJuegos('carouselTendencias', $juegosTendencia) ?>
         </section>
     <?php endif; ?>
 
-    <section class="resenas-recientes">
+    <section class="resenas-recientes resenas-home">
         <h2>Reseñas recientes</h2>
         <?php if ($resenasRecientes): ?>
             <div class="carousel">
@@ -166,6 +185,20 @@ require 'includes/header.php';
             <p>Todavía no hay reseñas recientes publicadas en LogNow!.</p>
         <?php endif; ?>
     </section>
+
+    <?php if (estaLogueado()): ?>
+        <section class="recomendados-home seccion-juegos-home">
+            <h2 class="titulo-mobile">Recomendados</h2>
+            <h2 class="titulo-tablet">Recomendados para ti</h2>
+            <?php if ($recomendacionesInicio): ?>
+                <?= htmlCarruselInicioJuegos('carouselRecomendaciones', $recomendacionesInicio) ?>
+            <?php else: ?>
+                <div class="panel-vacio-juegos-home">
+                    <p><?= $totalBibliotecaInicio < 3 ? 'Añade más juegos a tu biblioteca para recibir recomendaciones.' : 'Todavía no hay recomendaciones para ti.' ?></p>
+                </div>
+            <?php endif; ?>
+        </section>
+    <?php endif; ?>
 </main>
 
 <?php

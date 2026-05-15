@@ -594,7 +594,7 @@ function cacheResenasRecientesInicio(PDO $db, $limite = 4) {
     return $resenas;
 }
 
-function cacheJuegosTendenciaInicio(PDO $db, $limite = 8) {
+function cacheJuegosTendenciaInicio(PDO $db, $limite = 10) {
     $limite = max(1, (int) $limite);
     $sqlPuntuaciones = 'SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
                         FROM RESENA
@@ -650,6 +650,77 @@ function cacheJuegosTendenciaInicio(PDO $db, $limite = 8) {
 
         $juegos = array_merge($juegos, $stmt->fetchAll());
     }
+
+    foreach ($juegos as &$juego) {
+        $juego['puntuacion_visible'] = isset($juego['puntuacion_visible']) ? (float) $juego['puntuacion_visible'] : null;
+    }
+
+    return $juegos;
+}
+
+function cacheRecomendacionesInicio(PDO $db, $idUsuario, $limite = 10) {
+    $idUsuario = (int) $idUsuario;
+    $limite = max(1, (int) $limite);
+
+    if ($idUsuario <= 0) {
+        return [];
+    }
+
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM USUARIO_JUEGO
+                          WHERE id_usuario = ?');
+    $stmt->execute([$idUsuario]);
+
+    if ((int) $stmt->fetchColumn() < 3) {
+        return [];
+    }
+
+    $stmt = $db->prepare('SELECT vg.id_genero, COUNT(*) AS total
+                          FROM USUARIO_JUEGO uj
+                          INNER JOIN VIDEOJUEGO_GENERO vg ON vg.id_videojuego = uj.id_videojuego
+                          WHERE uj.id_usuario = ?
+                          GROUP BY vg.id_genero
+                          ORDER BY total DESC, vg.id_genero ASC
+                          LIMIT 3');
+    $stmt->execute([$idUsuario]);
+    $generos = array_map('intval', array_column($stmt->fetchAll(), 'id_genero'));
+
+    if (!$generos) {
+        return [];
+    }
+
+    $sqlPuntuaciones = 'SELECT id_videojuego, ROUND(AVG(puntuacion) / 20, 1) AS puntuacion_media
+                        FROM RESENA
+                        WHERE activa = 1
+                        GROUP BY id_videojuego';
+    $placeholders = implode(', ', array_fill(0, count($generos), '?'));
+    $params = array_merge($generos, [$idUsuario]);
+
+    $stmt = $db->prepare('SELECT
+                            v.id,
+                            v.igdb_id,
+                            v.titulo,
+                            v.portada_url,
+                            COALESCE(r.puntuacion_media, v.puntuacion_igdb) AS puntuacion_visible,
+                            COUNT(DISTINCT vg.id_genero) AS coincidencias_genero
+                          FROM VIDEOJUEGO v
+                          INNER JOIN VIDEOJUEGO_GENERO vg ON vg.id_videojuego = v.id
+                          LEFT JOIN (' . $sqlPuntuaciones . ') r ON r.id_videojuego = v.id
+                          WHERE vg.id_genero IN (' . $placeholders . ')
+                            AND v.portada_url IS NOT NULL
+                            AND TRIM(v.portada_url) <> ""
+                            AND COALESCE(r.puntuacion_media, v.puntuacion_igdb) IS NOT NULL
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM USUARIO_JUEGO uj
+                                WHERE uj.id_usuario = ?
+                                  AND uj.id_videojuego = v.id
+                            )
+                          GROUP BY v.id, v.igdb_id, v.titulo, v.portada_url, r.puntuacion_media, v.puntuacion_igdb
+                          ORDER BY coincidencias_genero DESC, puntuacion_visible DESC, v.titulo ASC
+                          LIMIT ' . $limite);
+    $stmt->execute($params);
+    $juegos = $stmt->fetchAll();
 
     foreach ($juegos as &$juego) {
         $juego['puntuacion_visible'] = isset($juego['puntuacion_visible']) ? (float) $juego['puntuacion_visible'] : null;

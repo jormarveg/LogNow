@@ -11,7 +11,7 @@
             <a href="https://x.com"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
         <div class="copy-footer">
-            <span>&copy; LogNow!</span>
+            <span>&copy; <span class="marca-lognow">LogNow!</span></span>
             <span>Hecho por Jorge Martínez Vegara</span>
         </div>
     </div>

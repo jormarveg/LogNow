@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $titulo ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Limelight&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap">
     <?php if (isset($cssExterno) && !empty($cssExterno)): ?>
         <?php foreach ($cssExterno as $archivo): ?>
             <link rel="stylesheet" href="<?= htmlspecialchars($archivo) ?>">
@@ -23,7 +23,7 @@
 <body>
 <header>
     <div class="container">
-        <div class="logo"><a href="/"><span>LogNow!</span></a></div>
+        <div class="logo"><a href="/"><span class="marca-lognow">LogNow!</span></a></div>
 
         <form class="buscar" action="/buscar.php" method="GET">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -69,7 +69,7 @@
                     <a href="https://instagram.com"><i class="fa-brands fa-square-instagram"></i></a>
                     <a href="https://x.com"><i class="fa-brands fa-x-twitter"></i></a>
                 </div>
-                <p class="copy">&copy; LogNow!</p>
+                <p class="copy">&copy; <span class="marca-lognow">LogNow!</span></p>
             </div>
             <label for="check-info"><i class="fa-solid fa-circle-info"></i></label>
         </div>
