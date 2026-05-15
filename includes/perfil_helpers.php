@@ -118,6 +118,7 @@ function datosPerfilUsuario(PDO $db, $idUsuario, $estadoFiltro, $paginaBibliotec
 
     $offsetBiblioteca = ($paginaBibliotecaActual - 1) * $porPaginaBiblioteca;
     $histogramaUsuario = cacheHistogramaUsuario($db, $idUsuario);
+    $totalPuntuacionesUsuario = array_sum($histogramaUsuario);
 
     return [
         'resumenBiblioteca' => $resumenBiblioteca,
@@ -130,6 +131,7 @@ function datosPerfilUsuario(PDO $db, $idUsuario, $estadoFiltro, $paginaBibliotec
         'favoritosUsuario' => cacheFavoritosUsuario($db, $idUsuario, 6),
         'jugadosEsteAno' => cacheJuegosUsuarioEsteAno($db, $idUsuario),
         'histogramaUsuario' => $histogramaUsuario,
+        'totalPuntuacionesUsuario' => $totalPuntuacionesUsuario,
         'maximoHistograma' => max($histogramaUsuario ?: [0]),
         'contadorFiltros' => [
             '' => $resumenBiblioteca['total'],

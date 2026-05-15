@@ -57,6 +57,7 @@ $resenasUsuarioTab = $datosPerfil['resenasUsuarioTab'];
 $favoritosUsuario = $datosPerfil['favoritosUsuario'];
 $jugadosEsteAno = $datosPerfil['jugadosEsteAno'];
 $histogramaUsuario = $datosPerfil['histogramaUsuario'];
+$totalPuntuacionesUsuario = $datosPerfil['totalPuntuacionesUsuario'];
 $maximoHistograma = $datosPerfil['maximoHistograma'];
 $contadorFiltros = $datosPerfil['contadorFiltros'];
 $filtros = $datosPerfil['filtros'];

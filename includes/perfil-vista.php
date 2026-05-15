@@ -64,23 +64,26 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
             </section>
 
             <section class="puntuaciones">
-                <h3><?= $perfilPropio ? 'Tus puntuaciones' : 'Puntuaciones' ?></h3>
-                <?php if ($maximoHistograma > 0): ?>
-                    <div class="grafica">
-                        <div class="barra barra1" style="height: <?= alturaBarraPerfil($histogramaUsuario[1], $maximoHistograma) ?>%;"></div>
-                        <div class="barra barra2" style="height: <?= alturaBarraPerfil($histogramaUsuario[2], $maximoHistograma) ?>%;"></div>
-                        <div class="barra barra3" style="height: <?= alturaBarraPerfil($histogramaUsuario[3], $maximoHistograma) ?>%;"></div>
-                        <div class="barra barra4" style="height: <?= alturaBarraPerfil($histogramaUsuario[4], $maximoHistograma) ?>%;"></div>
-                        <div class="barra barra5" style="height: <?= alturaBarraPerfil($histogramaUsuario[5], $maximoHistograma) ?>%;"></div>
-                        <span>1 <i class="fa-solid fa-star"></i></span>
-                        <span>2 <i class="fa-solid fa-star"></i></span>
-                        <span>3 <i class="fa-solid fa-star"></i></span>
-                        <span>4 <i class="fa-solid fa-star"></i></span>
-                        <span>5 <i class="fa-solid fa-star"></i></span>
-                    </div>
-                <?php else: ?>
-                    <p class="puntuaciones-vacias"><?= $textoPuntuacionesVacias ?></p>
-                <?php endif; ?>
+                <div class="panel-puntuaciones-perfil">
+                    <h3><?= $perfilPropio ? 'Tus puntuaciones' : 'Puntuaciones' ?></h3>
+                    <?php if ($maximoHistograma > 0): ?>
+                        <div class="grafica">
+                            <div class="barra barra1" style="height: <?= alturaBarraPerfil($histogramaUsuario[1], $maximoHistograma) ?>%;"></div>
+                            <div class="barra barra2" style="height: <?= alturaBarraPerfil($histogramaUsuario[2], $maximoHistograma) ?>%;"></div>
+                            <div class="barra barra3" style="height: <?= alturaBarraPerfil($histogramaUsuario[3], $maximoHistograma) ?>%;"></div>
+                            <div class="barra barra4" style="height: <?= alturaBarraPerfil($histogramaUsuario[4], $maximoHistograma) ?>%;"></div>
+                            <div class="barra barra5" style="height: <?= alturaBarraPerfil($histogramaUsuario[5], $maximoHistograma) ?>%;"></div>
+                            <span>1 <i class="fa-solid fa-star"></i></span>
+                            <span>2 <i class="fa-solid fa-star"></i></span>
+                            <span>3 <i class="fa-solid fa-star"></i></span>
+                            <span>4 <i class="fa-solid fa-star"></i></span>
+                            <span>5 <i class="fa-solid fa-star"></i></span>
+                        </div>
+                        <p class="total-resenas"><?= $totalPuntuacionesUsuario === 1 ? '1 puntuación' : $totalPuntuacionesUsuario . ' puntuaciones' ?></p>
+                    <?php else: ?>
+                        <p class="puntuaciones-vacias"><?= $textoPuntuacionesVacias ?></p>
+                    <?php endif; ?>
+                </div>
             </section>
         </aside>
         <hr class="separador">
