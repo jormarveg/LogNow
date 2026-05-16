@@ -3,6 +3,8 @@ require __DIR__ . '/includes/proteger.php';
 require __DIR__ . '/includes/funciones.php';
 require __DIR__ . '/../includes/perfil_helpers.php';
 
+$totalJuegosCatalogo = (int) $db->query('SELECT COUNT(*) FROM VIDEOJUEGO')->fetchColumn();
+
 $ultimosUsuarios = $db->query("SELECT nombre, nick, rol, activo, registro
                                FROM USUARIO
                                ORDER BY registro DESC, id DESC
@@ -39,6 +41,16 @@ require __DIR__ . '/../includes/header.php';
         <section class="admin-cabecera">
             <h1>Panel de administración</h1>
         </section>
+
+        <?php if ($totalJuegosCatalogo === 0): ?>
+            <section class="admin-importar">
+                <div>
+                    <h2>Catálogo vacío</h2>
+                    <p>Todavía no hay juegos importados desde IGDB.</p>
+                </div>
+                <a href="/api/importar.php?pagina=1&cantidad=20&reiniciar=1">Importar juegos</a>
+            </section>
+        <?php endif; ?>
 
         <div class="admin-columnas">
             <section class="admin-bloque">
