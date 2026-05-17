@@ -796,6 +796,8 @@ section.principal {
 
     aside.sidebar {
         order: 0;
+        width: min(100%, 42rem);
+        align-self: center;
     }
 
     .separador {
@@ -898,6 +900,8 @@ section.principal {
     aside.sidebar {
         padding: 1rem 1rem;
         border: 1px solid rgba(195, 207, 217, 0.59);
+        width: auto;
+        align-self: start;
     }
 
     .estado {

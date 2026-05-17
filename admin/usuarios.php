@@ -196,18 +196,18 @@ require __DIR__ . '/../includes/header.php';
                             <?php foreach ($usuarios as $usuario): ?>
                                 <?php $esCuentaActual = (int) $usuario['id'] === (int) getUsuario()['id']; ?>
                                 <tr>
-                                    <td>
+                                    <td data-label="Usuario">
                                         <strong><a class="enlace-admin" href="<?= htmlspecialchars(urlUsuarioPublico($usuario['nick'])) ?>"><?= htmlspecialchars($usuario['nombre']) ?></a></strong>
                                         <span><a class="enlace-admin" href="<?= htmlspecialchars(urlUsuarioPublico($usuario['nick'])) ?>">@<?= htmlspecialchars($usuario['nick']) ?></a></span>
                                         <span>Rol: <?= $usuario['rol'] === 'admin' ? 'admin' : 'usuario' ?></span>
                                     </td>
-                                    <td><?= htmlspecialchars($usuario['email']) ?></td>
-                                    <td>
+                                    <td data-label="Email"><?= htmlspecialchars($usuario['email']) ?></td>
+                                    <td data-label="Actividad">
                                         <span><?= (int) $usuario['total_juegos'] ?> juegos</span>
                                         <span><?= (int) $usuario['total_resenas'] ?> reseñas</span>
                                     </td>
-                                    <td><?= adminFecha($usuario['registro']) ?></td>
-                                    <td>
+                                    <td data-label="Registro"><?= adminFecha($usuario['registro']) ?></td>
+                                    <td data-label="Estado">
                                         <div class="estado-admin">
                                             <span class="estado-cuenta estado-<?= $usuario['activo'] ? 'activo' : 'inactivo' ?>"><?= $usuario['activo'] ? 'Activo' : 'Inactivo' ?></span>
                                             <form method="POST">
