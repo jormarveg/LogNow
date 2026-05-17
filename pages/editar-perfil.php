@@ -114,7 +114,7 @@ require '../includes/header.php';
 
                     <div class="campo">
                         <label for="nick">Nick</label>
-                        <input type="text" id="nick" name="nick" maxlength="20" required value="<?= htmlspecialchars($nick) ?>">
+                        <input type="text" id="nick" name="nick" minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]{3,20}" required value="<?= htmlspecialchars($nick) ?>">
                         <span class="msg-error"></span>
                     </div>
 

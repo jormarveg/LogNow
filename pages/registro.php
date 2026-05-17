@@ -23,14 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un número';
     } elseif ($password !== $password2) {
         $error = 'Las contraseñas no coinciden';
+    } elseif ($usuarioModel->existeNick($nick)) {
+        $error = 'Ese nick ya está en uso';
+    } elseif ($usuarioModel->existeEmail($email)) {
+        $error = 'Ese email ya está registrado';
     } else {
-        if ($usuarioModel->existeNickOEmail($nick, $email)) {
-            $error = 'El nick o el email ya están registrados';
-        } else {
-            $usuarioModel->registrar($nombre, $nick, $email, $password);
-            header('Location: /login.php?registro=ok');
-            exit;
-        }
+        $usuarioModel->registrar($nombre, $nick, $email, $password);
+        header('Location: /login.php?registro=ok');
+        exit;
     }
 }
 
