@@ -132,6 +132,10 @@ require 'includes/header.php';
 ?>
 
 <main class="container">
+    <?php if (isset($_GET['logout']) && $_GET['logout'] === 'ok'): ?>
+        <p class="mensaje-inicio exito">Sesión cerrada correctamente.</p>
+    <?php endif; ?>
+
     <?php if ($juegosTendencia): ?>
         <section class="tendencias seccion-juegos-home">
             <h2 class="titulo-mobile">Tendencias</h2>

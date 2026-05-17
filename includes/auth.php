@@ -78,6 +78,6 @@ function urlPortadaJuego($portada, $texto = 'Sin portada') {
 function cerrarSesion() {
     $_SESSION = [];
     session_destroy();
-    header('Location: /');
+    header('Location: /?logout=ok');
     exit;
 }

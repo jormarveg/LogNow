@@ -7,6 +7,17 @@
     gap: 1rem;
 }
 
+.mensaje-inicio {
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.mensaje-inicio.exito {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
 .tendencias {
     border-bottom: 2px solid var(--bordes);
     padding: 1rem 2rem;
