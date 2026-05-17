@@ -165,6 +165,7 @@ $titulo = $juego ? (($modoEdicion ? 'Editar juego' : 'Registrar juego') . ' — 
 $css = ['biblioteca.css'];
 $pagina = 'registrar-juego';
 $js = ['puntuacion.js', 'biblioteca.js'];
+$usarJquery = true;
 require '../includes/header.php';
 ?>
 

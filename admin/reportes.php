@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $db->beginTransaction();
 
-        $stmtResena = $db->prepare('UPDATE RESENA SET activa = 0 WHERE id = ?');
-        $stmtResena->execute([$idResena]);
-
-        $stmtReportes = $db->prepare("UPDATE REPORTE SET estado = 'revisado' WHERE id_resena = ? AND estado = 'pendiente'");
+        $stmtReportes = $db->prepare('DELETE FROM REPORTE WHERE id_resena = ?');
         $stmtReportes->execute([$idResena]);
+
+        $stmtResena = $db->prepare('DELETE FROM RESENA WHERE id = ?');
+        $stmtResena->execute([$idResena]);
 
         $db->commit();
         volverReportes('ok', 'eliminado');

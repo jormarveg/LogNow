@@ -204,7 +204,7 @@ function igdbBackgroundJuego($juego) {
 
 function igdbPopulares($pagina = 1, $tamano = 20) {
     $pagina = max(1, (int) $pagina);
-    $tamano = max(1, min(50, (int) $tamano));
+    $tamano = max(1, min(500, (int) $tamano));
     $offset = ($pagina - 1) * $tamano;
 
     return igdbRequest('games', igdbCamposJuego()

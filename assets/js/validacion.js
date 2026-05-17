@@ -48,15 +48,15 @@ function validarCampo(input) {
         }
     }
 
-    if (id === 'password') {
+    if (id === 'password' || id === 'password_nueva') {
         if (!regexPassword.test(valor)) {
             mostrarError(input, 'Mínimo 8 caracteres, una mayúscula y un número');
             return false;
         }
     }
 
-    if (id === 'password2') {
-        const password = document.getElementById('password');
+    if (id === 'password2' || id === 'password_nueva2') {
+        const password = id === 'password_nueva2' ? document.getElementById('password_nueva') : document.getElementById('password');
         if (password && valor !== password.value) {
             mostrarError(input, 'Las contraseñas no coinciden');
             return false;
@@ -86,6 +86,39 @@ if (formRegistro) {
     });
 
     formRegistro.addEventListener('submit', function(e) {
+        let valido = true;
+
+        inputs.forEach(function(input) {
+            if (!validarCampo(input)) {
+                valido = false;
+            }
+        });
+
+        if (!valido) {
+            e.preventDefault();
+        }
+    });
+}
+
+const formPasswordPerfil = document.getElementById('form-password-perfil');
+if (formPasswordPerfil) {
+    const inputs = formPasswordPerfil.querySelectorAll('input[type="password"]');
+
+    inputs.forEach(function(input) {
+        input.addEventListener('blur', function() {
+            if (input.value.trim() !== '') {
+                validarCampo(input);
+            }
+        });
+
+        input.addEventListener('input', function() {
+            if (input.classList.contains('invalido')) {
+                validarCampo(input);
+            }
+        });
+    });
+
+    formPasswordPerfil.addEventListener('submit', function(e) {
         let valido = true;
 
         inputs.forEach(function(input) {

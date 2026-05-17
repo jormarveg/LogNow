@@ -15,7 +15,8 @@ if (!$datosUsuario) {
     exit;
 }
 
-$error = '';
+$errorPerfil = '';
+$errorPassword = '';
 $nombre = trim((string) ($datosUsuario['nombre'] ?? ''));
 $nick = trim((string) ($datosUsuario['nick'] ?? ''));
 $biografia = trim((string) ($datosUsuario['biografia'] ?? ''));
@@ -23,49 +24,72 @@ $avatarActual = trim((string) ($datosUsuario['avatar'] ?? ''));
 $encabezadoActual = trim((string) ($datosUsuario['encabezado'] ?? ''));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim((string) ($_POST['nombre'] ?? ''));
-    $nick = trim((string) ($_POST['nick'] ?? ''));
-    $biografia = trim((string) ($_POST['biografia'] ?? ''));
+    $accion = $_POST['accion'] ?? 'perfil';
 
-    if ($nombre === '' || $nick === '') {
-        $error = 'El nombre y el nick son obligatorios';
-    } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nick)) {
-        $error = 'El nick debe tener entre 3 y 20 caracteres (letras, números y _)';
-    } elseif (mb_strlen($biografia, 'UTF-8') > 280) {
-        $error = 'La bio no puede superar los 280 caracteres';
-    } elseif ($usuarioModel->existeNickDeOtroUsuario($idUsuario, $nick)) {
-        $error = 'Ese nick ya está en uso';
-    } else {
-        $subidaAvatar = subirAvatar($_FILES['avatar'] ?? null, $avatarActual);
-        $subidaEncabezado = subirEncabezado($_FILES['encabezado'] ?? null, $encabezadoActual);
+    if ($accion === 'password') {
+        $passwordActual = $_POST['password_actual'] ?? '';
+        $passwordNueva = $_POST['password_nueva'] ?? '';
+        $passwordNueva2 = $_POST['password_nueva2'] ?? '';
 
-        if (!$subidaAvatar['ok']) {
-            $error = $subidaAvatar['error'];
-        } elseif (!$subidaEncabezado['ok']) {
-            $error = $subidaEncabezado['error'];
+        if ($passwordActual === '' || $passwordNueva === '' || $passwordNueva2 === '') {
+            $errorPassword = 'Todos los campos de contraseña son obligatorios';
+        } elseif (!password_verify($passwordActual, $datosUsuario['password'])) {
+            $errorPassword = 'La contraseña actual no es correcta';
+        } elseif (!preg_match('/^(?=.*[A-Z])(?=.*\d).{8,}$/', $passwordNueva)) {
+            $errorPassword = 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula y un número';
+        } elseif ($passwordNueva !== $passwordNueva2) {
+            $errorPassword = 'Las contraseñas no coinciden';
         } else {
-            $avatarActual = $subidaAvatar['ruta'];
-            $encabezadoActual = $subidaEncabezado['ruta'];
-            $usuarioModel->actualizarPerfil(
-                $idUsuario,
-                $nombre,
-                $nick,
-                $biografia !== '' ? $biografia : null,
-                $avatarActual !== '' ? $avatarActual : null,
-                $encabezadoActual !== '' ? $encabezadoActual : null
-            );
-
-            $usuarioActualizado = $usuarioModel->obtenerPorId($idUsuario);
-            actualizarSesionUsuario($usuarioActualizado);
-
-            header('Location: /perfil.php?editado=ok');
+            $usuarioModel->actualizarPassword($idUsuario, $passwordNueva);
+            header('Location: /perfil.php?password=ok');
             exit;
+        }
+    } else {
+        $nombre = trim((string) ($_POST['nombre'] ?? ''));
+        $nick = trim((string) ($_POST['nick'] ?? ''));
+        $biografia = trim((string) ($_POST['biografia'] ?? ''));
+
+        if ($nombre === '' || $nick === '') {
+            $errorPerfil = 'El nombre y el nick son obligatorios';
+        } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nick)) {
+            $errorPerfil = 'El nick debe tener entre 3 y 20 caracteres (letras, números y _)';
+        } elseif (mb_strlen($biografia, 'UTF-8') > 280) {
+            $errorPerfil = 'La bio no puede superar los 280 caracteres';
+        } elseif ($usuarioModel->existeNickDeOtroUsuario($idUsuario, $nick)) {
+            $errorPerfil = 'Ese nick ya está en uso';
+        } else {
+            $subidaAvatar = subirAvatar($_FILES['avatar'] ?? null, $avatarActual);
+            $subidaEncabezado = subirEncabezado($_FILES['encabezado'] ?? null, $encabezadoActual);
+
+            if (!$subidaAvatar['ok']) {
+                $errorPerfil = $subidaAvatar['error'];
+            } elseif (!$subidaEncabezado['ok']) {
+                $errorPerfil = $subidaEncabezado['error'];
+            } else {
+                $avatarActual = $subidaAvatar['ruta'];
+                $encabezadoActual = $subidaEncabezado['ruta'];
+                $usuarioModel->actualizarPerfil(
+                    $idUsuario,
+                    $nombre,
+                    $nick,
+                    $biografia !== '' ? $biografia : null,
+                    $avatarActual !== '' ? $avatarActual : null,
+                    $encabezadoActual !== '' ? $encabezadoActual : null
+                );
+
+                $usuarioActualizado = $usuarioModel->obtenerPorId($idUsuario);
+                actualizarSesionUsuario($usuarioActualizado);
+
+                header('Location: /perfil.php?editado=ok');
+                exit;
+            }
         }
     }
 }
 
 $titulo = 'Editar perfil — LogNow!';
 $css = ['perfil.css', 'biblioteca.css'];
+$js = ['validacion.js'];
 $pagina = 'perfil';
 require '../includes/header.php';
 ?>
@@ -100,11 +124,12 @@ require '../includes/header.php';
         </section>
 
         <section class="formulario-biblioteca">
-            <?php if ($error): ?>
-                <p class="error"><?= htmlspecialchars($error) ?></p>
+            <?php if ($errorPerfil): ?>
+                <p class="error"><?= htmlspecialchars($errorPerfil) ?></p>
             <?php endif; ?>
 
             <form method="POST" enctype="multipart/form-data" class="form-editar-perfil">
+                <input type="hidden" name="accion" value="perfil">
                 <div class="grid-formulario">
                     <div class="campo">
                         <label for="nombre">Nombre</label>
@@ -114,7 +139,7 @@ require '../includes/header.php';
 
                     <div class="campo">
                         <label for="nick">Nick</label>
-                        <input type="text" id="nick" name="nick" maxlength="20" required value="<?= htmlspecialchars($nick) ?>">
+                        <input type="text" id="nick" name="nick" minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]{3,20}" required value="<?= htmlspecialchars($nick) ?>">
                         <span class="msg-error"></span>
                     </div>
 
@@ -140,6 +165,40 @@ require '../includes/header.php';
                 <div class="acciones-formulario">
                     <button type="submit">Guardar cambios</button>
                     <a class="boton-secundario" href="/perfil.php">Cancelar</a>
+                </div>
+            </form>
+        </section>
+
+        <section class="formulario-biblioteca formulario-password-perfil">
+            <h2>Cambiar contraseña</h2>
+            <?php if ($errorPassword): ?>
+                <p class="error"><?= htmlspecialchars($errorPassword) ?></p>
+            <?php endif; ?>
+
+            <form method="POST" id="form-password-perfil">
+                <input type="hidden" name="accion" value="password">
+                <div class="grid-formulario">
+                    <div class="campo campo-ancho">
+                        <label for="password_actual">Contraseña actual</label>
+                        <input type="password" id="password_actual" name="password_actual" required>
+                        <span class="msg-error"></span>
+                    </div>
+
+                    <div class="campo">
+                        <label for="password_nueva">Nueva contraseña</label>
+                        <input type="password" id="password_nueva" name="password_nueva" required>
+                        <span class="msg-error"></span>
+                    </div>
+
+                    <div class="campo">
+                        <label for="password_nueva2">Repetir nueva contraseña</label>
+                        <input type="password" id="password_nueva2" name="password_nueva2" required>
+                        <span class="msg-error"></span>
+                    </div>
+                </div>
+
+                <div class="acciones-formulario">
+                    <button type="submit">Guardar contraseña</button>
                 </div>
             </form>
         </section>

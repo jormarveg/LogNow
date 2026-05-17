@@ -1118,15 +1118,13 @@ function cacheEliminarResenaUsuario(PDO $db, $idUsuario, $idVideojuego) {
             $db->beginTransaction();
         }
 
-        $update = $db->prepare('UPDATE RESENA
-                                SET activa = 0
-                                WHERE id = ? AND id_usuario = ?');
-        $ok = $update->execute([(int) $resena['id'], (int) $idUsuario]);
-
-        $reportes = $db->prepare("UPDATE REPORTE
-                                  SET estado = 'revisado'
-                                  WHERE id_resena = ? AND estado = 'pendiente'");
+        $reportes = $db->prepare('DELETE FROM REPORTE
+                                  WHERE id_resena = ?');
         $reportes->execute([(int) $resena['id']]);
+
+        $delete = $db->prepare('DELETE FROM RESENA
+                                WHERE id = ? AND id_usuario = ?');
+        $ok = $delete->execute([(int) $resena['id'], (int) $idUsuario]);
 
         if ($transaccionPropia) {
             $db->commit();

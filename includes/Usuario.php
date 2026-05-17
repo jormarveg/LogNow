@@ -13,9 +13,15 @@ class Usuario {
         return $stmt->fetch();
     }
 
-    public function existeNickOEmail($nick, $email) {
-        $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE nick = ? OR email = ?');
-        $stmt->execute([$nick, $email]);
+    public function existeNick($nick) {
+        $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE nick = ?');
+        $stmt->execute([$nick]);
+        return $stmt->fetch() !== false;
+    }
+
+    public function existeEmail($email) {
+        $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE email = ?');
+        $stmt->execute([$email]);
         return $stmt->fetch() !== false;
     }
 
@@ -50,5 +56,12 @@ class Usuario {
                                     WHERE id = ?');
 
         return $stmt->execute([$nombre, $nick, $biografia, $avatar, $encabezado, $idUsuario]);
+    }
+
+    public function actualizarPassword($idUsuario, $password) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare('UPDATE USUARIO SET password = ? WHERE id = ?');
+
+        return $stmt->execute([$hash, $idUsuario]);
     }
 }

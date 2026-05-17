@@ -209,13 +209,23 @@ if (modalReporte.length) {
         motivoReporte.val('');
         mensajeReporte.removeClass('ok error').text('');
         botonEnviarReporte.prop('disabled', false).text('Reportar');
-        modalReporte.prop('hidden', false);
-        motivoReporte.trigger('focus');
+        modalReporte
+            .stop(true, true)
+            .prop('hidden', false)
+            .css('display', 'grid')
+            .hide()
+            .fadeIn(160, function() {
+                motivoReporte.trigger('focus');
+            });
     }
 
     function cerrarModalReporte() {
-        modalReporte.prop('hidden', true);
-        botonReporteActivo = null;
+        modalReporte
+            .stop(true, true)
+            .fadeOut(140, function() {
+                modalReporte.prop('hidden', true).css('display', '');
+                botonReporteActivo = null;
+            });
     }
 
     $('.boton-reportar-resena').on('click', function() {
