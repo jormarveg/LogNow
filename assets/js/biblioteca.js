@@ -69,20 +69,68 @@ if (formBiblioteca) {
     const campoFechaInicio = document.querySelector('.campo-fecha-inicio');
     const campoFechaFin = document.querySelector('.campo-fecha-fin');
 
-    function actualizarCamposFecha() {
+    function mostrarCampoFecha(campo, animar) {
+        if (!campo) {
+            return;
+        }
+
+        if (typeof window.jQuery === 'undefined') {
+            campo.classList.remove('oculto');
+            return;
+        }
+
+        const campoJquery = $(campo);
+        const estabaOculto = campoJquery.hasClass('oculto') || !campoJquery.is(':visible');
+
+        campoJquery.stop(true, true).removeClass('oculto');
+
+        if (animar && estabaOculto) {
+            campoJquery.hide().slideDown(170, function() {
+                campoJquery.css('display', '');
+            });
+        } else {
+            campoJquery.show().css('display', '');
+        }
+    }
+
+    function ocultarCampoFecha(campo, animar) {
+        if (!campo) {
+            return;
+        }
+
+        if (typeof window.jQuery === 'undefined') {
+            campo.classList.add('oculto');
+            return;
+        }
+
+        const campoJquery = $(campo);
+        const estabaOculto = campoJquery.hasClass('oculto') || !campoJquery.is(':visible');
+
+        campoJquery.stop(true, true);
+
+        if (animar && !estabaOculto) {
+            campoJquery.slideUp(150, function() {
+                campoJquery.addClass('oculto').css('display', '');
+            });
+        } else {
+            campoJquery.hide().addClass('oculto').css('display', '');
+        }
+    }
+
+    function actualizarCamposFecha(animar) {
         if (estadoInput.value === 'pendiente') {
-            campoFechaInicio.classList.add('oculto');
-            campoFechaFin.classList.add('oculto');
+            ocultarCampoFecha(campoFechaInicio, animar);
+            ocultarCampoFecha(campoFechaFin, animar);
             fechaInicioInput.value = '';
             fechaFinInput.value = '';
             limpiarBiblioteca(fechaInicioInput);
             limpiarBiblioteca(fechaFinInput);
         } else if (estadoInput.value === 'completado') {
-            campoFechaInicio.classList.remove('oculto');
-            campoFechaFin.classList.remove('oculto');
+            mostrarCampoFecha(campoFechaInicio, animar);
+            mostrarCampoFecha(campoFechaFin, animar);
         } else {
-            campoFechaInicio.classList.remove('oculto');
-            campoFechaFin.classList.add('oculto');
+            mostrarCampoFecha(campoFechaInicio, animar);
+            ocultarCampoFecha(campoFechaFin, animar);
             fechaFinInput.value = '';
             limpiarBiblioteca(fechaFinInput);
         }
@@ -183,7 +231,7 @@ if (formBiblioteca) {
     }
 
     estadoInput.addEventListener('change', function() {
-        actualizarCamposFecha();
+        actualizarCamposFecha(true);
         validarSelect(estadoInput);
         validarOrdenFechas();
     });
@@ -211,7 +259,7 @@ if (formBiblioteca) {
         });
     });
 
-    actualizarCamposFecha();
+    actualizarCamposFecha(false);
     iniciarSelectorPuntuacion({
         alCambiar: function() {
             validarPuntuacion();
