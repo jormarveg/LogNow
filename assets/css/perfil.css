@@ -341,6 +341,11 @@ section.principal .panel-vacio-listas p {
     align-items: start;
 }
 
+.formulario-password-perfil h2 {
+    font-size: 1.45rem;
+    margin-bottom: 1rem;
+}
+
 .resumen-perfil-actual {
     align-items: center;
 }
@@ -470,6 +475,10 @@ section.principal .panel-vacio-listas p {
 
     .resumen-perfil-actual {
         grid-template-columns: 1fr;
+    }
+
+    .formulario-password-perfil {
+        grid-column: 2;
     }
 
     .encabezado-perfil .container {

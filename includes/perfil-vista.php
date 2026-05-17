@@ -91,6 +91,9 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
             <?php if ($perfilPropio && isset($_GET['editado']) && $_GET['editado'] === 'ok'): ?>
                 <p class="exito exito-perfil">Perfil actualizado correctamente.</p>
             <?php endif; ?>
+            <?php if ($perfilPropio && isset($_GET['password']) && $_GET['password'] === 'ok'): ?>
+                <p class="exito exito-perfil">Contraseña actualizada correctamente.</p>
+            <?php endif; ?>
 
             <?php if ($tab === 'perfil'): ?>
                 <section class="favoritos">

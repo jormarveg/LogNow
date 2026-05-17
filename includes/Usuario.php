@@ -57,4 +57,11 @@ class Usuario {
 
         return $stmt->execute([$nombre, $nick, $biografia, $avatar, $encabezado, $idUsuario]);
     }
+
+    public function actualizarPassword($idUsuario, $password) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare('UPDATE USUARIO SET password = ? WHERE id = ?');
+
+        return $stmt->execute([$hash, $idUsuario]);
+    }
 }
