@@ -51,7 +51,7 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
     if (!is_dir($directorio) && !mkdir($directorio, 0775, true) && !is_dir($directorio)) {
         return [
             'ok' => false,
-            'error' => 'No se ha podido preparar la carpeta de imagenes'
+            'error' => 'No se ha podido preparar la carpeta de imágenes'
         ];
     }
 
@@ -61,7 +61,7 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
     if (!is_writable($directorio)) {
         return [
             'ok' => false,
-            'error' => 'La carpeta de imagenes no tiene permisos de escritura'
+            'error' => 'La carpeta de imágenes no tiene permisos de escritura'
         ];
     }
 

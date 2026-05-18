@@ -624,6 +624,39 @@ section.principal {
     margin-bottom: 0;
 }
 
+.paginacion-resenas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.paginacion-resenas a {
+    min-width: 2.6rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--bordes);
+    border-radius: 999px;
+    background: white;
+    text-align: center;
+    font-weight: 600;
+}
+
+.paginacion-resenas a.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.paginacion-resenas .separador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
 .boton-reportar-resena {
     grid-column: 2;
     grid-row: 3;

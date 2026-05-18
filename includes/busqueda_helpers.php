@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/paginacion_helpers.php';
+
 const BUSQUEDA_MINIMA_JUEGOS = 3;
 const BUSQUEDA_POR_PAGINA = 18;
 const BUSQUEDA_USUARIOS_POR_PAGINA = 12;
@@ -38,32 +40,6 @@ function urlTabBusqueda($busqueda, $tipo) {
     }
 
     return '/buscar.php?' . http_build_query($params);
-}
-
-function paginasBusqueda($paginaActual, $totalPaginas) {
-    if ($totalPaginas <= 7) {
-        return range(1, $totalPaginas);
-    }
-
-    $paginas = [1];
-    $inicio = max(2, $paginaActual - 1);
-    $fin = min($totalPaginas - 1, $paginaActual + 1);
-
-    if ($inicio > 2) {
-        $paginas[] = '...';
-    }
-
-    for ($i = $inicio; $i <= $fin; $i++) {
-        $paginas[] = $i;
-    }
-
-    if ($fin < $totalPaginas - 1) {
-        $paginas[] = '...';
-    }
-
-    $paginas[] = $totalPaginas;
-
-    return $paginas;
 }
 
 function datosBusquedaLocal(PDO $db, $busqueda, $paginaActual = 1, $porPagina = BUSQUEDA_POR_PAGINA) {
@@ -292,7 +268,7 @@ function htmlPaginacionBusqueda($busqueda, $paginaActual, $totalPaginas, $tipo =
             <a href="<?= htmlspecialchars(urlBusqueda($busqueda, $paginaActual - 1, $tipo)) ?>">Anterior</a>
         <?php endif; ?>
 
-        <?php foreach (paginasBusqueda($paginaActual, $totalPaginas) as $item): ?>
+        <?php foreach (paginasCompactas($paginaActual, $totalPaginas) as $item): ?>
             <?php if ($item === '...'): ?>
                 <span class="separador">...</span>
             <?php else: ?>

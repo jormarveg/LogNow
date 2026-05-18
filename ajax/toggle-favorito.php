@@ -8,7 +8,7 @@ if (!estaLogueado()) {
     http_response_code(403);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Debes iniciar sesion'
+        'mensaje' => 'Debes iniciar sesión'
     ]);
     exit;
 }
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Metodo no permitido'
+        'mensaje' => 'Método no permitido'
     ]);
     exit;
 }
@@ -29,7 +29,7 @@ if ($idVideojuego <= 0 || ($favorito !== 0 && $favorito !== 1)) {
     http_response_code(422);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Datos no validos'
+        'mensaje' => 'Datos no válidos'
     ]);
     exit;
 }

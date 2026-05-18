@@ -18,13 +18,6 @@ function mostrarOk(input) {
     span.textContent = '';
 }
 
-function limpiarValidacion(input) {
-    const campo = input.parentElement;
-    const span = campo.querySelector('.msg-error');
-    input.classList.remove('invalido', 'valido');
-    span.textContent = '';
-}
-
 function validarCampo(input) {
     const valor = input.value.trim();
     const id = input.id;

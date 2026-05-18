@@ -1,5 +1,6 @@
 <?php
 require '../api/cache.php';
+require '../includes/paginacion_helpers.php';
 
 $titulo = 'Catálogo — LogNow!';
 $css = ['catalogo.css'];
@@ -59,32 +60,6 @@ function urlCatalogo($cambios = []) {
     $query = http_build_query($params);
 
     return '/catalogo.php' . ($query ? '?' . $query : '');
-}
-
-function paginasCatalogo($paginaActual, $totalPaginas) {
-    if ($totalPaginas <= 7) {
-        return range(1, $totalPaginas);
-    }
-
-    $paginas = [1];
-    $inicio = max(2, $paginaActual - 1);
-    $fin = min($totalPaginas - 1, $paginaActual + 1);
-
-    if ($inicio > 2) {
-        $paginas[] = '...';
-    }
-
-    for ($i = $inicio; $i <= $fin; $i++) {
-        $paginas[] = $i;
-    }
-
-    if ($fin < $totalPaginas - 1) {
-        $paginas[] = '...';
-    }
-
-    $paginas[] = $totalPaginas;
-
-    return $paginas;
 }
 
 require '../includes/header.php';
@@ -185,7 +160,7 @@ require '../includes/header.php';
                 <a href="<?= htmlspecialchars(urlCatalogo(['p' => $paginaActual - 1])) ?>">Anterior</a>
             <?php endif; ?>
 
-            <?php foreach (paginasCatalogo($paginaActual, $totalPaginas) as $item): ?>
+            <?php foreach (paginasCompactas($paginaActual, $totalPaginas) as $item): ?>
                 <?php if ($item === '...'): ?>
                     <span class="separador">...</span>
                 <?php else: ?>

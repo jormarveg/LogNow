@@ -22,17 +22,6 @@ function mostrarOkResena(input) {
     }
 }
 
-function limpiarResena(input) {
-    const campo = input.closest('.campo');
-    const span = campo ? campo.querySelector('.msg-error') : null;
-
-    input.classList.remove('invalido', 'valido');
-
-    if (span) {
-        span.textContent = '';
-    }
-}
-
 const formResena = document.getElementById('form-resena');
 
 if (formResena) {
