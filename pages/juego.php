@@ -1,6 +1,7 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/biblioteca_helpers.php';
 require '../includes/perfil_helpers.php';
 require '../includes/listas_helpers.php';
 
@@ -34,7 +35,6 @@ if (
     $accion = $_POST['accion'] ?? '';
     $destino = '/juego.php?id=' . $idIgdb;
     $nuevoEstado = $_POST['estado_juego'] ?? '';
-    $estadosCambio = ['completado', 'jugando', 'pendiente', 'abandonado'];
 
     if (isset($_POST['toggle_favorito']) && !empty($juego['usuario_juego'])) {
         $nuevoFavorito = !$juego['usuario_juego']['favorito'];
@@ -84,7 +84,7 @@ if (
             header('Location: ' . $destino . '&puntuacion=error');
             exit;
         }
-    } elseif (in_array($nuevoEstado, $estadosCambio, true)) {
+    } elseif (estadoBibliotecaValido($nuevoEstado)) {
         $resultadoEstado = cacheGuardarEstadoRapidoBiblioteca($db, $idUsuario, (int) $juego['id'], $nuevoEstado);
 
         if ($resultadoEstado === 'creado') {
@@ -121,49 +121,24 @@ function fechaBonita($fecha, $abreviada = false) {
     return date('j', $marca) . ' ' . $mes . ' ' . date('Y', $marca);
 }
 
-function puntuacionVisible($puntuacion) {
-    if ($puntuacion === null) {
-        return '';
-    }
+function urlJuego($cambios = []) {
+    $params = $_GET;
+    unset($params['biblioteca'], $params['resena'], $params['puntuacion'], $params['favorito'], $params['lista']);
 
-    $puntuacion = (float) $puntuacion;
-
-    if (abs($puntuacion - round($puntuacion)) < 0.05) {
-        return number_format($puntuacion, 0, ',', '.');
-    }
-
-    return number_format($puntuacion, 1, ',', '.');
-}
-
-function estrellasJuego($puntuacion) {
-    if ($puntuacion === null) {
-        $puntuacion = 0;
-    }
-
-    $puntuacion = max(0, min(5, (float) $puntuacion));
-    $estrellasCompletas = (int) floor($puntuacion);
-    $mediaEstrella = ($puntuacion - $estrellasCompletas) >= 0.5;
-    $html = '';
-
-    for ($i = 1; $i <= 5; $i++) {
-        if ($i <= $estrellasCompletas) {
-            $html .= '<i class="fa-solid fa-star"></i>';
-        } elseif ($mediaEstrella && $i === $estrellasCompletas + 1) {
-            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
+    foreach ($cambios as $clave => $valor) {
+        if ($valor === null || $valor === '' || $valor === 0) {
+            unset($params[$clave]);
         } else {
-            $html .= '<i class="fa-solid fa-star vacia"></i>';
+            $params[$clave] = $valor;
         }
     }
 
-    return $html;
+    $query = http_build_query($params);
+
+    return '/juego.php' . ($query ? '?' . $query : '');
 }
 
-$estados = [
-    'completado' => ['icono' => 'fa-check', 'texto' => 'Complet.'],
-    'jugando' => ['icono' => 'fa-gamepad', 'texto' => 'Jugando'],
-    'pendiente' => ['icono' => 'fa-calendar-days', 'texto' => 'Pendiente'],
-    'abandonado' => ['icono' => 'fa-ban', 'texto' => 'Aband.']
-];
+$estados = estadosBibliotecaFicha();
 
 $background = $juego['background_url'] ?? '/assets/img/profile/banner.webp';
 $portada = urlPortadaJuego($juego['portada_url'] ?? '', $juego['titulo'] ?? 'Sin portada');
@@ -174,6 +149,19 @@ $plataformaUsuario = $juego['usuario_juego']['plataforma'] ?? '';
 $puntuacionFormulario = $puntuacionUsuario !== null ? (string) (int) round(((float) $puntuacionUsuario) * 20) : '';
 $puntuacionMedia = $juego['resumen_resenas']['media'] ?? null;
 $totalResenas = $juego['resumen_resenas']['total'] ?? 0;
+$paginaResenas = isset($_GET['rp']) ? max(1, (int) $_GET['rp']) : 1;
+$resenasPorPagina = 6;
+$totalResenasTexto = $juego ? cacheContarResenasJuego($db, (int) $juego['id']) : 0;
+$totalPaginasResenas = max(1, (int) ceil($totalResenasTexto / $resenasPorPagina));
+
+if ($paginaResenas > $totalPaginasResenas) {
+    $paginaResenas = $totalPaginasResenas;
+}
+
+if ($juego) {
+    $juego['resenas'] = cacheResenasJuego($db, (int) $juego['id'], $resenasPorPagina, ($paginaResenas - 1) * $resenasPorPagina);
+}
+
 $histograma = $juego['histograma'] ?? [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 $maxHistograma = max($histograma);
 $mensajeBiblioteca = $_GET['biblioteca'] ?? '';
@@ -285,7 +273,7 @@ require '../includes/header.php';
                         <h2>Tu puntuación</h2>
                         <?php if (estaLogueado()): ?>
                             <?php if ($puntuacionUsuario !== null): ?>
-                                <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionUsuario) ?></p>
+                                <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionUsuario, '') ?></p>
                             <?php endif; ?>
                             <form class="form-puntuacion-juego" method="POST">
                                 <input type="hidden" name="accion" value="puntuar_juego">
@@ -323,7 +311,7 @@ require '../includes/header.php';
                     <div class="media-juego">
                         <h3>Puntuación media</h3>
                         <?php if ($puntuacionMedia !== null): ?>
-                            <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionMedia) ?></p>
+                            <p class="numero-puntuacion"><?= puntuacionVisible($puntuacionMedia, '') ?></p>
                             <div class="grafica">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
                                     <?php $altura = $maxHistograma > 0 ? max(10, (int) round(($histograma[$i] / $maxHistograma) * 100)) : 0; ?>
@@ -383,7 +371,7 @@ require '../includes/header.php';
                     </p>
                 </section>
 
-                <section class="resenas-recientes resenas-juego">
+                <section class="resenas-recientes resenas-juego" id="resenas">
                     <div class="cabecera-resenas-juego">
                         <h2>Reseñas</h2>
                         <?php if (estaLogueado() && $estadoActual): ?>
@@ -405,7 +393,7 @@ require '../includes/header.php';
                                         <h4><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></h4>
                                         <div class="puntuacion">
                                             <i class="fa-solid fa-star"></i>
-                                            <span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span>
+                                            <span><?= puntuacionVisible($resena['puntuacion_estrellas'], '') ?></span>
                                         </div>
                                     </div>
                                     <div class="puntuacion-tablet">
@@ -417,7 +405,7 @@ require '../includes/header.php';
                                                 <?php endif; ?>
                                             </p>
                                             <div class="meta-resena-linea">
-                                                <div class="estrellas"><?= estrellasJuego($resena['puntuacion_estrellas']) ?></div>
+                                                <div class="estrellas"><?= estrellasHtml($resena['puntuacion_estrellas']) ?></div>
                                                 <p class="autor-resena">por <strong><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></strong></p>
                                             </div>
                                         </div>
@@ -433,6 +421,25 @@ require '../includes/header.php';
                                 </article>
                             <?php endforeach; ?>
                         </div>
+                        <?php if ($totalPaginasResenas > 1): ?>
+                            <nav class="paginacion paginacion-resenas" aria-label="Paginación de reseñas">
+                                <?php if ($paginaResenas > 1): ?>
+                                    <a href="<?= htmlspecialchars(urlJuego(['rp' => $paginaResenas - 1])) ?>#resenas">Anterior</a>
+                                <?php endif; ?>
+
+                                <?php foreach (paginasCompactas($paginaResenas, $totalPaginasResenas) as $item): ?>
+                                    <?php if ($item === '...'): ?>
+                                        <span class="separador">...</span>
+                                    <?php else: ?>
+                                        <a href="<?= htmlspecialchars(urlJuego(['rp' => $item])) ?>#resenas"<?= $item === $paginaResenas ? ' class="active"' : '' ?>><?= $item ?></a>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                                <?php if ($paginaResenas < $totalPaginasResenas): ?>
+                                    <a href="<?= htmlspecialchars(urlJuego(['rp' => $paginaResenas + 1])) ?>#resenas">Siguiente</a>
+                                <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
                     <?php else: ?>
                         <div class="sin-resenas">
                             <p>Todavía no hay reseñas publicadas para este juego en LogNow!.</p>

@@ -165,7 +165,7 @@ require __DIR__ . '/../includes/header.php';
                     <a href="/admin/reportes.php?p=<?= $paginaActual - 1 ?>">Anterior</a>
                 <?php endif; ?>
 
-                <?php foreach (adminPaginas($paginaActual, $totalPaginas) as $item): ?>
+                <?php foreach (paginasCompactas($paginaActual, $totalPaginas) as $item): ?>
                     <?php if ($item === '...'): ?>
                         <span class="separador">...</span>
                     <?php else: ?>

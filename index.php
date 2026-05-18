@@ -19,43 +19,6 @@ function fechaInicioBonita($fecha) {
     return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
 }
 
-function puntuacionInicioVisible($puntuacion) {
-    if ($puntuacion === null) {
-        return 'N/D';
-    }
-
-    $puntuacion = (float) $puntuacion;
-
-    if (abs($puntuacion - round($puntuacion)) < 0.05) {
-        return number_format($puntuacion, 0, ',', '.');
-    }
-
-    return number_format($puntuacion, 1, ',', '.');
-}
-
-function estrellasInicio($puntuacion) {
-    if ($puntuacion === null) {
-        $puntuacion = 0;
-    }
-
-    $puntuacion = max(0, min(5, (float) $puntuacion));
-    $completas = (int) floor($puntuacion);
-    $media = ($puntuacion - $completas) >= 0.5;
-    $html = '';
-
-    for ($i = 1; $i <= 5; $i++) {
-        if ($i <= $completas) {
-            $html .= '<i class="fa-solid fa-star"></i>';
-        } elseif ($media && $i === $completas + 1) {
-            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
-        } else {
-            $html .= '<i class="fa-solid fa-star vacia"></i>';
-        }
-    }
-
-    return $html;
-}
-
 function partesTextoInicioResena($texto, $limite = 110) {
     $texto = trim((string) $texto);
 
@@ -88,7 +51,7 @@ function htmlCarruselInicioJuegos($idCarrusel, $juegos) {
                         </a>
                         <div class="puntuacion">
                             <i class="fa-solid fa-star"></i>
-                            <span><?= puntuacionInicioVisible($juego['puntuacion_visible']) ?></span>
+                            <span><?= puntuacionVisible($juego['puntuacion_visible']) ?></span>
                         </div>
                     </div>
                     <div class="titulo-puntuacion">
@@ -158,7 +121,7 @@ require 'includes/header.php';
                         </div>
                         <div class="nombre-puntuacion">
                             <h4><a href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>"><?= htmlspecialchars($resena['titulo']) ?></a></h4>
-                            <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionInicioVisible($resena['puntuacion_estrellas']) ?></span></div>
+                            <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span></div>
                         </div>
                         <div class="puntuacion-tablet">
                             <div class="titulo-puntuacion-wrapper">
@@ -169,7 +132,7 @@ require 'includes/header.php';
                                     <?php endif; ?>
                                 </p>
                                 <div class="meta-resena-inline">
-                                    <div class="estrellas"><?= estrellasInicio($resena['puntuacion_estrellas']) ?></div>
+                                    <div class="estrellas"><?= estrellasHtml($resena['puntuacion_estrellas']) ?></div>
                                     <span>por <a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></span>
                                 </div>
                             </div>

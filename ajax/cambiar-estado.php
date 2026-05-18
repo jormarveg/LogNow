@@ -1,6 +1,7 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/biblioteca_helpers.php';
 
 header('Content-Type: application/json; charset=UTF-8');
 
@@ -8,7 +9,7 @@ if (!estaLogueado()) {
     http_response_code(403);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Debes iniciar sesion'
+        'mensaje' => 'Debes iniciar sesión'
     ]);
     exit;
 }
@@ -17,20 +18,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Metodo no permitido'
+        'mensaje' => 'Método no permitido'
     ]);
     exit;
 }
 
 $idVideojuego = (int) ($_POST['id_videojuego'] ?? 0);
 $estado = trim((string) ($_POST['estado'] ?? ''));
-$estadosValidos = ['completado', 'jugando', 'pendiente', 'abandonado'];
 
-if ($idVideojuego <= 0 || !in_array($estado, $estadosValidos, true)) {
+if ($idVideojuego <= 0 || !estadoBibliotecaValido($estado)) {
     http_response_code(422);
     echo json_encode([
         'ok' => false,
-        'mensaje' => 'Datos no validos'
+        'mensaje' => 'Datos no válidos'
     ]);
     exit;
 }

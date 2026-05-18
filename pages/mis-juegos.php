@@ -11,9 +11,7 @@ if (!estaLogueado()) {
 $estadoFiltro = $_GET['estado'] ?? '';
 $paginaBibliotecaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
 $porPaginaBiblioteca = 12;
-$estadosValidos = ['jugando', 'completado', 'pendiente', 'abandonado'];
-
-if (!in_array($estadoFiltro, $estadosValidos, true)) {
+if ($estadoFiltro !== '' && !estadoBibliotecaValido($estadoFiltro)) {
     $estadoFiltro = '';
 }
 

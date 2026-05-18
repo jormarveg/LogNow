@@ -1,6 +1,7 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/biblioteca_helpers.php';
 
 if (!estaLogueado()) {
     header('Location: /login.php');
@@ -17,12 +18,7 @@ function fechaBibliotecaValida($fecha) {
     return $objeto && $objeto->format('Y-m-d') === $fecha;
 }
 
-$estados = [
-    'jugando' => 'Jugando',
-    'completado' => 'Completado',
-    'pendiente' => 'Pendiente',
-    'abandonado' => 'Abandonado'
-];
+$estados = estadosBiblioteca();
 
 $idIgdb = isset($_GET['id']) ? (int) $_GET['id'] : (int) ($_POST['id'] ?? 0);
 $idUsuario = (int) getUsuario()['id'];
@@ -83,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
     $fechaFin = trim((string) ($_POST['fecha_fin'] ?? ''));
     $favorito = isset($_POST['favorito']);
 
-    if (!isset($estados[$estado])) {
+    if (!estadoBibliotecaValido($estado)) {
         $error = 'Selecciona un estado válido';
     } elseif ($idPlataforma > 0 && !in_array($idPlataforma, $plataformasValidas, true)) {
         $error = 'Selecciona una plataforma válida para este juego';

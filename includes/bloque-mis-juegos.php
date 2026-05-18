@@ -104,7 +104,7 @@ $bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar e
             <a href="<?= htmlspecialchars(urlBibliotecaPagina($baseBibliotecaUrl, $estadoFiltro, $paginaBibliotecaActual - 1)) ?>">Anterior</a>
         <?php endif; ?>
 
-        <?php foreach (paginasBiblioteca($paginaBibliotecaActual, $totalPaginasBiblioteca) as $item): ?>
+        <?php foreach (paginasCompactas($paginaBibliotecaActual, $totalPaginasBiblioteca) as $item): ?>
             <?php if ($item === '...'): ?>
                 <span class="separador">...</span>
             <?php else: ?>

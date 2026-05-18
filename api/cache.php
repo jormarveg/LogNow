@@ -543,7 +543,19 @@ function cacheResenaUsuario(PDO $db, $idUsuario, $idVideojuego) {
     return $resena;
 }
 
-function cacheResenasJuego(PDO $db, $idVideojuego, $limite = 6) {
+function cacheContarResenasJuego(PDO $db, $idVideojuego) {
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM RESENA
+                          WHERE id_videojuego = ? AND activa = 1 AND TRIM(COALESCE(comentario, "")) <> ""');
+    $stmt->execute([(int) $idVideojuego]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cacheResenasJuego(PDO $db, $idVideojuego, $limite = 6, $offset = 0) {
+    $limite = max(1, (int) $limite);
+    $offset = max(0, (int) $offset);
+
     $stmt = $db->prepare('SELECT r.id, r.id_usuario, r.comentario, r.puntuacion, r.fecha_publicacion, u.nick, u.nombre, u.avatar, p.nombre AS plataforma
                           FROM RESENA r
                           INNER JOIN USUARIO u ON u.id = r.id_usuario
@@ -551,7 +563,7 @@ function cacheResenasJuego(PDO $db, $idVideojuego, $limite = 6) {
                           LEFT JOIN PLATAFORMA p ON p.id = uj.id_plataforma
                           WHERE r.id_videojuego = ? AND r.activa = 1 AND TRIM(COALESCE(r.comentario, "")) <> ""
                           ORDER BY r.fecha_publicacion DESC
-                          LIMIT ' . (int) $limite);
+                          LIMIT ' . $limite . ' OFFSET ' . $offset);
     $stmt->execute([(int) $idVideojuego]);
     $resenas = $stmt->fetchAll();
 
@@ -837,7 +849,6 @@ function cacheDetalleJuego(PDO $db, $igdbId, $idUsuario = 0, $horas = HORAS_CACH
     $juego['plataformas_detalle'] = cachePlataformasJuegoDetalle($db, $juego['id']);
     $juego['resumen_resenas'] = cacheResumenResenasJuego($db, $juego['id']);
     $juego['histograma'] = cacheHistogramaJuego($db, $juego['id']);
-    $juego['resenas'] = cacheResenasJuego($db, $juego['id']);
     $juego['usuario_juego'] = $idUsuario > 0 ? cacheUsuarioJuego($db, $juego['id'], $idUsuario) : null;
 
     return $juego;
@@ -1282,7 +1293,7 @@ function cacheImportarJuegosIgdb(PDO $db, $pagina = 1, $cantidad = 20, $reinicia
 
     return [
         'ok' => true,
-        'mensaje' => 'Importacion completada',
+        'mensaje' => 'Importación completada',
         'importados' => $importados
     ];
 }
@@ -1365,7 +1376,7 @@ function cacheImportarBusquedaIgdb(PDO $db, $busqueda, $pagina = 1, $cantidad = 
     if ($busqueda === '') {
         return [
             'ok' => false,
-            'mensaje' => 'No hay termino de busqueda',
+            'mensaje' => 'No hay término de búsqueda',
             'importados' => 0
         ];
     }

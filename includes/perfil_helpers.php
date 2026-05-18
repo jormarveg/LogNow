@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/puntuacion_helpers.php';
+
 function urlUsuarioPublico($nick) {
     return '/usuario.php?nick=' . rawurlencode((string) $nick);
 }
@@ -39,43 +41,6 @@ function fechaPerfilBonita($fecha, $abreviada = false) {
         : ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
     return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
-}
-
-function puntuacionPerfilVisible($puntuacion) {
-    if ($puntuacion === null) {
-        return 'N/D';
-    }
-
-    $puntuacion = (float) $puntuacion;
-
-    if (abs($puntuacion - round($puntuacion)) < 0.05) {
-        return number_format($puntuacion, 0, ',', '.');
-    }
-
-    return number_format($puntuacion, 1, ',', '.');
-}
-
-function estrellasPerfil($puntuacion) {
-    if ($puntuacion === null) {
-        $puntuacion = 0;
-    }
-
-    $puntuacion = max(0, min(5, (float) $puntuacion));
-    $estrellasCompletas = (int) floor($puntuacion);
-    $mediaEstrella = ($puntuacion - $estrellasCompletas) >= 0.5;
-    $html = '';
-
-    for ($i = 1; $i <= 5; $i++) {
-        if ($i <= $estrellasCompletas) {
-            $html .= '<i class="fa-solid fa-star"></i>';
-        } elseif ($mediaEstrella && $i === $estrellasCompletas + 1) {
-            $html .= '<i class="fa-solid fa-star-half-stroke"></i>';
-        } else {
-            $html .= '<i class="fa-solid fa-star vacia"></i>';
-        }
-    }
-
-    return $html;
 }
 
 function partesTextoPerfilResena($texto, $limite = 110) {

@@ -125,7 +125,7 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                     <div class="mini-portada"><img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
                                     <div class="nombre-puntuacion">
                                         <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
-                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionPerfilVisible($resena['puntuacion_estrellas']) ?></span></div>
+                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
                                     <div class="puntuacion-tablet">
                                         <div class="titulo-puntuacion-wrapper">
@@ -135,7 +135,7 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
                                             </p>
-                                            <div class="estrellas"><?= estrellasPerfil($resena['puntuacion_estrellas']) ?></div>
+                                            <div class="estrellas"><?= estrellasHtml($resena['puntuacion_estrellas']) ?></div>
                                         </div>
                                         <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
                                     </div>
@@ -221,7 +221,7 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                     <div class="mini-portada"><img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
                                     <div class="nombre-puntuacion">
                                         <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
-                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionPerfilVisible($resena['puntuacion_estrellas']) ?></span></div>
+                                        <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
                                     <div class="puntuacion-tablet">
                                         <div class="titulo-puntuacion-wrapper">
@@ -231,7 +231,7 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
                                             </p>
-                                            <div class="estrellas"><?= estrellasPerfil($resena['puntuacion_estrellas']) ?></div>
+                                            <div class="estrellas"><?= estrellasHtml($resena['puntuacion_estrellas']) ?></div>
                                         </div>
                                         <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
                                     </div>

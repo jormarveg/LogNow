@@ -1,14 +1,31 @@
 <?php
 
-function textoEstadoBiblioteca($estado) {
-    $estados = [
+require_once __DIR__ . '/paginacion_helpers.php';
+
+function estadosBiblioteca() {
+    return [
         'jugando' => 'Jugando',
         'completado' => 'Completado',
         'pendiente' => 'Pendiente',
         'abandonado' => 'Abandonado'
     ];
+}
 
-    return $estados[$estado] ?? 'Sin estado';
+function estadosBibliotecaFicha() {
+    return [
+        'completado' => ['icono' => 'fa-check', 'texto' => 'Complet.'],
+        'jugando' => ['icono' => 'fa-gamepad', 'texto' => 'Jugando'],
+        'pendiente' => ['icono' => 'fa-calendar-days', 'texto' => 'Pendiente'],
+        'abandonado' => ['icono' => 'fa-ban', 'texto' => 'Aband.']
+    ];
+}
+
+function estadoBibliotecaValido($estado) {
+    return isset(estadosBiblioteca()[$estado]);
+}
+
+function textoEstadoBiblioteca($estado) {
+    return estadosBiblioteca()[$estado] ?? 'Sin estado';
 }
 
 function tiempoBiblioteca($horas, $minutos) {
@@ -46,20 +63,6 @@ function fechaBibliotecaBonita($fecha) {
     return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
 }
 
-function puntuacionBibliotecaVisible($puntuacion) {
-    if ($puntuacion === null) {
-        return 'N/D';
-    }
-
-    $puntuacion = (float) $puntuacion;
-
-    if (abs($puntuacion - round($puntuacion)) < 0.05) {
-        return number_format($puntuacion, 0, ',', '.');
-    }
-
-    return number_format($puntuacion, 1, ',', '.');
-}
-
 function urlBibliotecaEstado($baseUrl, $estado = '') {
     $params = [];
 
@@ -88,30 +91,4 @@ function urlBibliotecaPagina($baseUrl, $estado = '', $pagina = 1) {
     $query = http_build_query($params);
 
     return $baseUrl . (str_contains($baseUrl, '?') ? '&' : '?') . $query;
-}
-
-function paginasBiblioteca($paginaActual, $totalPaginas) {
-    if ($totalPaginas <= 7) {
-        return range(1, $totalPaginas);
-    }
-
-    $paginas = [1];
-    $inicio = max(2, $paginaActual - 1);
-    $fin = min($totalPaginas - 1, $paginaActual + 1);
-
-    if ($inicio > 2) {
-        $paginas[] = '...';
-    }
-
-    for ($i = $inicio; $i <= $fin; $i++) {
-        $paginas[] = $i;
-    }
-
-    if ($fin < $totalPaginas - 1) {
-        $paginas[] = '...';
-    }
-
-    $paginas[] = $totalPaginas;
-
-    return $paginas;
 }
