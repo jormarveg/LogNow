@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($usuarioModel->existeNickDeOtroUsuario($idUsuario, $nick)) {
             $errorPerfil = 'Ese nick ya está en uso';
         } else {
+            $tieneAvatarNuevo = isset($_FILES['avatar']) && ($_FILES['avatar']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+            $tieneEncabezadoNuevo = isset($_FILES['encabezado']) && ($_FILES['encabezado']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
             $subidaAvatar = subirAvatar($_FILES['avatar'] ?? null, $avatarActual);
             $subidaEncabezado = subirEncabezado($_FILES['encabezado'] ?? null, $encabezadoActual);
 
@@ -68,6 +70,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $avatarActual = $subidaAvatar['ruta'];
                 $encabezadoActual = $subidaEncabezado['ruta'];
+
+                if (isset($_POST['quitar_avatar']) && !$tieneAvatarNuevo) {
+                    borrarImagenPerfil($avatarActual, 'avatars');
+                    $avatarActual = '';
+                }
+
+                if (isset($_POST['quitar_encabezado']) && !$tieneEncabezadoNuevo) {
+                    borrarImagenPerfil($encabezadoActual, 'covers');
+                    $encabezadoActual = '';
+                }
+
                 $usuarioModel->actualizarPerfil(
                     $idUsuario,
                     $nombre,
@@ -99,30 +112,11 @@ require '../includes/header.php';
         <div>
             <p class="eyebrow">Tu perfil</p>
             <h1>Editar perfil</h1>
-            <p class="texto-cabecera">Actualiza tu nombre visible, tu nick, la bio, el avatar y el encabezado de tu cuenta.</p>
         </div>
         <a class="boton-secundario" href="/perfil.php">Volver al perfil</a>
     </section>
 
     <div class="bloque-biblioteca bloque-editar-perfil">
-        <section class="resumen-juego-biblioteca resumen-perfil-actual">
-            <div class="vista-encabezado-actual" style="background-image: url('<?= htmlspecialchars(urlEncabezadoUsuario($encabezadoActual)) ?>');">
-                <div class="portada-resumen avatar-resumen">
-                    <img src="<?= htmlspecialchars(urlAvatarUsuario($avatarActual)) ?>" alt="Avatar actual de <?= htmlspecialchars($nick) ?>">
-                </div>
-            </div>
-            <div class="datos-resumen">
-                <p class="eyebrow">Vista actual</p>
-                <h2><?= htmlspecialchars($nombre) ?></h2>
-                <p class="subtexto-resumen">@<?= htmlspecialchars($nick) ?></p>
-                <?php if ($biografia !== ''): ?>
-                    <p class="meta-resumen"><?= nl2br(htmlspecialchars($biografia)) ?></p>
-                <?php else: ?>
-                    <p class="meta-resumen">Todavía no has escrito ninguna bio.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-
         <section class="formulario-biblioteca">
             <?php if ($errorPerfil): ?>
                 <p class="error"><?= htmlspecialchars($errorPerfil) ?></p>
@@ -152,13 +146,27 @@ require '../includes/header.php';
                     <div class="campo campo-ancho">
                         <label for="avatar">Avatar</label>
                         <input type="file" id="avatar" name="avatar" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="msg-error"></span>
                         <p class="ayuda-campo">Formatos permitidos: JPG, PNG o WEBP. Máximo 5 MB.</p>
+                        <?php if ($avatarActual !== ''): ?>
+                            <label class="check-eliminar-imagen" for="quitar_avatar">
+                                <input type="checkbox" id="quitar_avatar" name="quitar_avatar" value="1">
+                                <span>Eliminar avatar</span>
+                            </label>
+                        <?php endif; ?>
                     </div>
 
                     <div class="campo campo-ancho">
                         <label for="encabezado">Encabezado</label>
                         <input type="file" id="encabezado" name="encabezado" accept=".jpg,.jpeg,.png,.webp">
+                        <span class="msg-error"></span>
                         <p class="ayuda-campo">Sube una imagen horizontal para la cabecera del perfil. Máximo 5 MB.</p>
+                        <?php if ($encabezadoActual !== ''): ?>
+                            <label class="check-eliminar-imagen" for="quitar_encabezado">
+                                <input type="checkbox" id="quitar_encabezado" name="quitar_encabezado" value="1">
+                                <span>Eliminar encabezado</span>
+                            </label>
+                        <?php endif; ?>
                     </div>
                 </div>
 

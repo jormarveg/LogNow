@@ -741,7 +741,16 @@ function cacheRecomendacionesInicio(PDO $db, $idUsuario, $limite = 10) {
     return $juegos;
 }
 
-function cacheListarResenasUsuario(PDO $db, $idUsuario, $limite = 12) {
+function cacheContarResenasUsuario(PDO $db, $idUsuario) {
+    $stmt = $db->prepare('SELECT COUNT(*)
+                          FROM RESENA
+                          WHERE id_usuario = ? AND activa = 1 AND TRIM(COALESCE(comentario, "")) <> ""');
+    $stmt->execute([(int) $idUsuario]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function cacheListarResenasUsuario(PDO $db, $idUsuario, $limite = 12, $offset = 0) {
     $stmt = $db->prepare('SELECT
                             r.comentario,
                             r.puntuacion,
@@ -758,7 +767,7 @@ function cacheListarResenasUsuario(PDO $db, $idUsuario, $limite = 12) {
                           LEFT JOIN PLATAFORMA p ON p.id = uj.id_plataforma
                           WHERE r.id_usuario = ? AND r.activa = 1 AND TRIM(COALESCE(r.comentario, "")) <> ""
                           ORDER BY r.fecha_publicacion DESC, r.id DESC
-                          LIMIT ' . (int) $limite);
+                          LIMIT ' . (int) $limite . ' OFFSET ' . (int) $offset);
     $stmt->execute([(int) $idUsuario]);
     $resenas = $stmt->fetchAll();
 
@@ -796,9 +805,9 @@ function cacheJuegosUsuarioEsteAno(PDO $db, $idUsuario, $ano = null) {
     $stmt = $db->prepare('SELECT COUNT(*)
                           FROM USUARIO_JUEGO
                           WHERE id_usuario = ?
-                            AND estado = "completado"
-                            AND fecha_fin IS NOT NULL
-                            AND YEAR(fecha_fin) = ?');
+                            AND estado <> "pendiente"
+                            AND fecha_inicio IS NOT NULL
+                            AND YEAR(fecha_inicio) = ?');
     $stmt->execute([(int) $idUsuario, (int) $ano]);
 
     return (int) $stmt->fetchColumn();
@@ -952,22 +961,6 @@ function cacheActualizarEstadoJuegoBiblioteca(PDO $db, $idUsuario, $idVideojuego
 
     if (!in_array($estado, $estadosValidos, true)) {
         return false;
-    }
-
-    if ($estado === 'pendiente') {
-        $stmt = $db->prepare('UPDATE USUARIO_JUEGO
-                              SET estado = ?, fecha_inicio = NULL, fecha_fin = NULL
-                              WHERE id_usuario = ? AND id_videojuego = ?');
-
-        return $stmt->execute([$estado, (int) $idUsuario, (int) $idVideojuego]);
-    }
-
-    if ($estado !== 'completado') {
-        $stmt = $db->prepare('UPDATE USUARIO_JUEGO
-                              SET estado = ?, fecha_fin = NULL
-                              WHERE id_usuario = ? AND id_videojuego = ?');
-
-        return $stmt->execute([$estado, (int) $idUsuario, (int) $idVideojuego]);
     }
 
     $stmt = $db->prepare('UPDATE USUARIO_JUEGO
@@ -1155,6 +1148,7 @@ function cacheResumenBibliotecaUsuario(PDO $db, $idUsuario) {
     $stmt = $db->prepare("SELECT
                             COUNT(*) AS total,
                             SUM(CASE WHEN favorito = 1 THEN 1 ELSE 0 END) AS favoritos,
+                            SUM(CASE WHEN estado IN ('jugando', 'completado', 'abandonado') THEN 1 ELSE 0 END) AS jugados,
                             SUM(CASE WHEN estado = 'jugando' THEN 1 ELSE 0 END) AS jugando,
                             SUM(CASE WHEN estado = 'completado' THEN 1 ELSE 0 END) AS completados,
                             SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) AS pendientes,
@@ -1167,6 +1161,7 @@ function cacheResumenBibliotecaUsuario(PDO $db, $idUsuario) {
     return [
         'total' => (int) ($datos['total'] ?? 0),
         'favoritos' => (int) ($datos['favoritos'] ?? 0),
+        'jugados' => (int) ($datos['jugados'] ?? 0),
         'jugando' => (int) ($datos['jugando'] ?? 0),
         'completados' => (int) ($datos['completados'] ?? 0),
         'pendientes' => (int) ($datos['pendientes'] ?? 0),

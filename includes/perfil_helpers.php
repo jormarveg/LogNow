@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/puntuacion_helpers.php';
+require_once __DIR__ . '/paginacion_helpers.php';
 
 function urlUsuarioPublico($nick) {
     return '/usuario.php?nick=' . rawurlencode((string) $nick);
@@ -70,18 +71,26 @@ function alturaBarraPerfil($valor, $maximo) {
     return max(12, (int) round(($valor / $maximo) * 100));
 }
 
-function datosPerfilUsuario(PDO $db, $idUsuario, $estadoFiltro, $paginaBibliotecaActual, $porPaginaBiblioteca = 12) {
+function datosPerfilUsuario(PDO $db, $idUsuario, $estadoFiltro, $paginaBibliotecaActual, $porPaginaBiblioteca = 12, $paginaResenasActual = 1, $porPaginaResenas = 6) {
     $idUsuario = (int) $idUsuario;
     $paginaBibliotecaActual = max(1, (int) $paginaBibliotecaActual);
+    $paginaResenasActual = max(1, (int) $paginaResenasActual);
     $resumenBiblioteca = cacheResumenBibliotecaUsuario($db, $idUsuario);
     $totalJuegosBiblioteca = cacheContarBibliotecaUsuario($db, $idUsuario, $estadoFiltro);
     $totalPaginasBiblioteca = max(1, (int) ceil($totalJuegosBiblioteca / $porPaginaBiblioteca));
+    $totalResenasUsuario = cacheContarResenasUsuario($db, $idUsuario);
+    $totalPaginasResenas = max(1, (int) ceil($totalResenasUsuario / $porPaginaResenas));
 
     if ($paginaBibliotecaActual > $totalPaginasBiblioteca) {
         $paginaBibliotecaActual = $totalPaginasBiblioteca;
     }
 
+    if ($paginaResenasActual > $totalPaginasResenas) {
+        $paginaResenasActual = $totalPaginasResenas;
+    }
+
     $offsetBiblioteca = ($paginaBibliotecaActual - 1) * $porPaginaBiblioteca;
+    $offsetResenas = ($paginaResenasActual - 1) * $porPaginaResenas;
     $histogramaUsuario = cacheHistogramaUsuario($db, $idUsuario);
     $totalPuntuacionesUsuario = array_sum($histogramaUsuario);
 
@@ -92,7 +101,10 @@ function datosPerfilUsuario(PDO $db, $idUsuario, $estadoFiltro, $paginaBibliotec
         'paginaBibliotecaActual' => $paginaBibliotecaActual,
         'juegosBiblioteca' => cacheListarBibliotecaUsuario($db, $idUsuario, $estadoFiltro, $porPaginaBiblioteca, $offsetBiblioteca),
         'resenasUsuarioPerfil' => cacheListarResenasUsuario($db, $idUsuario, 5),
-        'resenasUsuarioTab' => cacheListarResenasUsuario($db, $idUsuario, 20),
+        'resenasUsuarioTab' => cacheListarResenasUsuario($db, $idUsuario, $porPaginaResenas, $offsetResenas),
+        'totalResenasUsuario' => $totalResenasUsuario,
+        'totalPaginasResenas' => $totalPaginasResenas,
+        'paginaResenasActual' => $paginaResenasActual,
         'favoritosUsuario' => cacheFavoritosUsuario($db, $idUsuario, 6),
         'jugadosEsteAno' => cacheJuegosUsuarioEsteAno($db, $idUsuario),
         'histogramaUsuario' => $histogramaUsuario,

@@ -6,9 +6,11 @@ Permite a los usuarios gestionar su biblioteca de juegos, escribir reseñas, cre
 
 ## Tecnologías
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** PHP, MySQL
+- **Frontend:** HTML5, CSS3, JavaScript y jQuery
+- **Backend:** PHP 8 con PDO y MariaDB
+- **Entorno:** Nginx, PHP-FPM y Docker
 - **API externa:** [IGDB](https://www.igdb.com/api)
+- **Bibliotecas:** FPDF, FontAwesome y Google Fonts
 
 ## Autor
 

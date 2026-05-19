@@ -2,7 +2,7 @@
 
 const LIMITE_IMAGEN_PERFIL = 5 * 1024 * 1024;
 
-function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen', $limite = 2097152) {
+function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen', $limite = LIMITE_IMAGEN_PERFIL) {
     if (!isset($archivo) || !is_array($archivo) || ($archivo['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return [
             'ok' => true,
@@ -10,10 +10,18 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
         ];
     }
 
-    if (($archivo['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+    $errorSubida = $archivo['error'] ?? UPLOAD_ERR_OK;
+
+    if ($errorSubida !== UPLOAD_ERR_OK) {
+        $mensaje = 'No se ha podido subir la imagen';
+
+        if (in_array($errorSubida, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) {
+            $mensaje = 'La imagen no puede superar los 5 MB';
+        }
+
         return [
             'ok' => false,
-            'error' => 'No se ha podido subir la imagen'
+            'error' => $mensaje
         ];
     }
 
@@ -55,9 +63,6 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
         ];
     }
 
-    @chmod($directorioBase, 0777);
-    @chmod($directorio, 0777);
-
     if (!is_writable($directorio)) {
         return [
             'ok' => false,
@@ -92,10 +97,25 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
     ];
 }
 
+function borrarImagenPerfil($rutaActual, $carpeta) {
+    $rutaActual = trim((string) $rutaActual);
+    $carpeta = trim((string) $carpeta, '/');
+
+    if ($rutaActual === '' || !str_starts_with($rutaActual, '/uploads/' . $carpeta . '/')) {
+        return;
+    }
+
+    $rutaAbsoluta = __DIR__ . '/..' . $rutaActual;
+
+    if (is_file($rutaAbsoluta)) {
+        unlink($rutaAbsoluta);
+    }
+}
+
 function subirAvatar($archivo, $avatarActual = '') {
-    return subirImagenPerfil($archivo, $avatarActual, 'avatars', 'avatar', LIMITE_IMAGEN_PERFIL);
+    return subirImagenPerfil($archivo, $avatarActual, 'avatars', 'user-pic', LIMITE_IMAGEN_PERFIL);
 }
 
 function subirEncabezado($archivo, $encabezadoActual = '') {
-    return subirImagenPerfil($archivo, $encabezadoActual, 'covers', 'encabezado', LIMITE_IMAGEN_PERFIL);
+    return subirImagenPerfil($archivo, $encabezadoActual, 'covers', 'user-header', LIMITE_IMAGEN_PERFIL);
 }
