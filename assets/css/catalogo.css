@@ -27,7 +27,7 @@ main{
 
 .filtros-catalogo{
     display: grid;
-    gap: 0.55rem;
+    gap: 0.75rem;
 }
 
 .filtros-catalogo-wrapper{
@@ -78,6 +78,23 @@ main{
     display: grid;
 }
 
+.grupo-catalogo{
+    display: grid;
+    gap: 0.55rem;
+    min-width: 0;
+    border: 1px solid var(--bordes);
+    border-radius: 8px;
+    padding: 0.8rem;
+    background: #f7f9fa;
+}
+
+.grupo-catalogo legend{
+    padding: 0 0.3rem;
+    color: #4b5c6b;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
 .filtros-catalogo label{
     display: flex;
     flex-direction: column;
@@ -118,6 +135,14 @@ main{
     color: white;
     font-weight: 600;
     padding: 0 0.7rem;
+}
+
+.acciones-catalogo{
+    display: flex;
+}
+
+.acciones-catalogo button{
+    width: 100%;
 }
 
 .juegos .portada {
@@ -398,8 +423,13 @@ main{
         display: grid;
     }
 
-    .filtros-catalogo{
+    .grupo-filtros-catalogo{
         grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: end;
+    }
+
+    .grupo-orden-catalogo{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         align-items: end;
     }
 
@@ -439,7 +469,16 @@ main{
 
     .filtros-catalogo{
         flex: 1;
-        grid-template-columns: minmax(7.5rem, 1fr) minmax(8.5rem, 1.1fr) minmax(6.5rem, 0.8fr) minmax(7.5rem, 1fr) minmax(7rem, 0.85fr) minmax(5.8rem, 0.7fr);
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) auto;
+        align-items: stretch;
+    }
+
+    .grupo-catalogo{
+        align-content: end;
+    }
+
+    .acciones-catalogo{
+        align-items: end;
     }
 
     .juegos{

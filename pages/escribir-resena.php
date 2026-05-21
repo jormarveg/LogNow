@@ -88,9 +88,6 @@ require '../includes/header.php';
                     </p>
                     <p class="meta-resumen">Estado: <?= htmlspecialchars(ucfirst($juego['usuario_juego']['estado'])) ?></p>
                     <p class="meta-resumen">Plataforma: <?= htmlspecialchars($juego['usuario_juego']['plataforma'] ?? 'Sin plataforma') ?></p>
-                    <?php if ($puntuacion !== ''): ?>
-                        <p class="aviso-resena">Ya tienes una puntuación rápida guardada. Puedes mantenerla o cambiarla aquí.</p>
-                    <?php endif; ?>
                 </div>
             </section>
 

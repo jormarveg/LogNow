@@ -281,6 +281,10 @@ aside.sidebar {
     font-size: 0.9rem;
 }
 
+.nota-usuario{
+    margin-bottom: 0.5rem;
+}
+
 .nota-usuario,
 .total-resenas {
     color: #6f7d8c;
@@ -289,7 +293,6 @@ aside.sidebar {
 }
 
 .mensaje-puntuacion-juego {
-    min-height: 1.2rem;
     margin: 0;
     color: #6f7d8c;
     font-size: 0.85rem;
@@ -622,6 +625,40 @@ section.principal {
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
+.resenas-juego .texto-recortado {
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.resenas-juego .resena-expandida .texto-recortado {
+    display: block;
+    overflow: visible;
+}
+
+.boton-leer-resena {
+    grid-column: 2;
+    grid-row: 3;
+    width: fit-content;
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+}
+
+.boton-leer-resena:hover,
+.boton-leer-resena:focus-visible {
+    color: #5d22a2;
+    outline: none;
+    text-decoration: underline;
 }
 
 .paginacion-resenas {
@@ -657,10 +694,20 @@ section.principal {
     font-weight: 600;
 }
 
+.form-eliminar-resena-admin,
 .boton-reportar-resena {
     grid-column: 2;
     grid-row: 3;
     width: fit-content;
+}
+
+.resena-con-leer .form-eliminar-resena-admin,
+.resena-con-leer > .boton-reportar-resena {
+    grid-row: 4;
+}
+
+.form-eliminar-resena-admin button,
+.boton-reportar-resena {
     border: none;
     background: transparent;
     color: #6f7d8c;
@@ -671,6 +718,12 @@ section.principal {
     cursor: pointer;
 }
 
+.boton-eliminar-resena-admin {
+    color: #c84a4a;
+}
+
+.form-eliminar-resena-admin button:hover,
+.form-eliminar-resena-admin button:focus-visible,
 .boton-reportar-resena:hover,
 .boton-reportar-resena:focus-visible {
     color: #c84a4a;
@@ -979,11 +1032,14 @@ section.principal {
         grid-template-columns: 7rem 1fr;
     }
 
+    .form-eliminar-resena-admin,
     .boton-reportar-resena {
         opacity: 0;
         transition: opacity 0.2s ease, color 0.2s ease;
     }
 
+    .resenas-juego .elemento-carousel:hover .form-eliminar-resena-admin,
+    .resenas-juego .elemento-carousel:focus-within .form-eliminar-resena-admin,
     .resenas-juego .elemento-carousel:hover .boton-reportar-resena,
     .resenas-juego .elemento-carousel:focus-within .boton-reportar-resena {
         opacity: 1;

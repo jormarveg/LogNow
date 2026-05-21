@@ -110,9 +110,7 @@ if ($paginaActual > $totalPaginas) {
 }
 
 $offset = ($paginaActual - 1) * $porPagina;
-$stmtUsuarios = $db->prepare("SELECT u.id, u.nombre, u.nick, u.email, u.rol, u.activo, u.registro,
-                                     (SELECT COUNT(*) FROM USUARIO_JUEGO uj WHERE uj.id_usuario = u.id) AS total_juegos,
-                                     (SELECT COUNT(*) FROM RESENA r WHERE r.id_usuario = u.id AND r.activa = 1 AND r.comentario IS NOT NULL AND TRIM(r.comentario) <> '') AS total_resenas
+$stmtUsuarios = $db->prepare("SELECT u.id, u.nombre, u.nick, u.email, u.rol, u.activo, u.registro
                               FROM USUARIO u
                               $whereSql
                               ORDER BY u.registro DESC, u.id DESC
@@ -175,7 +173,6 @@ require __DIR__ . '/../includes/header.php';
                 </select>
             </label>
             <button type="submit">Filtrar</button>
-            <a href="/admin/usuarios.php" class="boton-limpiar">Limpiar</a>
             <a href="<?= htmlspecialchars($urlPdf) ?>" class="boton-pdf">Exportar PDF</a>
         </form>
 
@@ -187,7 +184,6 @@ require __DIR__ . '/../includes/header.php';
                             <tr>
                                 <th>Usuario</th>
                                 <th>Email</th>
-                                <th>Actividad</th>
                                 <th>Registro</th>
                                 <th>Estado</th>
                             </tr>
@@ -202,10 +198,6 @@ require __DIR__ . '/../includes/header.php';
                                         <span>Rol: <?= $usuario['rol'] === 'admin' ? 'admin' : 'usuario' ?></span>
                                     </td>
                                     <td data-label="Email"><?= htmlspecialchars($usuario['email']) ?></td>
-                                    <td data-label="Actividad">
-                                        <span><?= (int) $usuario['total_juegos'] ?> juegos</span>
-                                        <span><?= (int) $usuario['total_resenas'] ?> reseñas</span>
-                                    </td>
                                     <td data-label="Registro"><?= adminFecha($usuario['registro']) ?></td>
                                     <td data-label="Estado">
                                         <div class="estado-admin">

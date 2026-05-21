@@ -256,7 +256,6 @@
 .admin-filtros input,
 .admin-filtros select,
 .admin-filtros button,
-.boton-limpiar,
 .boton-pdf,
 .boton-estado,
 .boton-eliminar {
@@ -281,17 +280,6 @@
     font-weight: 600;
     padding: 0 1rem;
     cursor: pointer;
-}
-
-.boton-limpiar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--bordes);
-    color: #4b5c6b;
-    background: white;
-    font-weight: 600;
-    padding: 0 1rem;
 }
 
 .boton-pdf {
@@ -481,6 +469,70 @@
     gap: 0.5rem;
 }
 
+.modal-admin-confirmacion[hidden] {
+    display: none;
+}
+
+.modal-admin-confirmacion {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.modal-admin-fondo {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 31, 42, 0.55);
+}
+
+.modal-admin-panel {
+    position: relative;
+    width: min(100%, 28rem);
+    border: 1px solid var(--bordes);
+    background: white;
+    padding: 1.2rem;
+}
+
+.modal-admin-panel h2 {
+    font-size: 1.45rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-admin-panel p {
+    color: #5e6d7a;
+    line-height: 1.5;
+}
+
+.acciones-modal-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.acciones-modal-admin button {
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.boton-cancelar-admin {
+    border: 1px solid var(--bordes);
+    background: white;
+    color: #4b5c6b;
+}
+
+.boton-confirmar-admin {
+    border: none;
+    background: #b23b3b;
+    color: white;
+}
+
 .paginacion-admin {
     display: flex;
     flex-wrap: wrap;
@@ -542,7 +594,7 @@
     }
 
     .admin-filtros {
-        grid-template-columns: 1.5fr 1fr 1fr auto auto auto;
+        grid-template-columns: 1.5fr 1fr 1fr auto auto;
     }
 
     .admin-filtros label:first-child {
@@ -563,7 +615,7 @@
 
     .tabla-admin {
         display: table;
-        min-width: 46rem;
+        min-width: 39rem;
     }
 
     .tabla-admin thead {

@@ -88,3 +88,55 @@ if (formResena) {
         }
     });
 }
+
+const modalEliminarResena = document.getElementById('modalEliminarResena');
+const formsEliminarResena = document.querySelectorAll('.form-eliminar-resena');
+
+if (modalEliminarResena && formsEliminarResena.length > 0) {
+    const cancelarEliminarResena = modalEliminarResena.querySelector('.boton-cancelar-quitar');
+    const confirmarEliminarResena = modalEliminarResena.querySelector('.boton-confirmar-quitar');
+    const fondoEliminarResena = modalEliminarResena.querySelector('.modal-quitar-fondo');
+    let formEliminarResena = null;
+    let abrirEliminarResena = null;
+
+    function abrirModalEliminarResena(form, boton) {
+        formEliminarResena = form;
+        abrirEliminarResena = boton;
+        modalEliminarResena.hidden = false;
+        confirmarEliminarResena.focus();
+    }
+
+    function cerrarModalEliminarResena() {
+        modalEliminarResena.hidden = true;
+        if (abrirEliminarResena) {
+            abrirEliminarResena.focus();
+        }
+    }
+
+    formsEliminarResena.forEach(function(form) {
+        const botonAbrir = form.querySelector('.abrir-modal-eliminar-resena');
+
+        if (!botonAbrir) {
+            return;
+        }
+
+        botonAbrir.addEventListener('click', function() {
+            abrirModalEliminarResena(form, botonAbrir);
+        });
+    });
+
+    cancelarEliminarResena.addEventListener('click', cerrarModalEliminarResena);
+    fondoEliminarResena.addEventListener('click', cerrarModalEliminarResena);
+
+    confirmarEliminarResena.addEventListener('click', function() {
+        if (formEliminarResena) {
+            formEliminarResena.submit();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modalEliminarResena.hidden) {
+            cerrarModalEliminarResena();
+        }
+    });
+}

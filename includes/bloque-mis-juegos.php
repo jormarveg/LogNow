@@ -8,7 +8,6 @@ $bibliotecaMostrarAccionVacia = $bibliotecaMostrarAccionVacia ?? $bibliotecaMost
 $bibliotecaAccionTexto = $bibliotecaAccionTexto ?? 'Registrar otro juego';
 $bibliotecaVaciaTitulo = $bibliotecaVaciaTitulo ?? 'Tu biblioteca está vacía';
 $bibliotecaVaciaTexto = $bibliotecaVaciaTexto ?? 'Todavía no has registrado ningún juego.';
-$bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.';
 ?>
 <section class="cabecera-biblioteca">
     <div>
@@ -86,7 +85,6 @@ $bibliotecaFiltroVacioTexto = $bibliotecaFiltroVacioTexto ?? 'Prueba a cambiar e
         <div class="panel-vacio">
             <?php if ($resumenBiblioteca['total'] > 0): ?>
                 <h2>No hay juegos con ese filtro</h2>
-                <p><?= htmlspecialchars($bibliotecaFiltroVacioTexto) ?></p>
             <?php else: ?>
                 <h2><?= htmlspecialchars($bibliotecaVaciaTitulo) ?></h2>
                 <p><?= htmlspecialchars($bibliotecaVaciaTexto) ?></p>

@@ -42,9 +42,7 @@ if ($estadoFiltro === 'activos') {
 }
 
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-$stmtUsuarios = $db->prepare("SELECT u.nombre, u.nick, u.email, u.rol, u.activo, u.registro,
-                                     (SELECT COUNT(*) FROM USUARIO_JUEGO uj WHERE uj.id_usuario = u.id) AS total_juegos,
-                                     (SELECT COUNT(*) FROM RESENA r WHERE r.id_usuario = u.id AND r.activa = 1 AND r.comentario IS NOT NULL AND TRIM(r.comentario) <> '') AS total_resenas
+$stmtUsuarios = $db->prepare("SELECT u.nombre, u.nick, u.email, u.rol, u.activo, u.registro
                               FROM USUARIO u
                               $whereSql
                               ORDER BY u.registro DESC, u.id DESC");
@@ -76,12 +74,10 @@ $pdf->Ln(2);
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(42, 8, 'Nombre', 1, 0, 'C');
 $pdf->Cell(28, 8, 'Nick', 1, 0, 'C');
-$pdf->Cell(68, 8, 'Email', 1, 0, 'C');
+$pdf->Cell(82, 8, 'Email', 1, 0, 'C');
 $pdf->Cell(24, 8, 'Rol', 1, 0, 'C');
 $pdf->Cell(24, 8, 'Estado', 1, 0, 'C');
-$pdf->Cell(25, 8, 'Juegos', 1, 0, 'C');
-$pdf->Cell(25, 8, textoPdf('Reseñas'), 1, 0, 'C');
-$pdf->Cell(38, 8, 'Registro', 1, 1, 'C');
+$pdf->Cell(48, 8, 'Registro', 1, 1, 'C');
 
 $pdf->SetFont('Arial', '', 9);
 
@@ -91,24 +87,20 @@ foreach ($usuarios as $usuario) {
         $pdf->SetFont('Arial', 'B', 10);
         $pdf->Cell(42, 8, 'Nombre', 1, 0, 'C');
         $pdf->Cell(28, 8, 'Nick', 1, 0, 'C');
-        $pdf->Cell(68, 8, 'Email', 1, 0, 'C');
+        $pdf->Cell(82, 8, 'Email', 1, 0, 'C');
         $pdf->Cell(24, 8, 'Rol', 1, 0, 'C');
         $pdf->Cell(24, 8, 'Estado', 1, 0, 'C');
-        $pdf->Cell(25, 8, 'Juegos', 1, 0, 'C');
-        $pdf->Cell(25, 8, textoPdf('Reseñas'), 1, 0, 'C');
-        $pdf->Cell(38, 8, 'Registro', 1, 1, 'C');
+        $pdf->Cell(48, 8, 'Registro', 1, 1, 'C');
         $pdf->SetFont('Arial', '', 9);
     }
 
     $estado = $usuario['activo'] ? 'Activo' : 'Inactivo';
     $pdf->Cell(42, 7, textoPdf($usuario['nombre']), 1);
     $pdf->Cell(28, 7, textoPdf($usuario['nick']), 1);
-    $pdf->Cell(68, 7, textoPdf($usuario['email']), 1);
+    $pdf->Cell(82, 7, textoPdf($usuario['email']), 1);
     $pdf->Cell(24, 7, textoPdf($usuario['rol']), 1, 0, 'C');
     $pdf->Cell(24, 7, textoPdf($estado), 1, 0, 'C');
-    $pdf->Cell(25, 7, (string) $usuario['total_juegos'], 1, 0, 'C');
-    $pdf->Cell(25, 7, (string) $usuario['total_resenas'], 1, 0, 'C');
-    $pdf->Cell(38, 7, textoPdf(adminFecha($usuario['registro'])), 1, 1);
+    $pdf->Cell(48, 7, textoPdf(adminFecha($usuario['registro'])), 1, 1);
 }
 
 if (!$usuarios) {

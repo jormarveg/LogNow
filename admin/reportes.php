@@ -88,6 +88,7 @@ $mensajesError = [
 
 $titulo = 'Reportes — LogNow!';
 $css = ['admin.css'];
+$js = ['admin.js'];
 $pagina = 'admin';
 $adminPagina = 'reportes';
 require __DIR__ . '/../includes/header.php';
@@ -99,7 +100,7 @@ require __DIR__ . '/../includes/header.php';
     <section class="admin-content">
         <section class="admin-cabecera">
             <h1>Reportes</h1>
-            <p>Revisa los comentarios reportados y decide si se ocultan o se ignoran.</p>
+            <p>Revisa los comentarios reportados y decide si se eliminan o se ignoran.</p>
         </section>
 
         <?php if (isset($mensajesOk[$ok])): ?>
@@ -138,15 +139,15 @@ require __DIR__ . '/../includes/header.php';
                             </div>
 
                             <div class="acciones-reporte-admin">
-                                <form method="POST">
+                                <form method="POST" class="form-confirmacion-admin" data-titulo="Ignorar reporte" data-texto="El reporte quedará descartado y la reseña seguirá visible." data-confirmar="Ignorar">
                                     <input type="hidden" name="accion" value="ignorar">
                                     <input type="hidden" name="id_reporte" value="<?= (int) $reporte['id'] ?>">
-                                    <button class="boton-estado" type="submit">Ignorar</button>
+                                    <button class="boton-estado abrir-confirmacion-admin" type="button">Ignorar</button>
                                 </form>
-                                <form method="POST">
+                                <form method="POST" class="form-confirmacion-admin" data-titulo="Eliminar comentario" data-texto="Se eliminará la reseña reportada y sus reportes asociados." data-confirmar="Eliminar comentario">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="id_reporte" value="<?= (int) $reporte['id'] ?>">
-                                    <button class="boton-eliminar" type="submit">Eliminar comentario</button>
+                                    <button class="boton-eliminar abrir-confirmacion-admin" type="button">Eliminar comentario</button>
                                 </form>
                             </div>
                         </article>
@@ -180,6 +181,18 @@ require __DIR__ . '/../includes/header.php';
         <?php endif; ?>
     </section>
 </main>
+
+<div class="modal-admin-confirmacion" id="modalAdminConfirmacion" hidden>
+    <div class="modal-admin-fondo"></div>
+    <div class="modal-admin-panel" role="dialog" aria-modal="true" aria-labelledby="tituloModalAdmin">
+        <h2 id="tituloModalAdmin">Confirmar acción</h2>
+        <p id="textoModalAdmin"></p>
+        <div class="acciones-modal-admin">
+            <button type="button" class="boton-cancelar-admin">Cancelar</button>
+            <button type="button" class="boton-confirmar-admin">Confirmar</button>
+        </div>
+    </div>
+</div>
 
 <?php
 require __DIR__ . '/../includes/nav_inferior.php';

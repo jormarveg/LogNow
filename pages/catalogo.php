@@ -22,6 +22,9 @@ if (!in_array($direccion, ['normal', 'inversa'], true)) {
     $direccion = 'normal';
 }
 
+$textoDireccionNormal = $orden === 'nombre' ? 'Ascendente' : 'Descendente';
+$textoDireccionInversa = $orden === 'nombre' ? 'Descendente' : 'Ascendente';
+
 $filtros = [
     'genero' => $filtroGenero,
     'plataforma' => $filtroPlataforma,
@@ -76,55 +79,63 @@ require '../includes/header.php';
                 <i class="fa-solid fa-chevron-down"></i>
             </label>
             <form method="GET" class="filtros-catalogo">
-                <label>
-                    <span><i class="fa-solid fa-filter"></i> Género</span>
-                    <select name="genero">
-                        <option value="0">Todos</option>
-                        <?php foreach ($generos as $genero): ?>
-                            <option value="<?= $genero['id'] ?>"<?= $filtroGenero === (int) $genero['id'] ? ' selected' : '' ?>>
-                                <?= htmlspecialchars($genero['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-                <label>
-                    <span>Plataforma</span>
-                    <select name="plataforma">
-                        <option value="0">Todas</option>
-                        <?php foreach ($plataformas as $plataforma): ?>
-                            <option value="<?= $plataforma['id'] ?>"<?= $filtroPlataforma === (int) $plataforma['id'] ? ' selected' : '' ?>>
-                                <?= htmlspecialchars($plataforma['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-                <label>
-                    <span>Año</span>
-                    <select name="anio">
-                        <option value="0">Todos</option>
-                        <?php foreach ($anios as $item): ?>
-                            <option value="<?= $item['anio'] ?>"<?= $filtroAnio === (int) $item['anio'] ? ' selected' : '' ?>>
-                                <?= $item['anio'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-                <label>
-                    <span>Ordenar por</span>
-                    <select name="orden">
-                        <option value="puntuacion"<?= $orden === 'puntuacion' ? ' selected' : '' ?>>Puntuación</option>
-                        <option value="nombre"<?= $orden === 'nombre' ? ' selected' : '' ?>>Nombre</option>
-                        <option value="fecha"<?= $orden === 'fecha' ? ' selected' : '' ?>>Fecha</option>
-                    </select>
-                </label>
-                <label>
-                    <span>Orden</span>
-                    <select name="direccion">
-                        <option value="normal"<?= $direccion === 'normal' ? ' selected' : '' ?>>Normal</option>
-                        <option value="inversa"<?= $direccion === 'inversa' ? ' selected' : '' ?>>Inversa</option>
-                    </select>
-                </label>
-                <button type="submit">Aplicar</button>
+                <fieldset class="grupo-catalogo grupo-filtros-catalogo">
+                    <legend>Filtrar</legend>
+                    <label>
+                        <span><i class="fa-solid fa-filter"></i> Género</span>
+                        <select name="genero">
+                            <option value="0">Todos</option>
+                            <?php foreach ($generos as $genero): ?>
+                                <option value="<?= $genero['id'] ?>"<?= $filtroGenero === (int) $genero['id'] ? ' selected' : '' ?>>
+                                    <?= htmlspecialchars($genero['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Plataforma</span>
+                        <select name="plataforma">
+                            <option value="0">Todas</option>
+                            <?php foreach ($plataformas as $plataforma): ?>
+                                <option value="<?= $plataforma['id'] ?>"<?= $filtroPlataforma === (int) $plataforma['id'] ? ' selected' : '' ?>>
+                                    <?= htmlspecialchars($plataforma['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Año</span>
+                        <select name="anio">
+                            <option value="0">Todos</option>
+                            <?php foreach ($anios as $item): ?>
+                                <option value="<?= $item['anio'] ?>"<?= $filtroAnio === (int) $item['anio'] ? ' selected' : '' ?>>
+                                    <?= $item['anio'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </fieldset>
+                <fieldset class="grupo-catalogo grupo-orden-catalogo">
+                    <legend>Ordenar</legend>
+                    <label>
+                        <span>Ordenar por</span>
+                        <select name="orden">
+                            <option value="puntuacion"<?= $orden === 'puntuacion' ? ' selected' : '' ?>>Puntuación</option>
+                            <option value="nombre"<?= $orden === 'nombre' ? ' selected' : '' ?>>Nombre</option>
+                            <option value="fecha"<?= $orden === 'fecha' ? ' selected' : '' ?>>Fecha</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Orden</span>
+                        <select name="direccion">
+                            <option value="normal"<?= $direccion === 'normal' ? ' selected' : '' ?>><?= $textoDireccionNormal ?></option>
+                            <option value="inversa"<?= $direccion === 'inversa' ? ' selected' : '' ?>><?= $textoDireccionInversa ?></option>
+                        </select>
+                    </label>
+                </fieldset>
+                <div class="acciones-catalogo">
+                    <button type="submit">Aplicar</button>
+                </div>
             </form>
         </div>
     </section>
