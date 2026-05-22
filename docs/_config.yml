@@ -1,0 +1,27 @@
+title: LogNow!
+description: Documentación técnica de la aplicación web de seguimiento de videojuegos.
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+remote_theme: just-the-docs/just-the-docs
+
+search:
+  tokenizer_separator: /[\s\-/]+/
+  rel_url: true
+
+heading_anchors: true
+
+aux_links:
+  Repositorio:
+    - "https://github.com/jormarveg/LogNow"
+
+callouts:
+  warning:
+    title: Advertencia
+    color: yellow
+  info:
+    title: Info
+    color: blue
