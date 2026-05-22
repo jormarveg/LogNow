@@ -1,0 +1,45 @@
+h1,
+h2,
+h3 {
+  font-family: $header-font-family;
+  color: #1a1a1a;
+}
+
+.side-bar {
+  border-right: 1px solid #c3cfd9;
+}
+
+.site-title {
+  font-family: "Limelight", serif;
+  color: #2c88d9;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.nav-list-item.active > .nav-list-link {
+  color: #2c88d9;
+  background-color: rgba(44, 136, 217, 0.1);
+  border-left: 4px solid #2c88d9;
+  padding-left: 12px;
+}
+
+.footer-lognow {
+  border-top: 1px solid #c3cfd9;
+  color: #6c7a86;
+  font-size: 11px;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.footer-lognow span {
+  font-weight: 600;
+}
+
+.muestra-color {
+  border: 1px solid #c3cfd9;
+  display: inline-block;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: middle;
+  width: 16px;
+}
