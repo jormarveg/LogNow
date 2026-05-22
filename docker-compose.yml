@@ -16,6 +16,7 @@ services:
     environment:
       TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
       TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
       - ./:/var/www/html
     depends_on:
@@ -25,7 +26,7 @@ services:
     container_name: lognow-db
     image: mariadb:11
     environment:
-      MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_DATABASE: lognow
     ports:
       - "3306:3306"
@@ -40,7 +41,7 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: root
-      PMA_PASSWORD: root
+      PMA_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     depends_on:
       - db
 

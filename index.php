@@ -19,7 +19,7 @@ function fechaInicioBonita($fecha) {
     return date('j', $marca) . ' ' . $meses[(int) date('n', $marca) - 1] . ' ' . date('Y', $marca);
 }
 
-function partesTextoInicioResena($texto, $limite = 110) {
+function partesTextoInicioResena($texto, $limite = 90) {
     $texto = trim((string) $texto);
 
     if (mb_strlen($texto, 'UTF-8') <= $limite) {
@@ -141,7 +141,7 @@ require 'includes/header.php';
                         <p class="texto">
                             <?= htmlspecialchars($textoCorto) ?>
                             <?php if ($textoCompleto !== ''): ?>
-                                <span class="completo"><?= htmlspecialchars($textoCompleto) ?></span>
+                                <a class="enlace-ver-resena" href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>#resenas">Ver más</a>
                             <?php endif; ?>
                         </p>
                         <p class="username"><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></p>

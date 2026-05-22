@@ -333,12 +333,25 @@ section.principal .panel-vacio-listas p {
     padding-top: 1.5rem;
 }
 
+.cabecera-editar-perfil {
+    padding: 0.75rem;
+}
+
 .cabecera-editar-perfil .texto-cabecera {
     max-width: 34rem;
 }
 
-.bloque-editar-perfil {
+.bloque-biblioteca.bloque-editar-perfil {
     align-items: start;
+    grid-template-columns: 1fr;
+    max-width: 48rem;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bloque-editar-perfil .formulario-biblioteca {
+    width: 100%;
 }
 
 .formulario-password-perfil h2 {
@@ -346,35 +359,31 @@ section.principal .panel-vacio-listas p {
     margin-bottom: 1rem;
 }
 
-.resumen-perfil-actual {
-    align-items: center;
-}
-
-.vista-encabezado-actual {
-    width: 100%;
-    min-height: 9rem;
-    display: flex;
-    align-items: end;
-    justify-content: center;
-    padding: 1rem;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius: 10px;
-}
-
-.avatar-resumen {
-    width: 6rem;
-}
-
-.avatar-resumen img {
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
 .form-editar-perfil input[type="file"] {
     padding: 0.55rem 0.7rem;
+}
+
+.check-eliminar-imagen {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    width: auto;
+    max-width: max-content;
+    margin-top: 0.65rem;
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.campo .check-eliminar-imagen input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    flex: 0 0 auto;
+}
+
+.check-eliminar-imagen span {
+    white-space: nowrap;
 }
 
 .perfil-no-encontrado {
@@ -471,14 +480,6 @@ section.principal .panel-vacio-listas p {
 
     .favorito {
         width: clamp(8.5rem, 18vw, 10rem);
-    }
-
-    .resumen-perfil-actual {
-        grid-template-columns: 1fr;
-    }
-
-    .formulario-password-perfil {
-        grid-column: 2;
     }
 
     .encabezado-perfil .container {

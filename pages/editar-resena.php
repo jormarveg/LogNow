@@ -143,9 +143,20 @@ require '../includes/header.php';
                 <form method="POST" class="form-eliminar-resena">
                     <input type="hidden" name="id" value="<?= (int) $juego['igdb_id'] ?>">
                     <input type="hidden" name="accion" value="eliminar_resena">
-                    <button type="submit">Eliminar reseña</button>
+                    <button type="button" class="abrir-modal-eliminar-resena">Eliminar reseña</button>
                 </form>
             </section>
+        </div>
+        <div class="modal-quitar-biblioteca" id="modalEliminarResena" hidden>
+            <div class="modal-quitar-fondo"></div>
+            <div class="modal-quitar-panel" role="dialog" aria-modal="true" aria-labelledby="tituloEliminarResena">
+                <h2 id="tituloEliminarResena">Eliminar reseña</h2>
+                <p>La reseña dejará de aparecer en la ficha del juego y en tu perfil.</p>
+                <div class="acciones-modal-quitar">
+                    <button type="button" class="boton-cancelar-quitar">Cancelar</button>
+                    <button type="button" class="boton-confirmar-quitar">Eliminar reseña</button>
+                </div>
+            </div>
         </div>
     <?php else: ?>
         <section class="juego-vacio">

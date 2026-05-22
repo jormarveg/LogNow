@@ -48,7 +48,6 @@ $bibliotecaMostrarAccion = true;
 $bibliotecaAccionTexto = 'Registrar otro juego';
 $bibliotecaVaciaTitulo = 'Tu biblioteca está vacía';
 $bibliotecaVaciaTexto = 'Todavía no has registrado ningún juego.';
-$bibliotecaFiltroVacioTexto = 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.';
 
 $titulo = 'Mis juegos — LogNow!';
 $css = ['biblioteca.css'];

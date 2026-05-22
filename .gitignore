@@ -1,5 +1,6 @@
 config.php
 .env
+.env.local
 
 uploads/avatars/*
 uploads/covers/*
@@ -21,3 +22,10 @@ Thumbs.db
 error_log
 
 docker-compose.override.yml
+
+!docs/
+!docs/**
+docs/_site/
+docs/.jekyll-cache/
+docs/.bundle/
+docs/vendor/

@@ -74,11 +74,6 @@ if (formBiblioteca) {
             return;
         }
 
-        if (typeof window.jQuery === 'undefined') {
-            campo.classList.remove('oculto');
-            return;
-        }
-
         const campoJquery = $(campo);
         const estabaOculto = campoJquery.hasClass('oculto') || !campoJquery.is(':visible');
 
@@ -95,11 +90,6 @@ if (formBiblioteca) {
 
     function ocultarCampoFecha(campo, animar) {
         if (!campo) {
-            return;
-        }
-
-        if (typeof window.jQuery === 'undefined') {
-            campo.classList.add('oculto');
             return;
         }
 
@@ -121,8 +111,6 @@ if (formBiblioteca) {
         if (estadoInput.value === 'pendiente') {
             ocultarCampoFecha(campoFechaInicio, animar);
             ocultarCampoFecha(campoFechaFin, animar);
-            fechaInicioInput.value = '';
-            fechaFinInput.value = '';
             limpiarBiblioteca(fechaInicioInput);
             limpiarBiblioteca(fechaFinInput);
         } else if (estadoInput.value === 'completado') {
@@ -131,7 +119,6 @@ if (formBiblioteca) {
         } else {
             mostrarCampoFecha(campoFechaInicio, animar);
             ocultarCampoFecha(campoFechaFin, animar);
-            fechaFinInput.value = '';
             limpiarBiblioteca(fechaFinInput);
         }
     }

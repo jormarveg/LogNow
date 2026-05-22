@@ -29,6 +29,44 @@ if (
 if (
     $juego
     && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && esAdmin()
+    && ($_POST['accion'] ?? '') === 'eliminar_resena_admin'
+) {
+    $idResena = (int) ($_POST['id_resena'] ?? 0);
+    $destino = '/juego.php?id=' . $idIgdb;
+    $stmtResena = $db->prepare('SELECT id
+                                FROM RESENA
+                                WHERE id = ? AND id_videojuego = ?
+                                LIMIT 1');
+    $stmtResena->execute([$idResena, (int) $juego['id']]);
+
+    if ($stmtResena->fetch()) {
+        try {
+            $db->beginTransaction();
+
+            $stmtReportes = $db->prepare('DELETE FROM REPORTE WHERE id_resena = ?');
+            $stmtReportes->execute([$idResena]);
+
+            $stmtBorrar = $db->prepare('DELETE FROM RESENA WHERE id = ?');
+            $stmtBorrar->execute([$idResena]);
+
+            $db->commit();
+            header('Location: ' . $destino . '&resena=eliminada');
+            exit;
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+        }
+    }
+
+    header('Location: ' . $destino . '&resena=error');
+    exit;
+}
+
+if (
+    $juego
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
     && estaLogueado()
     && ($_POST['accion'] ?? '') !== 'anadir_lista'
 ) {
@@ -150,7 +188,7 @@ $puntuacionFormulario = $puntuacionUsuario !== null ? (string) (int) round(((flo
 $puntuacionMedia = $juego['resumen_resenas']['media'] ?? null;
 $totalResenas = $juego['resumen_resenas']['total'] ?? 0;
 $paginaResenas = isset($_GET['rp']) ? max(1, (int) $_GET['rp']) : 1;
-$resenasPorPagina = 6;
+$resenasPorPagina = 4;
 $totalResenasTexto = $juego ? cacheContarResenasJuego($db, (int) $juego['id']) : 0;
 $totalPaginasResenas = max(1, (int) ceil($totalResenasTexto / $resenasPorPagina));
 
@@ -231,6 +269,8 @@ require '../includes/header.php';
                 <p class="mensaje-juego exito">Reseña actualizada correctamente.</p>
             <?php elseif ($mensajeResena === 'eliminada'): ?>
                 <p class="mensaje-juego exito">Reseña eliminada correctamente.</p>
+            <?php elseif ($mensajeResena === 'error'): ?>
+                <p class="mensaje-juego aviso">No se ha podido eliminar la reseña.</p>
             <?php elseif ($mensajePuntuacion === 'ok'): ?>
                 <p class="mensaje-juego exito">Puntuación guardada correctamente.</p>
             <?php elseif ($mensajePuntuacion === 'error'): ?>
@@ -384,8 +424,13 @@ require '../includes/header.php';
                     <?php if (!empty($juego['resenas'])): ?>
                         <div class="carousel">
                             <?php foreach ($juego['resenas'] as $resena): ?>
-                                <?php $puedeReportar = estaLogueado() && (int) $resena['id_usuario'] !== $idUsuario; ?>
-                                <article class="elemento-carousel mini-resena">
+                                <?php
+                                $puedeEliminarResena = esAdmin();
+                                $puedeReportar = estaLogueado() && !$puedeEliminarResena && (int) $resena['id_usuario'] !== $idUsuario;
+                                $comentarioResena = trim((string) $resena['comentario']);
+                                $resenaLarga = mb_strlen($comentarioResena, 'UTF-8') > 650;
+                                ?>
+                                <article class="elemento-carousel mini-resena<?= $resenaLarga ? ' resena-con-leer' : '' ?>">
                                     <div class="mini-portada">
                                         <img src="<?= htmlspecialchars($resena['avatar'] ?: '/assets/img/profile/user.webp') ?>" alt="Avatar de <?= htmlspecialchars($resena['nick']) ?>">
                                     </div>
@@ -411,10 +456,19 @@ require '../includes/header.php';
                                         </div>
                                         <p class="fecha"><?= fechaBonita($resena['fecha_publicacion'], true) ?></p>
                                     </div>
-                                    <?php if (!empty(trim((string) $resena['comentario']))): ?>
-                                        <p class="texto"><?= nl2br(htmlspecialchars($resena['comentario'])) ?></p>
+                                    <?php if ($comentarioResena !== ''): ?>
+                                        <p class="texto<?= $resenaLarga ? ' texto-recortado' : '' ?>"><?= nl2br(htmlspecialchars($comentarioResena)) ?></p>
+                                        <?php if ($resenaLarga): ?>
+                                            <button class="boton-leer-resena" type="button" aria-expanded="false">Leer más</button>
+                                        <?php endif; ?>
                                     <?php endif; ?>
-                                    <?php if ($puedeReportar): ?>
+                                    <?php if ($puedeEliminarResena): ?>
+                                        <form method="POST" class="form-eliminar-resena-admin">
+                                            <input type="hidden" name="accion" value="eliminar_resena_admin">
+                                            <input type="hidden" name="id_resena" value="<?= (int) $resena['id'] ?>">
+                                            <button class="boton-eliminar-resena-admin abrir-modal-eliminar-resena-admin" type="button">Eliminar</button>
+                                        </form>
+                                    <?php elseif ($puedeReportar): ?>
                                         <button class="boton-reportar-resena" type="button" data-id-resena="<?= (int) $resena['id'] ?>">Reportar</button>
                                     <?php endif; ?>
                                     <p class="username"><a href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>"><?= htmlspecialchars($resena['nick']) ?></a></p>
@@ -465,6 +519,19 @@ require '../includes/header.php';
                         <button type="submit" class="boton-enviar-reporte">Reportar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if (esAdmin()): ?>
+        <div class="modal-reporte modal-eliminar-resena-admin" id="modalEliminarResenaAdmin" hidden>
+            <div class="modal-reporte-fondo"></div>
+            <div class="modal-reporte-panel" role="dialog" aria-modal="true" aria-labelledby="tituloEliminarResenaAdmin">
+                <h2 id="tituloEliminarResenaAdmin">Eliminar reseña</h2>
+                <p class="texto-modal-reporte">La reseña dejará de aparecer en la ficha del juego y en el perfil del usuario.</p>
+                <div class="acciones-reporte">
+                    <button type="button" class="boton-cancelar-reporte">Cancelar</button>
+                    <button type="button" class="boton-enviar-reporte boton-confirmar-eliminar-resena-admin">Eliminar</button>
+                </div>
             </div>
         </div>
     <?php endif; ?>

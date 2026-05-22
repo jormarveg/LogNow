@@ -1,11 +1,12 @@
 const favoritoForm = $('.favorito-form');
 const estadoForms = $('.estado-form');
 const modalReporte = $('#modalReporte');
+const modalEliminarResenaAdmin = $('#modalEliminarResenaAdmin');
 const formReporte = $('#formReporte');
 const formPuntuacionJuego = $('.form-puntuacion-juego');
 let botonReporteActivo = null;
+let formEliminarResenaActivo = null;
 let puntuacionGuardada = $('#puntuacion').val() || '';
-let puntuacionPendiente = null;
 let selectorPuntuacionJuego = null;
 
 selectorPuntuacionJuego = iniciarSelectorPuntuacion({
@@ -27,12 +28,10 @@ function guardarPuntuacionJuego(puntuacion) {
     }
 
     if (formPuntuacionJuego.hasClass('cargando')) {
-        puntuacionPendiente = puntuacion;
         return;
     }
 
     formPuntuacionJuego.addClass('cargando');
-    puntuacionPendiente = null;
     mensaje.removeClass('ok error').text('Guardando...');
 
     $.post('/ajax/puntuar-juego.php', {
@@ -70,10 +69,6 @@ function guardarPuntuacionJuego(puntuacion) {
         mensaje.addClass('error').text(respuesta.mensaje || 'No se ha podido guardar.');
     }).always(function() {
         formPuntuacionJuego.removeClass('cargando');
-
-        if (puntuacionPendiente !== null && puntuacionPendiente !== puntuacionGuardada) {
-            guardarPuntuacionJuego(puntuacionPendiente);
-        }
     });
 }
 
@@ -99,6 +94,17 @@ if (formPuntuacionJuego.length) {
         e.preventDefault();
     });
 }
+
+$('.boton-leer-resena').on('click', function() {
+    const boton = $(this);
+    const resena = boton.closest('.elemento-carousel');
+    const expandida = !resena.hasClass('resena-expandida');
+
+    resena.toggleClass('resena-expandida', expandida);
+    boton
+        .attr('aria-expanded', expandida ? 'true' : 'false')
+        .text(expandida ? 'Leer menos' : 'Leer más');
+});
 
 if (favoritoForm.length) {
     favoritoForm.on('submit', function(e) {
@@ -228,11 +234,12 @@ if (modalReporte.length) {
             });
     }
 
-    $('.boton-reportar-resena').on('click', function() {
+    $('.boton-reportar-resena[data-id-resena]').on('click', function(e) {
+        e.preventDefault();
         abrirModalReporte($(this));
     });
 
-    $('.boton-cancelar-reporte, .modal-reporte-fondo').on('click', function() {
+    modalReporte.find('.boton-cancelar-reporte, .modal-reporte-fondo').on('click', function() {
         cerrarModalReporte();
     });
 
@@ -279,5 +286,51 @@ if (modalReporte.length) {
             mensajeReporte.addClass('error').text(mensaje);
             botonEnviarReporte.prop('disabled', false).text('Reportar');
         });
+    });
+}
+
+if (modalEliminarResenaAdmin.length) {
+    const botonConfirmarEliminar = modalEliminarResenaAdmin.find('.boton-confirmar-eliminar-resena-admin');
+
+    function abrirModalEliminarResena(form) {
+        formEliminarResenaActivo = form;
+        modalEliminarResenaAdmin
+            .stop(true, true)
+            .prop('hidden', false)
+            .css('display', 'grid')
+            .hide()
+            .fadeIn(160, function() {
+                botonConfirmarEliminar.trigger('focus');
+            });
+    }
+
+    function cerrarModalEliminarResena() {
+        modalEliminarResenaAdmin
+            .stop(true, true)
+            .fadeOut(140, function() {
+                modalEliminarResenaAdmin.prop('hidden', true).css('display', '');
+                formEliminarResenaActivo = null;
+            });
+    }
+
+    $('.abrir-modal-eliminar-resena-admin').on('click', function(e) {
+        e.preventDefault();
+        abrirModalEliminarResena($(this).closest('form'));
+    });
+
+    modalEliminarResenaAdmin.find('.boton-cancelar-reporte, .modal-reporte-fondo').on('click', function() {
+        cerrarModalEliminarResena();
+    });
+
+    botonConfirmarEliminar.on('click', function() {
+        if (formEliminarResenaActivo) {
+            formEliminarResenaActivo.trigger('submit');
+        }
+    });
+
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && !modalEliminarResenaAdmin.prop('hidden')) {
+            cerrarModalEliminarResena();
+        }
     });
 }

@@ -35,12 +35,26 @@
     flex-direction: column;
 }
 
-.resenas-recientes .puntuacion-tablet, .resenas-recientes p .completo {
+.resenas-recientes .puntuacion-tablet {
     display: none;
 }
 
 .resenas-recientes .carousel {
     gap: 1rem;
+}
+
+.resenas-tab-perfil .carousel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scrollbar-width: none;
+}
+
+.resenas-tab-perfil .carousel::-webkit-scrollbar {
+    display: none;
 }
 
 .resenas-recientes .elemento-carousel {
@@ -53,6 +67,12 @@
     padding: 1rem;
     border: 2px solid var(--bordes);
     gap: 0.5rem;
+}
+
+.resenas-tab-perfil .elemento-carousel {
+    width: 100%;
+    flex-basis: auto;
+    height: auto;
 }
 
 .resenas-recientes .mini-portada {
@@ -127,6 +147,30 @@
 .resenas-recientes .texto {
     font-size: 0.95rem;
     align-self: start;
+    overflow-wrap: anywhere;
+}
+
+.resenas-recientes .enlace-ver-resena,
+.resenas-recientes .boton-leer-resena-perfil {
+    display: inline-block;
+    margin-left: 0.25rem;
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+}
+
+.resenas-recientes .enlace-ver-resena:hover,
+.resenas-recientes .enlace-ver-resena:focus-visible,
+.resenas-recientes .boton-leer-resena-perfil:hover,
+.resenas-recientes .boton-leer-resena-perfil:focus-visible {
+    color: #5d22a2;
+    outline: none;
+    text-decoration: underline;
 }
 
 .carousel .puntuacion {
@@ -143,23 +187,53 @@
     margin-right: 0.2rem;
 }
 
+.paginacion-resenas-perfil {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.paginacion-resenas-perfil a {
+    min-width: 2.6rem;
+    text-align: center;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--bordes);
+    background: white;
+}
+
+.paginacion-resenas-perfil .separador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: #4b5c6b;
+    font-weight: 600;
+}
+
+.paginacion-resenas-perfil a.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
 @media (min-width: 768px) {
     .resenas-recientes .nombre-puntuacion, .resenas-recientes .username {
         display: none;
     }
 
-    .resenas-recientes .puntuacion-tablet, .resenas-recientes p .completo {
+    .resenas-recientes .puntuacion-tablet {
         display: inline;
     }
 
-    /* ya no es carousel */
     .resenas-recientes .carousel {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
     }
 
-    /* cada reseña */
     .resenas-recientes .elemento-carousel {
         flex-basis: 0;
         height: auto;
@@ -247,6 +321,11 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         align-items: start;
+    }
+
+    .resenas-tab-perfil .carousel {
+        display: flex;
+        flex-direction: column;
     }
 
     .resenas-recientes .elemento-carousel p {

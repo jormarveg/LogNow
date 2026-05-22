@@ -40,6 +40,9 @@ require '../includes/header.php';
         <?php if (isset($_GET['registro']) && $_GET['registro'] === 'ok'): ?>
             <p class="exito">Cuenta creada correctamente. Ya puedes iniciar sesión.</p>
         <?php endif; ?>
+        <?php if (isset($_GET['cuenta']) && $_GET['cuenta'] === 'desactivada'): ?>
+            <p class="error">Esta cuenta ha sido desactivada.</p>
+        <?php endif; ?>
         <?php if ($error): ?>
             <p class="error"><?= $error ?></p>
         <?php endif; ?>

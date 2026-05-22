@@ -105,7 +105,7 @@ require '../includes/header.php';
         <?php else: ?>
             <section class="panel-vacio-listas">
                 <h2>Esta lista está vacía</h2>
-                <p>Entra en la ficha de un juego y añádelo desde el bloque de listas.</p>
+                <p>Añade un juego desde su ficha.</p>
                 <a class="boton-secundario-listas" href="/catalogo.php">Ir al catálogo</a>
             </section>
         <?php endif; ?>

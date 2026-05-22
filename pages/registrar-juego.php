@@ -91,20 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
         $error = 'Los minutos jugados deben ser un número válido';
     } elseif ((int) $minutosJugados > 59) {
         $error = 'Los minutos deben estar entre 0 y 59';
-    } elseif ($estado !== 'pendiente' && !fechaBibliotecaValida($fechaInicio)) {
+    } elseif ($fechaInicio !== '' && !fechaBibliotecaValida($fechaInicio)) {
         $error = 'La fecha de inicio no es válida';
-    } elseif ($estado === 'completado' && !fechaBibliotecaValida($fechaFin)) {
+    } elseif ($fechaFin !== '' && !fechaBibliotecaValida($fechaFin)) {
         $error = 'La fecha de fin no es válida';
     } elseif ($favorito && !cachePuedeMarcarFavorito($db, $idUsuario, (int) $juego['id'])) {
         $error = 'Has alcanzado el límite de juegos favoritos';
     } else {
-        if ($estado === 'pendiente') {
-            $fechaInicio = '';
-            $fechaFin = '';
-        } elseif ($estado !== 'completado') {
-            $fechaFin = '';
-        }
-
         if ($fechaInicio !== '' && $fechaFin !== '' && strtotime($fechaFin) < strtotime($fechaInicio)) {
             $error = 'La fecha de fin no puede ser anterior a la de inicio';
         } else {

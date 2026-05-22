@@ -20,7 +20,9 @@ if (!in_array($tab, $tabsValidas, true)) {
 
 $estadoFiltro = $_GET['estado'] ?? '';
 $paginaBibliotecaActual = isset($_GET['p']) ? max(1, (int) $_GET['p']) : 1;
+$paginaResenasActual = isset($_GET['rp']) ? max(1, (int) $_GET['rp']) : 1;
 $porPaginaBiblioteca = 12;
+$porPaginaResenas = 6;
 if ($estadoFiltro !== '' && !estadoBibliotecaValido($estadoFiltro)) {
     $estadoFiltro = '';
 }
@@ -44,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tab === 'listas') {
     }
 }
 
-$datosPerfil = datosPerfilUsuario($db, $idUsuario, $estadoFiltro, $paginaBibliotecaActual, $porPaginaBiblioteca);
+$datosPerfil = datosPerfilUsuario($db, $idUsuario, $estadoFiltro, $paginaBibliotecaActual, $porPaginaBiblioteca, $paginaResenasActual, $porPaginaResenas);
 $resumenBiblioteca = $datosPerfil['resumenBiblioteca'];
 $totalJuegosBiblioteca = $datosPerfil['totalJuegosBiblioteca'];
 $totalPaginasBiblioteca = $datosPerfil['totalPaginasBiblioteca'];
@@ -52,6 +54,9 @@ $paginaBibliotecaActual = $datosPerfil['paginaBibliotecaActual'];
 $juegosBiblioteca = $datosPerfil['juegosBiblioteca'];
 $resenasUsuarioPerfil = $datosPerfil['resenasUsuarioPerfil'];
 $resenasUsuarioTab = $datosPerfil['resenasUsuarioTab'];
+$totalResenasUsuario = $datosPerfil['totalResenasUsuario'];
+$totalPaginasResenas = $datosPerfil['totalPaginasResenas'];
+$paginaResenasActual = $datosPerfil['paginaResenasActual'];
 $favoritosUsuario = $datosPerfil['favoritosUsuario'];
 $jugadosEsteAno = $datosPerfil['jugadosEsteAno'];
 $histogramaUsuario = $datosPerfil['histogramaUsuario'];
@@ -66,6 +71,7 @@ $urlPerfilBase = '/perfil.php';
 
 $titulo = 'Perfil — LogNow!';
 $css = ['resenas.css', 'perfil.css', 'biblioteca.css', 'listas.css'];
+$js = ['resenas.js'];
 $pagina = $tab === 'juegos' ? 'mis-juegos' : ($tab === 'listas' ? 'listas' : 'perfil');
 require '../includes/header.php';
 require '../includes/perfil-vista.php';

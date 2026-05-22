@@ -3,14 +3,17 @@ $perfilPropio = $perfilPropio ?? false;
 $urlPerfilBase = $urlPerfilBase ?? '/perfil.php';
 $nickPerfil = (string) ($datosUsuario['nick'] ?? '');
 $nombrePerfil = (string) ($datosUsuario['nombre'] ?? '');
-$textoBioVacia = $perfilPropio ? 'Todavía no has escrito ninguna bio.' : 'Este usuario todavía no ha escrito ninguna bio.';
+$textoBioVacia = $perfilPropio ? 'No has escrito ninguna bio.' : 'Este usuario no tiene bio.';
 $textoFavoritosTitulo = $perfilPropio ? 'Tus favoritos' : 'Favoritos';
-$textoFavoritosVacio = $perfilPropio ? 'Todavía no tienes favoritos' : 'Todavía no tiene favoritos';
+$textoFavoritosVacio = $perfilPropio ? 'No tienes favoritos' : 'No tiene favoritos';
 $textoFavoritosAyuda = $perfilPropio ? 'Marca juegos de tu biblioteca como favoritos y aparecerán aquí.' : 'Cuando marque juegos como favoritos, aparecerán aquí.';
-$textoResenasTitulo = $perfilPropio ? 'Tus reseñas recientes' : 'Reseñas recientes';
-$textoResenasVacio = $perfilPropio ? 'Todavía no has publicado reseñas' : 'Todavía no ha publicado reseñas';
-$textoResenasAyuda = $perfilPropio ? 'Cuando completes tu primera reseña desde un juego guardado en biblioteca, aparecerá aquí.' : 'Cuando publique una reseña, aparecerá aquí.';
+$textoResenasRecientesTitulo = $perfilPropio ? 'Tus reseñas recientes' : 'Reseñas recientes';
+$textoResenasTitulo = 'Reseñas';
+$textoResenasVacio = $perfilPropio ? 'No has publicado reseñas' : 'No ha publicado reseñas';
+$textoResenasAyuda = $perfilPropio ? 'Cuando publiques una reseña, aparecerá aquí.' : 'Cuando publique una reseña, aparecerá aquí.';
 $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 'Todavía no ha puntuado juegos.';
+$paginaResenasActual = $paginaResenasActual ?? 1;
+$totalPaginasResenas = $totalPaginasResenas ?? 1;
 ?>
 
 <section class="encabezado-perfil" style="background-image: url('<?= htmlspecialchars(urlEncabezadoUsuario($datosUsuario['encabezado'] ?? '')) ?>');">
@@ -55,7 +58,7 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
             <section class="stats">
                 <div class="jugados">
                     <h3>Jugados</h3>
-                    <span class="datos"><?= $resumenBiblioteca['total'] ?></span>
+                    <span class="datos"><?= $resumenBiblioteca['jugados'] ?? 0 ?></span>
                 </div>
                 <div class="este-ano">
                     <h3>Este año</h3>
@@ -116,21 +119,29 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                 </section>
 
                 <section class="resenas-recientes">
-                    <h2><?= $textoResenasTitulo ?></h2>
+                    <h2><?= $textoResenasRecientesTitulo ?></h2>
                     <?php if ($resenasUsuarioPerfil): ?>
                         <div class="carousel">
                             <?php foreach ($resenasUsuarioPerfil as $resena): ?>
-                                <?php [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']); ?>
+                                <?php
+                                [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']);
+                                $textoBase = $textoCompleto !== '' ? rtrim($textoCorto, '.') : $textoCorto;
+                                $urlJuegoResena = '/juego.php?id=' . (int) $resena['igdb_id'];
+                                ?>
                                 <div class="elemento-carousel mini-resena">
-                                    <div class="mini-portada"><img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
+                                    <div class="mini-portada">
+                                        <a href="<?= htmlspecialchars($urlJuegoResena) ?>">
+                                            <img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>">
+                                        </a>
+                                    </div>
                                     <div class="nombre-puntuacion">
-                                        <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
+                                        <h4><a href="<?= htmlspecialchars($urlJuegoResena) ?>"><?= htmlspecialchars($resena['titulo']) ?></a></h4>
                                         <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
                                     <div class="puntuacion-tablet">
                                         <div class="titulo-puntuacion-wrapper">
                                             <p class="titulo-plataforma">
-                                                <strong><?= htmlspecialchars($resena['titulo']) ?></strong>
+                                                <strong><a href="<?= htmlspecialchars($urlJuegoResena) ?>"><?= htmlspecialchars($resena['titulo']) ?></a></strong>
                                                 <?php if (!empty($resena['plataforma'])): ?>
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
@@ -139,7 +150,14 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                         </div>
                                         <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
                                     </div>
-                                    <p class="texto"><?= htmlspecialchars($textoCorto) ?><?php if ($textoCompleto !== ''): ?><span class="completo"><?= htmlspecialchars($textoCompleto) ?></span><?php endif; ?></p>
+                                    <p class="texto">
+                                        <?php if ($textoCompleto !== ''): ?>
+                                            <?= htmlspecialchars($textoBase) ?><span class="puntos-resena">...</span><span class="texto-resto-resena" hidden> <?= htmlspecialchars($textoCompleto) ?></span>
+                                            <button class="boton-leer-resena-perfil" type="button" aria-expanded="false">Leer más</button>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($textoCorto) ?>
+                                        <?php endif; ?>
+                                    </p>
                                     <p class="username"><?= htmlspecialchars($nickPerfil) ?></p>
                                 </div>
                             <?php endforeach; ?>
@@ -157,11 +175,10 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                 $bibliotecaEyebrow = $perfilPropio ? 'Biblioteca personal' : 'Biblioteca de @' . $nickPerfil;
                 $bibliotecaTitulo = $perfilPropio ? 'Mis juegos' : 'Juegos';
                 $bibliotecaTexto = $perfilPropio ? 'Revisa tus juegos guardados y filtra por estado.' : 'Consulta los juegos guardados por este usuario.';
-                $bibliotecaMostrarAccion = $perfilPropio;
+                $bibliotecaMostrarAccion = false;
                 $bibliotecaMostrarAccionVacia = false;
                 $bibliotecaVaciaTitulo = $perfilPropio ? 'Tu biblioteca está vacía' : 'Esta biblioteca está vacía';
                 $bibliotecaVaciaTexto = $perfilPropio ? 'Todavía no has registrado ningún juego.' : 'Este usuario todavía no ha registrado juegos.';
-                $bibliotecaFiltroVacioTexto = $perfilPropio ? 'Prueba a cambiar el estado seleccionado para ver el resto de tu biblioteca.' : 'Prueba a cambiar el estado seleccionado para ver el resto de su biblioteca.';
                 require __DIR__ . '/bloque-mis-juegos.php';
                 ?>
             <?php elseif ($tab === 'listas' && $perfilPropio): ?>
@@ -207,26 +224,34 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                     </section>
                 <?php else: ?>
                     <section class="panel-vacio-listas">
-                        <h2>Todavía no tienes listas</h2>
+                        <h2>No tienes listas</h2>
                     </section>
                 <?php endif; ?>
             <?php else: ?>
-                <section class="resenas-recientes">
+                <section class="resenas-recientes resenas-tab-perfil" id="resenas-perfil">
                     <h2><?= $textoResenasTitulo ?></h2>
                     <?php if ($resenasUsuarioTab): ?>
                         <div class="carousel">
                             <?php foreach ($resenasUsuarioTab as $resena): ?>
-                                <?php [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']); ?>
+                                <?php
+                                [$textoCorto, $textoCompleto] = partesTextoPerfilResena($resena['comentario']);
+                                $textoBase = $textoCompleto !== '' ? rtrim($textoCorto, '.') : $textoCorto;
+                                $urlJuegoResena = '/juego.php?id=' . (int) $resena['igdb_id'];
+                                ?>
                                 <div class="elemento-carousel mini-resena">
-                                    <div class="mini-portada"><img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>"></div>
+                                    <div class="mini-portada">
+                                        <a href="<?= htmlspecialchars($urlJuegoResena) ?>">
+                                            <img src="<?= htmlspecialchars(urlPortadaJuego($resena['portada_url'] ?? '', $resena['titulo'])) ?>" alt="Portada de <?= htmlspecialchars($resena['titulo']) ?>">
+                                        </a>
+                                    </div>
                                     <div class="nombre-puntuacion">
-                                        <h4><?= htmlspecialchars($resena['titulo']) ?></h4>
+                                        <h4><a href="<?= htmlspecialchars($urlJuegoResena) ?>"><?= htmlspecialchars($resena['titulo']) ?></a></h4>
                                         <div class="puntuacion"><i class="fa-solid fa-star"></i><span><?= puntuacionVisible($resena['puntuacion_estrellas']) ?></span></div>
                                     </div>
                                     <div class="puntuacion-tablet">
                                         <div class="titulo-puntuacion-wrapper">
                                             <p class="titulo-plataforma">
-                                                <strong><?= htmlspecialchars($resena['titulo']) ?></strong>
+                                                <strong><a href="<?= htmlspecialchars($urlJuegoResena) ?>"><?= htmlspecialchars($resena['titulo']) ?></a></strong>
                                                 <?php if (!empty($resena['plataforma'])): ?>
                                                     en <strong><?= htmlspecialchars($resena['plataforma']) ?></strong>
                                                 <?php endif; ?>
@@ -235,11 +260,37 @@ $textoPuntuacionesVacias = $perfilPropio ? 'Todavía no has puntuado juegos.' : 
                                         </div>
                                         <p class="fecha"><?= fechaPerfilBonita($resena['fecha_publicacion']) ?></p>
                                     </div>
-                                    <p class="texto"><?= htmlspecialchars($textoCorto) ?><?php if ($textoCompleto !== ''): ?><span class="completo"><?= htmlspecialchars($textoCompleto) ?></span><?php endif; ?></p>
+                                    <p class="texto">
+                                        <?php if ($textoCompleto !== ''): ?>
+                                            <?= htmlspecialchars($textoBase) ?><span class="puntos-resena">...</span><span class="texto-resto-resena" hidden> <?= htmlspecialchars($textoCompleto) ?></span>
+                                            <button class="boton-leer-resena-perfil" type="button" aria-expanded="false">Leer más</button>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($textoCorto) ?>
+                                        <?php endif; ?>
+                                    </p>
                                     <p class="username"><?= htmlspecialchars($nickPerfil) ?></p>
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                        <?php if ($totalPaginasResenas > 1): ?>
+                            <nav class="paginacion paginacion-resenas-perfil" aria-label="Paginación de reseñas">
+                                <?php if ($paginaResenasActual > 1): ?>
+                                    <a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'resenas', ['rp' => $paginaResenasActual - 1])) ?>#resenas-perfil">Anterior</a>
+                                <?php endif; ?>
+
+                                <?php foreach (paginasCompactas($paginaResenasActual, $totalPaginasResenas) as $item): ?>
+                                    <?php if ($item === '...'): ?>
+                                        <span class="separador">...</span>
+                                    <?php else: ?>
+                                        <a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'resenas', ['rp' => $item])) ?>#resenas-perfil"<?= $item === $paginaResenasActual ? ' class="active"' : '' ?>><?= $item ?></a>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                                <?php if ($paginaResenasActual < $totalPaginasResenas): ?>
+                                    <a href="<?= htmlspecialchars(urlPerfilTab($urlPerfilBase, 'resenas', ['rp' => $paginaResenasActual + 1])) ?>#resenas-perfil">Siguiente</a>
+                                <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
                     <?php else: ?>
                         <div class="panel-vacio">
                             <h2><?= $textoResenasVacio ?></h2>

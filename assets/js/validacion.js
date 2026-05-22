@@ -1,13 +1,18 @@
 const regexNick = /^[a-zA-Z0-9_]{3,20}$/;
 const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const regexPassword = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const limiteImagenPerfil = 5 * 1024 * 1024;
+const formatosImagenPerfil = ['image/jpeg', 'image/png', 'image/webp'];
 
 function mostrarError(input, mensaje) {
     const campo = input.parentElement;
     const span = campo.querySelector('.msg-error');
     input.classList.add('invalido');
     input.classList.remove('valido');
-    span.textContent = mensaje;
+
+    if (span) {
+        span.textContent = mensaje;
+    }
 }
 
 function mostrarOk(input) {
@@ -15,7 +20,32 @@ function mostrarOk(input) {
     const span = campo.querySelector('.msg-error');
     input.classList.remove('invalido');
     input.classList.add('valido');
-    span.textContent = '';
+
+    if (span) {
+        span.textContent = '';
+    }
+}
+
+function validarImagenPerfil(input) {
+    if (!input.files || input.files.length === 0) {
+        mostrarOk(input);
+        return true;
+    }
+
+    const archivo = input.files[0];
+
+    if (!formatosImagenPerfil.includes(archivo.type)) {
+        mostrarError(input, 'La imagen debe ser JPG, PNG o WEBP');
+        return false;
+    }
+
+    if (archivo.size > limiteImagenPerfil) {
+        mostrarError(input, 'La imagen no puede superar los 5 MB');
+        return false;
+    }
+
+    mostrarOk(input);
+    return true;
 }
 
 function validarCampo(input) {
@@ -116,6 +146,59 @@ if (formPasswordPerfil) {
 
         inputs.forEach(function(input) {
             if (!validarCampo(input)) {
+                valido = false;
+            }
+        });
+
+        if (!valido) {
+            e.preventDefault();
+        }
+    });
+}
+
+const formEditarPerfil = document.querySelector('.form-editar-perfil');
+if (formEditarPerfil) {
+    const imagenesPerfil = [
+        {
+            archivo: document.getElementById('avatar'),
+            eliminar: document.getElementById('quitar_avatar')
+        },
+        {
+            archivo: document.getElementById('encabezado'),
+            eliminar: document.getElementById('quitar_encabezado')
+        }
+    ];
+
+    imagenesPerfil.forEach(function(imagen) {
+        if (!imagen.archivo) {
+            return;
+        }
+
+        imagen.archivo.addEventListener('change', function() {
+            validarImagenPerfil(imagen.archivo);
+
+            if (imagen.archivo.files.length > 0) {
+                if (imagen.eliminar) {
+                    imagen.eliminar.checked = false;
+                }
+            }
+        });
+
+        if (imagen.eliminar) {
+            imagen.eliminar.addEventListener('change', function() {
+                if (imagen.eliminar.checked) {
+                    imagen.archivo.value = '';
+                    mostrarOk(imagen.archivo);
+                }
+            });
+        }
+    });
+
+    formEditarPerfil.addEventListener('submit', function(e) {
+        let valido = true;
+
+        imagenesPerfil.forEach(function(imagen) {
+            if (imagen.archivo && !validarImagenPerfil(imagen.archivo)) {
                 valido = false;
             }
         });

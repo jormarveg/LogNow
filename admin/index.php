@@ -86,7 +86,7 @@ require __DIR__ . '/../includes/header.php';
                         <?php foreach ($ultimasResenas as $resena): ?>
                             <article>
                                 <div>
-                                    <strong><a class="enlace-admin-juego" href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>"><?= htmlspecialchars($resena['titulo']) ?></a></strong>
+                                    <strong><a class="enlace-admin-juego" href="/juego.php?id=<?= (int) $resena['igdb_id'] ?>" title="<?= htmlspecialchars($resena['titulo']) ?>"><?= htmlspecialchars(adminTextoCorto($resena['titulo'])) ?></a></strong>
                                     <span><a class="enlace-admin" href="<?= htmlspecialchars(urlUsuarioPublico($resena['nick'])) ?>">@<?= htmlspecialchars($resena['nick']) ?></a> · <?= adminFecha($resena['fecha_publicacion']) ?></span>
                                 </div>
                                 <div class="puntuacion-admin">
@@ -112,7 +112,7 @@ require __DIR__ . '/../includes/header.php';
                         <?php foreach ($juegosPopulares as $juego): ?>
                             <article>
                                 <div>
-                                    <strong><a class="enlace-admin-juego" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>"><?= htmlspecialchars($juego['titulo']) ?></a></strong>
+                                    <strong><a class="enlace-admin-juego" href="/juego.php?id=<?= (int) $juego['igdb_id'] ?>" title="<?= htmlspecialchars($juego['titulo']) ?>"><?= htmlspecialchars(adminTextoCorto($juego['titulo'])) ?></a></strong>
                                 </div>
                                 <span class="dato-admin"><?= (int) $juego['total'] ?> veces</span>
                             </article>
