@@ -1,0 +1,62 @@
+services:
+  web:
+    container_name: lognow-web
+    image: nginx:alpine
+    expose:
+      - "3000"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  php:
+    container_name: lognow-php
+    build: .
+    environment:
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    container_name: lognow-db
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: lognow
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_datos:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: lognow-pma
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    depends_on:
+      - db
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  db_datos:
+  caddy_data:
+  caddy_config:
