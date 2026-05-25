@@ -320,14 +320,14 @@ require '../includes/header.php';
                                 <input type="hidden" name="id_videojuego" value="<?= (int) $juego['id'] ?>">
                                 <div class="selector-puntuacion" id="selector-puntuacion">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <span class="estrella-puntuacion" data-estrella="<?= $i ?>" tabindex="0" role="button" aria-label="<?= $i ?> estrellas">
+                                        <span class="estrella-puntuacion" data-estrella="<?= $i ?>" aria-label="<?= $i ?> estrellas">
                                             <i class="fa-regular fa-star"></i>
                                         </span>
                                     <?php endfor; ?>
                                 </div>
                                 <div class="fila-puntuacion">
                                     <p class="texto-puntuacion" id="texto-puntuacion">Sin puntuar</p>
-                                    <button type="button" class="limpiar-puntuacion" id="limpiar-puntuacion">Quitar</button>
+                                    <button type="button" class="limpiar-puntuacion" id="limpiar-puntuacion"<?= $puntuacionFormulario === '' ? ' hidden' : '' ?>>Quitar</button>
                                 </div>
                                 <input type="hidden" id="puntuacion" name="puntuacion" value="<?= htmlspecialchars($puntuacionFormulario) ?>">
                                 <p class="mensaje-puntuacion-juego" aria-live="polite"></p>
@@ -527,7 +527,7 @@ require '../includes/header.php';
             <div class="modal-reporte-fondo"></div>
             <div class="modal-reporte-panel" role="dialog" aria-modal="true" aria-labelledby="tituloEliminarResenaAdmin">
                 <h2 id="tituloEliminarResenaAdmin">Eliminar reseña</h2>
-                <p class="texto-modal-reporte">La reseña dejará de aparecer en la ficha del juego y en el perfil del usuario.</p>
+                <p class="texto-modal-reporte">¿Quieres eliminar esta reseña definitivamente?</p>
                 <div class="acciones-reporte">
                     <button type="button" class="boton-cancelar-reporte">Cancelar</button>
                     <button type="button" class="boton-enviar-reporte boton-confirmar-eliminar-resena-admin">Eliminar</button>

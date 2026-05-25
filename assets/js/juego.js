@@ -1,4 +1,6 @@
+// formulario de favorito (icono para marcar fav)
 const favoritoForm = $('.favorito-form');
+// formulario iconos de estado (pendiente, completado, etc)
 const estadoForms = $('.estado-form');
 const modalReporte = $('#modalReporte');
 const modalEliminarResenaAdmin = $('#modalEliminarResenaAdmin');
@@ -9,20 +11,23 @@ let formEliminarResenaActivo = null;
 let puntuacionGuardada = $('#puntuacion').val() || '';
 let selectorPuntuacionJuego = null;
 
-selectorPuntuacionJuego = iniciarSelectorPuntuacion({
-    alCambiar: function(input) {
-        if (!formPuntuacionJuego.length) {
-            return;
-        }
-
-        guardarPuntuacionJuego(input.value);
+// lanza el selecctor de estrellas con callback para que cuando cambie la puntuación la guarde
+selectorPuntuacionJuego = iniciarSelectorPuntuacion(function(input) {
+    if (!formPuntuacionJuego.length) {
+        return;
     }
+
+    guardarPuntuacionJuego(input.value);
 });
 
+
+// Función que guarda la puntuación marcada desde la ficha del juego, con AJAX para no recargar la pagina .
+// Recupera el valor anterior si falla.
 function guardarPuntuacionJuego(puntuacion) {
     const mensaje = formPuntuacionJuego.find('.mensaje-puntuacion-juego');
     const idVideojuego = formPuntuacionJuego.find('input[name="id_videojuego"]').val();
 
+    // si la puntuación no ha cambiado, no hace nada
     if (puntuacion === puntuacionGuardada) {
         return;
     }
@@ -34,6 +39,7 @@ function guardarPuntuacionJuego(puntuacion) {
     formPuntuacionJuego.addClass('cargando');
     mensaje.removeClass('ok error').text('Guardando...');
 
+    // envía la puntuación y el ID a nuestro endpoint AJAX
     $.post('/ajax/puntuar-juego.php', {
         id_videojuego: idVideojuego,
         puntuacion: puntuacion
@@ -42,26 +48,32 @@ function guardarPuntuacionJuego(puntuacion) {
             mensaje.addClass('error').text('No se ha podido guardar.');
             return;
         }
-
+        // si responde bien guarda la puntuación en la variable
         puntuacionGuardada = respuesta.puntuacion;
+        // y la pone en el input oculto
         $('#puntuacion').val(respuesta.puntuacion);
 
+        // se repinta el selector de estrellas con la puntuación
         if (selectorPuntuacionJuego) {
             selectorPuntuacionJuego.pintar(respuesta.puntuacion);
         }
 
+        // actualiza el número visible
         actualizarPuntuacionVisible(respuesta);
         mensaje.removeClass('ok error').text('');
 
+        // recarga la página solo si el juego acaba de añadirse por primera vez a la biblioteca del usuario
         if (respuesta.creado) {
             window.setTimeout(function() {
                 window.location.reload();
             }, 300);
         }
+        // error
     }).fail(function(xhr) {
         const respuesta = xhr.responseJSON || {};
-        $('#puntuacion').val(puntuacionGuardada);
 
+        // vuelve a la puntuación anterior
+        $('#puntuacion').val(puntuacionGuardada);
         if (selectorPuntuacionJuego) {
             selectorPuntuacionJuego.pintar(puntuacionGuardada);
         }
@@ -72,6 +84,7 @@ function guardarPuntuacionJuego(puntuacion) {
     });
 }
 
+// Actualiza el número que se ve en la ficha
 function actualizarPuntuacionVisible(respuesta) {
     const caja = formPuntuacionJuego.closest('.tu-puntuacion');
     let numero = caja.find('.numero-puntuacion');
@@ -81,6 +94,7 @@ function actualizarPuntuacionVisible(respuesta) {
         return;
     }
 
+    // si no existe lo crea
     if (!numero.length) {
         numero = $('<p class="numero-puntuacion"></p>');
         caja.find('h2').after(numero);
@@ -89,12 +103,14 @@ function actualizarPuntuacionVisible(respuesta) {
     numero.text(respuesta.puntuacion_visible);
 }
 
+// evita que se envie normalmente porque se guarda por AJAX
 if (formPuntuacionJuego.length) {
     formPuntuacionJuego.on('submit', function(e) {
         e.preventDefault();
     });
 }
 
+// controla los botones de "leer más" y "leer menos" en las reseñas
 $('.boton-leer-resena').on('click', function() {
     const boton = $(this);
     const resena = boton.closest('.elemento-carousel');
@@ -106,6 +122,8 @@ $('.boton-leer-resena').on('click', function() {
         .text(expandida ? 'Leer menos' : 'Leer más');
 });
 
+
+// Guarda un juego como favorito al pulsar el icono del corazón, por AJAX
 if (favoritoForm.length) {
     favoritoForm.on('submit', function(e) {
         e.preventDefault();
@@ -157,6 +175,7 @@ if (favoritoForm.length) {
     });
 }
 
+// cambia el estado del juego mediante AJAX
 if (estadoForms.length) {
     estadoForms.on('submit', function(e) {
         e.preventDefault();
@@ -166,6 +185,7 @@ if (estadoForms.length) {
         const idVideojuego = form.find('input[name="id_videojuego"]').val();
         const estado = form.find('input[name="estado_juego"]').val();
 
+        // si tiene clase .cargando ya hay petición en marcha, si es .active ese estado ya está seleccionado
         if (boton.hasClass('cargando') || boton.hasClass('active')) {
             return;
         }
@@ -203,6 +223,7 @@ if (estadoForms.length) {
     });
 }
 
+// Modal para reportar reseña, pidiendo motivo
 if (modalReporte.length) {
     const idResenaReporte = $('#idResenaReporte');
     const motivoReporte = $('#motivoReporte');
@@ -289,6 +310,7 @@ if (modalReporte.length) {
     });
 }
 
+// modal para eliminar reseña por parte del admin
 if (modalEliminarResenaAdmin.length) {
     const botonConfirmarEliminar = modalEliminarResenaAdmin.find('.boton-confirmar-eliminar-resena-admin');
 

@@ -104,14 +104,14 @@ require '../includes/header.php';
                             <span class="label-puntuacion">Tu puntuación</span>
                             <div class="selector-puntuacion" id="selector-puntuacion">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <span class="estrella-puntuacion" data-estrella="<?= $i ?>" tabindex="0" role="button" aria-label="<?= $i ?> estrellas">
+                                    <span class="estrella-puntuacion" data-estrella="<?= $i ?>" aria-label="<?= $i ?> estrellas">
                                         <i class="fa-regular fa-star"></i>
                                     </span>
                                 <?php endfor; ?>
                             </div>
                             <div class="fila-puntuacion">
                                 <p class="texto-puntuacion" id="texto-puntuacion">Sin puntuar</p>
-                                <button type="button" class="limpiar-puntuacion" id="limpiar-puntuacion">Quitar</button>
+                                <button type="button" class="limpiar-puntuacion" id="limpiar-puntuacion"<?= $puntuacion === '' ? ' hidden' : '' ?>>Quitar</button>
                             </div>
                             <input type="hidden" id="puntuacion" name="puntuacion" value="<?= htmlspecialchars($puntuacion) ?>">
                             <span class="msg-error"></span>

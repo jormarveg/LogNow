@@ -1,9 +1,10 @@
 const regexNick = /^[a-zA-Z0-9_]{3,20}$/;
 const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const regexPassword = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-const limiteImagenPerfil = 5 * 1024 * 1024;
+const limiteImagenPerfil = 5 * 1024 * 1024; // 5MB
 const formatosImagenPerfil = ['image/jpeg', 'image/png', 'image/webp'];
 
+// Muestra mensaje de error para el input recibido
 function mostrarError(input, mensaje) {
     const campo = input.parentElement;
     const span = campo.querySelector('.msg-error');
@@ -15,6 +16,7 @@ function mostrarError(input, mensaje) {
     }
 }
 
+//Muestra mensaje de éxito para el input recibido
 function mostrarOk(input) {
     const campo = input.parentElement;
     const span = campo.querySelector('.msg-error');
@@ -26,7 +28,9 @@ function mostrarOk(input) {
     }
 }
 
+// Valida si el archivo de imagen es del formato y tamaño adecuados
 function validarImagenPerfil(input) {
+    // el usuario no ha seleccionado imagen, eso sirve
     if (!input.files || input.files.length === 0) {
         mostrarOk(input);
         return true;
@@ -34,20 +38,24 @@ function validarImagenPerfil(input) {
 
     const archivo = input.files[0];
 
+    // comprobamos formato
     if (!formatosImagenPerfil.includes(archivo.type)) {
         mostrarError(input, 'La imagen debe ser JPG, PNG o WEBP');
         return false;
     }
 
+    // comprobamos tamaño menor a limiteImagenPerfil
     if (archivo.size > limiteImagenPerfil) {
         mostrarError(input, 'La imagen no puede superar los 5 MB');
         return false;
     }
 
+    // aquí todo Ok
     mostrarOk(input);
     return true;
 }
 
+// Función que valida inputs con los regex y muestra error si necesario
 function validarCampo(input) {
     const valor = input.value.trim();
     const id = input.id;
@@ -90,10 +98,13 @@ function validarCampo(input) {
     return true;
 }
 
+// comprueba que existe el form, así permite cargar el mismo JS de 
+// validación en varias páginas sin error
 const formRegistro = document.getElementById('form-registro');
 if (formRegistro) {
     const inputs = formRegistro.querySelectorAll('input');
 
+    // con blur se valida cuando el usuario sale del campo (solo si ha escrito algo)
     inputs.forEach(function(input) {
         input.addEventListener('blur', function() {
             if (input.value.trim() !== '') {
@@ -101,6 +112,7 @@ if (formRegistro) {
             }
         });
 
+        // vuelve a validar si el campo ya estaba marcado como inválido
         input.addEventListener('input', function() {
             if (input.classList.contains('invalido')) {
                 validarCampo(input);
@@ -117,12 +129,14 @@ if (formRegistro) {
             }
         });
 
+        // si algún campo no es válido, no se envía el form
         if (!valido) {
             e.preventDefault();
         }
     });
 }
 
+// valida el formulario de cambiar contraseña en el perfil de usuario
 const formPasswordPerfil = document.getElementById('form-password-perfil');
 if (formPasswordPerfil) {
     const inputs = formPasswordPerfil.querySelectorAll('input[type="password"]');
@@ -156,8 +170,10 @@ if (formPasswordPerfil) {
     });
 }
 
+// valida el formulario de editar perfil
 const formEditarPerfil = document.querySelector('.form-editar-perfil');
 if (formEditarPerfil) {
+    // evita duplicar el mismo código para avatar y encabezado
     const imagenesPerfil = [
         {
             archivo: document.getElementById('avatar'),
@@ -177,6 +193,7 @@ if (formEditarPerfil) {
         imagen.archivo.addEventListener('change', function() {
             validarImagenPerfil(imagen.archivo);
 
+            // si hay imagen seleccionada, se desmarca el checkbox de eliminar imagen
             if (imagen.archivo.files.length > 0) {
                 if (imagen.eliminar) {
                     imagen.eliminar.checked = false;
@@ -184,6 +201,7 @@ if (formEditarPerfil) {
             }
         });
 
+        // si se marca el checkbox de eliminar imagen, se vacía el input de imagen
         if (imagen.eliminar) {
             imagen.eliminar.addEventListener('change', function() {
                 if (imagen.eliminar.checked) {
@@ -209,6 +227,7 @@ if (formEditarPerfil) {
     });
 }
 
+// valida el formulario de login, no lo envía si hay campos vacíos
 const formLogin = document.getElementById('form-login');
 if (formLogin) {
     formLogin.addEventListener('submit', function(e) {

@@ -21,7 +21,7 @@ Thumbs.db
 *.bak
 error_log
 
-docker-compose.override.yml
+Caddyfile
 
 !docs/
 !docs/**

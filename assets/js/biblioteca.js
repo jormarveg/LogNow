@@ -1,3 +1,6 @@
+// Controla y valida el formulario de añadir o editar un juego en la biblioteca personal
+
+// Muestra error en un campo
 function mostrarErrorBiblioteca(input, mensaje) {
     const campo = input.closest('.campo');
     const span = campo ? campo.querySelector('.msg-error') : null;
@@ -10,6 +13,7 @@ function mostrarErrorBiblioteca(input, mensaje) {
     }
 }
 
+// Elimina error en un campo
 function mostrarOkBiblioteca(input) {
     const campo = input.closest('.campo');
     const span = campo ? campo.querySelector('.msg-error') : null;
@@ -22,6 +26,7 @@ function mostrarOkBiblioteca(input) {
     }
 }
 
+// Elimina las clases valido e invalido y limpia el input
 function limpiarBiblioteca(input) {
     const campo = input.closest('.campo');
     const span = campo ? campo.querySelector('.msg-error') : null;
@@ -33,6 +38,7 @@ function limpiarBiblioteca(input) {
     }
 }
 
+// Valida una fecha y devuelve null si campo vacío, false si la fecha no es váida, y objeto Date si la fecha es válida
 function parsearFechaBiblioteca(valor) {
     if (valor.trim() === '') {
         return null;
@@ -59,6 +65,7 @@ function parsearFechaBiblioteca(valor) {
 const formBiblioteca = document.getElementById('form-biblioteca');
 
 if (formBiblioteca) {
+    // Coge los campos del formulario 
     const estadoInput = document.getElementById('estado');
     const plataformaInput = document.getElementById('plataforma');
     const puntuacionInput = document.getElementById('puntuacion');
@@ -69,6 +76,7 @@ if (formBiblioteca) {
     const campoFechaInicio = document.querySelector('.campo-fecha-inicio');
     const campoFechaFin = document.querySelector('.campo-fecha-fin');
 
+    // Muestra el campo de fecha con o sin animación usando jQuery
     function mostrarCampoFecha(campo, animar) {
         if (!campo) {
             return;
@@ -88,6 +96,7 @@ if (formBiblioteca) {
         }
     }
 
+    // Oculta el campo de fecha con o sin animación usando jQuery
     function ocultarCampoFecha(campo, animar) {
         if (!campo) {
             return;
@@ -107,6 +116,7 @@ if (formBiblioteca) {
         }
     }
 
+    // Función que decide qué fechas se ven según el estado del juego para el usuario
     function actualizarCamposFecha(animar) {
         if (estadoInput.value === 'pendiente') {
             ocultarCampoFecha(campoFechaInicio, animar);
@@ -123,6 +133,7 @@ if (formBiblioteca) {
         }
     }
 
+    // Validación para "select" obligatorios
     function validarSelect(input) {
         if (input.value === '' || input.value === '0') {
             mostrarErrorBiblioteca(input, 'Este campo es obligatorio');
@@ -133,6 +144,7 @@ if (formBiblioteca) {
         return true;
     }
 
+    // La platforma es opcional, si no tiene valor solo limpia
     function validarPlataforma() {
         if (plataformaInput.value === '0') {
             limpiarBiblioteca(plataformaInput);
@@ -143,6 +155,7 @@ if (formBiblioteca) {
         return true;
     }
 
+    // Valida que la puntuación sea correcta, solo permite puntuaciones válidas de media estrella en media estrella
     function validarPuntuacion() {
         const valor = puntuacionInput.value.trim();
 
@@ -160,6 +173,7 @@ if (formBiblioteca) {
         return true;
     }
 
+    // Valida los campos de horas y minutos
     function validarNumero(input, maximo) {
         let valor = input.value.trim();
 
@@ -182,7 +196,10 @@ if (formBiblioteca) {
         return true;
     }
 
+
+    // Valida una fecha
     function validarFecha(input) {
+        // vacía es válida
         if (input.value.trim() === '') {
             limpiarBiblioteca(input);
             return true;
@@ -197,6 +214,7 @@ if (formBiblioteca) {
         return true;
     }
 
+    // Compara fecha inicio y de fin comprobando que la fecha de fin no sea anterior a la de inicio
     function validarOrdenFechas() {
         const inicio = parsearFechaBiblioteca(fechaInicioInput.value);
         const fin = parsearFechaBiblioteca(fechaFinInput.value);
@@ -217,21 +235,25 @@ if (formBiblioteca) {
         return true;
     }
 
+    // cuando se selecciona otro estado de juego muestra u oculta fechas, valida estado y revisa orden de fechas
     estadoInput.addEventListener('change', function() {
         actualizarCamposFecha(true);
         validarSelect(estadoInput);
         validarOrdenFechas();
     });
 
+    // al cambiar plataforma la valida
     plataformaInput.addEventListener('change', function() {
         validarPlataforma();
     });
 
     [horasInput, minutosInput].forEach(function(input) {
+        // valida solo al salir del campo
         input.addEventListener('blur', function() {
             validarNumero(input, input.id === 'minutos_jugados' ? 59 : null);
         });
 
+        // solo valida de nuevo si se consideraba no válido antes
         input.addEventListener('input', function() {
             if (input.classList.contains('invalido')) {
                 validarNumero(input, input.id === 'minutos_jugados' ? 59 : null);
@@ -239,6 +261,7 @@ if (formBiblioteca) {
         });
     });
 
+    // al cambiar fechas valida y revisa orden
     [fechaInicioInput, fechaFinInput].forEach(function(input) {
         input.addEventListener('change', function() {
             validarFecha(input);
@@ -246,13 +269,17 @@ if (formBiblioteca) {
         });
     });
 
-    actualizarCamposFecha(false);
-    iniciarSelectorPuntuacion({
-        alCambiar: function() {
-            validarPuntuacion();
-        }
+    // cuando la página está cargada se ajusta qué fechas se muestran desde el principio
+    $(function() {
+        actualizarCamposFecha(false);
+    });
+    // arranca el selector de estrellas y le pasa un callback, 
+    // cada vez que cambia la puntuación, la valida
+    iniciarSelectorPuntuacion(function() {
+        validarPuntuacion();
     });
 
+    // validación final antes de enviar el formulario
     formBiblioteca.addEventListener('submit', function(e) {
         let valido = true;
 
@@ -295,6 +322,7 @@ if (formBiblioteca) {
 const modalQuitarBiblioteca = document.getElementById('modalQuitarBiblioteca');
 const formQuitarBiblioteca = document.getElementById('form-quitar-biblioteca');
 
+// modal de confirmación para quitar un juego de la biblioteca
 if (modalQuitarBiblioteca && formQuitarBiblioteca) {
     const abrirModalQuitar = formQuitarBiblioteca.querySelector('.abrir-modal-quitar');
     const cancelarQuitar = modalQuitarBiblioteca.querySelector('.boton-cancelar-quitar');

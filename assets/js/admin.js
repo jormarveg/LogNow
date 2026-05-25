@@ -1,3 +1,5 @@
+// Archivo que controla los modales del panel de administración
+
 const modalAdminConfirmacion = document.getElementById('modalAdminConfirmacion');
 
 if (modalAdminConfirmacion) {
@@ -12,6 +14,7 @@ if (modalAdminConfirmacion) {
     function abrirModalAdmin(form, boton) {
         formAdminActivo = form;
         botonAdminActivo = boton;
+        // rellena los textos del modal desde atributos data-* del formulario
         tituloModalAdmin.textContent = form.dataset.titulo || 'Confirmar acción';
         textoModalAdmin.textContent = form.dataset.texto || '';
         botonConfirmarAdmin.textContent = form.dataset.confirmar || 'Confirmar';
@@ -43,7 +46,7 @@ if (modalAdminConfirmacion) {
             formAdminActivo.submit();
         }
     });
-
+// cierra con escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !modalAdminConfirmacion.hidden) {
             cerrarModalAdmin();

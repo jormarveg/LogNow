@@ -1,3 +1,6 @@
+// Controla los botones de Leer más y menos de las reseñas del perfil de usuario
+
+// recorre todas porque puede haber variass reseñas
 document.querySelectorAll('.boton-leer-resena-perfil').forEach(function(boton) {
     boton.addEventListener('click', function() {
         const texto = boton.closest('.texto');

@@ -1,3 +1,9 @@
+// Controla el formulario de escribir reseña
+
+const MIN_CARACTERES_COMENTARIO = 20;
+const MAX_CARACTERES_COMENTARIO = 2000;
+
+// Muestra error en un campo
 function mostrarErrorResena(input, mensaje) {
     const campo = input.closest('.campo');
     const span = campo ? campo.querySelector('.msg-error') : null;
@@ -10,6 +16,7 @@ function mostrarErrorResena(input, mensaje) {
     }
 }
 
+// Elimina error en un campo
 function mostrarOkResena(input) {
     const campo = input.closest('.campo');
     const span = campo ? campo.querySelector('.msg-error') : null;
@@ -25,10 +32,14 @@ function mostrarOkResena(input) {
 const formResena = document.getElementById('form-resena');
 
 if (formResena) {
+    // input oculto donde el selector de estrellas guarda valor
     const puntuacionInput = document.getElementById('puntuacion');
+    // textarea de la reseña
     const comentarioInput = document.getElementById('comentario');
+    // contador de caractreres
     const contadorComentario = document.getElementById('contador-comentario');
 
+    // Valida que la puntuación esté entre las posibles
     function validarPuntuacion() {
         const valor = puntuacionInput.value.trim();
 
@@ -41,18 +52,21 @@ if (formResena) {
         return true;
     }
 
+    //Actualiza el contador visible del comentario
     function actualizarContador() {
         const longitud = comentarioInput.value.trim().length;
-        contadorComentario.textContent = longitud + '/2000';
+        contadorComentario.textContent = longitud + '/' + MAX_CARACTERES_COMENTARIO;
     }
 
+
+    // Comprueba que el comentario tenga longitud en el rango
     function validarComentario() {
         const longitud = comentarioInput.value.trim().length;
 
         actualizarContador();
 
-        if (longitud < 20 || longitud > 2000) {
-            mostrarErrorResena(comentarioInput, 'El comentario debe tener entre 20 y 2000 caracteres');
+        if (longitud < MIN_CARACTERES_COMENTARIO || longitud > MAX_CARACTERES_COMENTARIO) {
+            mostrarErrorResena(comentarioInput, 'El comentario debe tener entre ' + MIN_CARACTERES_COMENTARIO + ' y ' + MAX_CARACTERES_COMENTARIO + ' caracteres');
             return false;
         }
 
@@ -60,6 +74,7 @@ if (formResena) {
         return true;
     }
 
+    // cada vez que se escribe se actualiza el contador
     comentarioInput.addEventListener('input', function() {
         actualizarContador();
 
@@ -68,17 +83,18 @@ if (formResena) {
         }
     });
 
+    // cuando se sale del textarea se valida
     comentarioInput.addEventListener('blur', function() {
         validarComentario();
     });
 
-    iniciarSelectorPuntuacion({
-        alCambiar: function() {
-            validarPuntuacion();
-        }
+    // al seleccionar puntuación se valida
+    iniciarSelectorPuntuacion(function() {
+        validarPuntuacion();
     });
     actualizarContador();
 
+    // al enviar el form se valida todo una última vez
     formResena.addEventListener('submit', function(e) {
         const puntuacionValida = validarPuntuacion();
         const comentarioValido = validarComentario();
@@ -92,6 +108,7 @@ if (formResena) {
 const modalEliminarResena = document.getElementById('modalEliminarResena');
 const formsEliminarResena = document.querySelectorAll('.form-eliminar-resena');
 
+// modal para confirmar eliminación de reseña
 if (modalEliminarResena && formsEliminarResena.length > 0) {
     const cancelarEliminarResena = modalEliminarResena.querySelector('.boton-cancelar-quitar');
     const confirmarEliminarResena = modalEliminarResena.querySelector('.boton-confirmar-quitar');
@@ -134,6 +151,7 @@ if (modalEliminarResena && formsEliminarResena.length > 0) {
         }
     });
 
+    // se peude cerrar con ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !modalEliminarResena.hidden) {
             cerrarModalEliminarResena();

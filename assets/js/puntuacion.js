@@ -1,97 +1,127 @@
-function iniciarSelectorPuntuacion(opciones) {
-    const selector = document.getElementById(opciones.selectorId || 'selector-puntuacion');
-    const input = document.getElementById(opciones.inputId || 'puntuacion');
-    const texto = document.getElementById(opciones.textoId || 'texto-puntuacion');
-    const limpiar = document.getElementById(opciones.limpiarId || 'limpiar-puntuacion');
-    const botones = selector ? selector.querySelectorAll('.estrella-puntuacion[data-estrella]') : [];
-    const alCambiar = typeof opciones.alCambiar === 'function' ? opciones.alCambiar : function() {};
+const VALOR_ESTRELLA = 20;
+const VALOR_MEDIA_ESTRELLA = VALOR_ESTRELLA / 2;
 
-    if (!selector || !input || !texto || botones.length === 0) {
+// Función para crear el selector de puntuación con estrellas.
+// recibe la función callback que se ejecuta al cambiar la puntuación
+function iniciarSelectorPuntuacion(alCambiar = function() {}) {
+    // contenedor con las 5 estrellas
+    const selector = document.getElementById('selector-puntuacion');
+    // input oculto que guarda el valor elegido
+    const inputPuntuacion = document.getElementById('puntuacion');
+    // elemento que muestra en texto la puntuación elegida
+    const texto = document.getElementById('texto-puntuacion');
+    // texto clicable para limpiar puntuación
+    const limpiar = document.getElementById('limpiar-puntuacion');
+    // cada una de las cinco estrellas. Contienen atributo [data-estrella] con el número de la estrella
+    const botonesEstrella = selector ? selector.querySelectorAll('.estrella-puntuacion[data-estrella]') : [];
+
+    if (!selector || !inputPuntuacion || !texto || botonesEstrella.length === 0) {
         return null;
     }
 
+    // Devuelve el texto con el número de estrellas
     function textoEstrellas(valor) {
-        if (valor === '' || valor === '0' || valor === 0) {
+        if (valor === 0) {
             return 'Sin puntuar';
         }
+        // entre VALOR_ESTRELLA (20) porque la puntuación llega en escala de 0 a 100
+        const estrellas = valor / VALOR_ESTRELLA;
 
-        const estrellas = parseInt(valor, 10) / 20;
-
+        // si es entero no muestra decimales, si es decimal, muestra 1
         return estrellas.toLocaleString('es-ES', {
             minimumFractionDigits: Number.isInteger(estrellas) ? 0 : 1,
             maximumFractionDigits: 1
         }) + ' estrellas';
     }
 
-    function iconoPuntuacion(indice, valor) {
-        const puntos = indice * 20;
-        const medio = puntos - 10;
 
-        if (valor >= puntos) {
+    // Decide qué icono de FontAwesome usar: estrella completa, media o vacía
+    // Recibe qué estrella pinta (indice) y la puntuación
+    function iconoPuntuacion(indice, puntuacion) {
+        /*
+        Internamente una estrella completa vale 20
+        - Estrella 1: 1 * 20 = 20.
+        - Estrella 2: 2 * 20 = 40.
+        - Estrella 3: 3 * 20 = 60.
+        - Estrella 4: 4 * 20 = 80.
+        - Estrella 5: 5 * 20 = 100.
+        */
+        // puntosEstrella es el valor de la estrella pulsada
+        const puntosEstrella = indice * VALOR_ESTRELLA;
+        const media = puntosEstrella - VALOR_MEDIA_ESTRELLA;
+
+        if (puntuacion >= puntosEstrella) {
             return 'fa-solid fa-star';
         }
 
-        if (valor === medio) {
+        if (puntuacion === media) {
             return 'fa-solid fa-star-half-stroke';
         }
 
         return 'fa-regular fa-star';
     }
 
-    function pintar(valor) {
+    function actualizarBotonLimpiar(valor) {
+        if (limpiar) {
+            limpiar.hidden = valor === '' || valor === '0' || valor === 0;
+        }
+    }
+
+    // Actualiza visualmente el selector de estrellas, recorriendolas
+    function pintar(valor, actualizarLimpiar = true) {
         const numero = parseInt(valor || '0', 10);
 
+        // cambia el texto, por ej. "2 estrellas"
         texto.textContent = textoEstrellas(numero);
 
-        botones.forEach(function(boton) {
+        if (actualizarLimpiar) {
+            actualizarBotonLimpiar(valor);
+        }
+
+        // recorre cada estrella y cambia icono y le pone o quita la clase "activa"
+        botonesEstrella.forEach(function(boton) {
             const estrella = parseInt(boton.dataset.estrella, 10);
             const icono = boton.querySelector('i');
 
             icono.className = iconoPuntuacion(estrella, numero);
-            boton.classList.toggle('activa', numero >= (estrella * 20) - 10);
+            boton.classList.toggle('activa', numero >= (estrella * VALOR_ESTRELLA) - VALOR_MEDIA_ESTRELLA);
         });
     }
 
+    // Guarda el valor, lo pinta y ejecuta el callback para
+    // avisar a la página que usa el selector
     function guardar(valor) {
-        input.value = valor;
+        inputPuntuacion.value = valor;
         pintar(valor);
-        alCambiar(input);
+        alCambiar(inputPuntuacion);
     }
 
-    botones.forEach(function(boton) {
+    // se añaden eventos a cada estrella
+    botonesEstrella.forEach(function(boton) {
         boton.addEventListener('mousemove', function(e) {
             const estrella = parseInt(boton.dataset.estrella, 10);
+            // comprueba si el ratón está en la mitad izquierda o derecha
             const rect = boton.getBoundingClientRect();
             const mitadIzquierda = e.clientX - rect.left < rect.width / 2;
-            const valor = mitadIzquierda ? (estrella * 20) - 10 : estrella * 20;
+            // mitad izquierda = media, mitad izquierda = completa
+            const valor = mitadIzquierda ? (estrella * VALOR_ESTRELLA) - VALOR_MEDIA_ESTRELLA : estrella * VALOR_ESTRELLA;
 
-            pintar(valor);
+            pintar(valor, false);
         });
 
-        boton.addEventListener('focus', function() {
-            pintar(parseInt(boton.dataset.estrella, 10) * 20);
-        });
-
+        // al hacer click guarda el valor elegido
         boton.addEventListener('click', function(e) {
             const estrella = parseInt(boton.dataset.estrella, 10);
             const rect = boton.getBoundingClientRect();
             const mitadIzquierda = e.clientX - rect.left < rect.width / 2;
 
-            guardar(String(mitadIzquierda ? (estrella * 20) - 10 : estrella * 20));
+            guardar(String(mitadIzquierda ? (estrella * VALOR_ESTRELLA) - VALOR_MEDIA_ESTRELLA : estrella * VALOR_ESTRELLA));
         });
 
-        boton.addEventListener('keydown', function(e) {
-            const estrella = parseInt(boton.dataset.estrella, 10);
-
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                guardar(String(estrella * 20));
-            }
-        });
     });
 
     selector.addEventListener('mouseleave', function() {
-        pintar(input.value);
+        pintar(inputPuntuacion.value);
     });
 
     if (limpiar) {
@@ -100,7 +130,7 @@ function iniciarSelectorPuntuacion(opciones) {
         });
     }
 
-    pintar(input.value);
+    pintar(inputPuntuacion.value);
 
     return {
         pintar: pintar
