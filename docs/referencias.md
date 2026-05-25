@@ -66,7 +66,10 @@ nav_order: 8
   Herramienta utilizada para preparar un entorno de ejecución reproducible mediante contenedores.
 
 - [AWS EC2](https://aws.amazon.com/ec2/)  
-  Servicio contemplado para el despliegue de la aplicación en una instancia de servidor.
+  Servicio utilizado para desplegar la aplicación en una instancia de servidor.
+
+- [Caddy](https://caddyserver.com/)  
+  Servidor utilizado como proxy inverso en producción y para gestionar el acceso HTTPS.
 
 - [Git](https://git-scm.com/)  
   Sistema de control de versiones utilizado durante el desarrollo del proyecto.

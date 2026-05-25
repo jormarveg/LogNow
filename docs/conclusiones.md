@@ -36,7 +36,7 @@ Otro aprendizaje importante ha sido el tratamiento de datos externos. La integra
 
 En cuanto al diseño, el proyecto me ha servido para aplicar una estrategia responsive en una aplicación con muchas vistas diferentes. He trabajado con Flexbox, Grid, media queries, variables CSS, adaptación de imágenes y menús distintos según el tamaño de pantalla.
 
-Además, la parte de despliegue me ha ayudado a entender mejor cómo se organiza una aplicación web fuera del entorno de desarrollo. El uso de Docker, Nginx, PHP-FPM, MariaDB y AWS Free Tier me ha permitido acercarme a una estructura más parecida a la de un entorno real.
+Además, la parte de despliegue me ha ayudado a entender mejor cómo se organiza una aplicación web fuera del entorno de desarrollo. El uso de Docker, Nginx, PHP-FPM, MariaDB, Caddy y AWS Free Tier me ha permitido ver con más claridad la diferencia entre levantar una aplicación en local y publicarla en un servidor real.
 
 ## Mejoras futuras
 

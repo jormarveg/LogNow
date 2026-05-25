@@ -252,7 +252,13 @@ Los servicios principales son:
 | `db` | MariaDB. |
 | `phpmyadmin` | Gestión visual de la base de datos. |
 
-En AWS se ha usado una instancia EC2 con Ubuntu Server y Docker. El despliegue mantiene los mismos servicios: Nginx recibe las peticiones, PHP-FPM ejecuta PHP y MariaDB guarda los datos.
+Para producción se ha preparado `docker-compose-prod.yml`. Este archivo mantiene la misma base del entorno local, pero añade Caddy como punto de entrada público. En local Nginx publica directamente el puerto 80, mientras que en producción Caddy gestiona el acceso HTTPS y redirige las peticiones hacia el servicio `web`.
+
+El despliegue final se ha realizado en AWS Free Tier, usando una instancia EC2 con Ubuntu Server y Docker. El dominio `lognow.jorgemv.es` apunta a una IP elástica asociada a esa instancia, para que la dirección pública no cambie al reiniciar el servidor. Además, en el grupo de seguridad de AWS se permitió el puerto 443 para que la web pudiera estar disponible mediante HTTPS.
+
+Cuando un usuario entra en la web, Caddy recibe la petición segura y la pasa a Nginx dentro de la red de contenedores.
+
+La estructura interna se mantiene igual: Nginx sirve los archivos estáticos y envía las páginas PHP a PHP-FPM, mientras que MariaDB guarda los datos de la aplicación. Así el servidor publicado se parece mucho al entorno de desarrollo, pero con una entrada pública más adecuada para producción.
 
 ## Requisitos cubiertos
 

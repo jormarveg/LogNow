@@ -136,7 +136,13 @@ El avatar y el encabezado del perfil admiten JPG, PNG y WEBP hasta 5 MB. Nginx y
 
 ## Despliegue
 
-El proyecto ya se ha desplegado en AWS Free Tier usando una instancia EC2 con Ubuntu Server y Docker. El despliegue mantiene la misma estructura técnica: Nginx, PHP-FPM, MariaDB y variables de entorno para credenciales y conexión.
+Para el despliegue se ha preparado el archivo `docker-compose-prod.yml`. La idea es mantener una estructura parecida a la del entorno local, pero adaptada a un servidor público.
+
+Los servicios principales siguen siendo Nginx, PHP-FPM y MariaDB. En producción se añade Caddy como proxy inverso, de forma que recibe las peticiones públicas por HTTPS y las envía al contenedor web.
+
+También hay que crear un archivo `Caddyfile` con el dominio que se vaya a usar y la redirección al servicio `web` del compose.
+
+Las credenciales y claves externas se siguen leyendo desde variables de entorno. El archivo `.env` debe crearse en el servidor, igual que en local, pero no debe subirse al repositorio.
 
 ## Comandos útiles
 
