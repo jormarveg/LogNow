@@ -1007,11 +1007,7 @@ function cacheLimpiarPuntuacionUsuario(PDO $db, $idUsuario, $idVideojuego) {
         return $delete->execute([(int) $resena['id']]);
     }
 
-    $update = $db->prepare('UPDATE RESENA
-                            SET puntuacion = NULL
-                            WHERE id = ?');
-
-    return $update->execute([(int) $resena['id']]);
+    return false;
 }
 
 function cacheGuardarPuntuacionUsuario(PDO $db, $idUsuario, $idVideojuego, $puntuacion) {

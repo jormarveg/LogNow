@@ -129,11 +129,15 @@ La puntuación permite valorar rápidamente un juego. Se guarda asociada al usua
 
 Cuando el usuario quiere dejar una opinión más completa, puede escribir una reseña. Las reseñas aparecen en la ficha del juego y también en el perfil del usuario, siempre que sigan visibles. En las fichas y en el tab de reseñas del perfil se muestran paginadas para evitar listas demasiado largas. Si una reseña es larga, se puede desplegar con "Leer más" en el perfil y en la ficha del juego.
 
+Cuando una reseña ya está publicada, su puntuación no se puede quitar desde la puntuación rápida. Para cambiarla, el usuario debe editar la reseña completa o eliminarla.
+
 ### Listas
 
 Las listas sirven para agrupar juegos con un criterio propio. Un usuario puede crear listas personales desde su perfil y añadir juegos desde la ficha de cada título.
 
 Esta funcionalidad permite separar juegos por ideas más concretas que los estados de biblioteca, por ejemplo favoritos de un género, juegos pendientes de una saga o títulos recomendados.
+
+Solo se pueden añadir a una lista juegos que existan en el catálogo local y que todavía no estén guardados en esa misma lista.
 
 ### Perfil y cambio de contraseña
 

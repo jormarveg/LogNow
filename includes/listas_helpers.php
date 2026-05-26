@@ -70,6 +70,13 @@ function listaAnadirJuego(PDO $db, $idUsuario, $idLista, $idVideojuego) {
         return 'error';
     }
 
+    $stmtJuego = $db->prepare('SELECT id FROM VIDEOJUEGO WHERE id = ? LIMIT 1');
+    $stmtJuego->execute([(int) $idVideojuego]);
+
+    if (!$stmtJuego->fetch()) {
+        return 'error';
+    }
+
     if (listaTieneJuego($db, $idUsuario, $idLista, $idVideojuego)) {
         return 'existe';
     }

@@ -126,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
 
                 if ($puntuacion !== '') {
                     cacheGuardarPuntuacionUsuario($db, $idUsuario, (int) $juego['id'], (int) $puntuacion);
-                } elseif ($modoEdicion) {
-                    cacheLimpiarPuntuacionUsuario($db, $idUsuario, (int) $juego['id']);
+                } elseif ($modoEdicion && !cacheLimpiarPuntuacionUsuario($db, $idUsuario, (int) $juego['id'])) {
+                    throw new RuntimeException('resena_publicada');
                 }
 
                 $db->commit();
@@ -140,6 +140,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
 
                 if ($e instanceof RuntimeException && $e->getMessage() === 'limite_favoritos') {
                     $error = 'Has alcanzado el límite de juegos favoritos';
+                } elseif ($e instanceof RuntimeException && $e->getMessage() === 'resena_publicada') {
+                    $error = 'No puedes quitar la puntuación de una reseña publicada';
                 } else {
                     $error = $e->getCode() === '23000'
                         ? 'Ese juego ya está en tu biblioteca'
