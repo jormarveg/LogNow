@@ -26,7 +26,7 @@ La aplicación se ha desarrollado como una web clásica con PHP, MariaDB, HTML, 
 
 El objetivo principal de LogNow! es centralizar la actividad de un jugador en torno a sus videojuegos. Desde su cuenta, el usuario puede registrar qué juegos está jugando, cuáles ha completado, cuáles tiene por jugar y cuáles ha abandonado.
 
-Además del seguimiento personal, la aplicación permite valorar juegos mediante puntuaciones y reseñas. Estas reseñas se muestran en la ficha de cada juego y también en los perfiles de usuario, de forma que la plataforma no se limita a guardar datos privados, sino que también ofrece una pequeña capa de comunidad.
+Además del seguimiento personal, la aplicación permite valorar juegos mediante puntuaciones y reseñas. Estas reseñas se muestran en la ficha de cada juego y también en los perfiles de usuario por lo que también ofrece una pequeña capa de comunidad.
 
 Otro objetivo importante es evitar que el catálogo dependa de datos escritos manualmente. Para ello se utiliza IGDB como fuente externa y se guarda una copia local de los juegos consultados o importados. Así se reduce la dependencia de la API en cada carga de página.
 
@@ -36,7 +36,7 @@ Muchos jugadores tienen videojuegos repartidos entre varias plataformas y tienda
 
 LogNow! resuelve ese problema ofreciendo una biblioteca única donde cada juego puede tener un estado claro: jugando, completado, pendiente o abandonado. También permite indicar tiempo jugado, fechas, favoritos y una puntuación personal.
 
-La aplicación también ayuda a conservar opiniones. En lugar de que una valoración quede perdida en una conversación, el usuario puede escribir una reseña asociada a su perfil. Esto permite consultar en el futuro qué juegos le gustaron, cuáles no y por qué.
+La aplicación también ayuda a conservar opiniones evitando que una valoración quede perdida en una conversación, el usuario puede escribir una reseña asociada a su perfil. Esto permite consultar en el futuro qué juegos le gustaron, cuáles no y por qué.
 
 ## Usuarios principales
 

@@ -89,7 +89,9 @@ La base de datos separa dos tipos de información:
 
 La puntuación de los juegos no depende de IGDB. La valoración mostrada en la aplicación sale de las puntuaciones de los usuarios de LogNow!, excepto cuando no hay ninguna puntuación registrada en el juego; en ese caso se muestra la puntuación recogida de IGDB.
 
-![Diagrama ER](img/ER.webp)
+<a href="img/ER.webp" target="_blank" rel="noopener">
+    <img src="img/ER.webp" alt="Diagrama ER">
+</a>
 
 Las relaciones principales son:
 
@@ -234,8 +236,6 @@ El archivo `.env` se usa para secretos:
 - `TWITCH_CLIENT_ID`
 - `TWITCH_CLIENT_SECRET`
 - `MARIADB_ROOT_PASSWORD`
-
-El resto de valores principales se mantienen fijos porque son decisiones del proyecto: host `db`, base de datos `lognow` y usuario `root` en el entorno de contenedores. Así la configuración queda sencilla y no parece más compleja de lo necesario.
 
 Tanto en local como en el servidor se usa:
 

@@ -5,8 +5,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/html:z
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:z
     depends_on:
       - php
 
@@ -18,7 +18,7 @@ services:
       TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
-      - ./:/var/www/html
+      - ./:/var/www/html:z
     depends_on:
       - db
 
