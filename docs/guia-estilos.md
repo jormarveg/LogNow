@@ -38,7 +38,7 @@ En móvil se acercan las secciones principales a la zona inferior de la pantalla
 
 ## Paleta de colores
 
-La paleta usa tonos neutros y un azul de acento para las acciones principales.
+La paleta usa tonos neutros y un **azul de acento** para las acciones principales.
 
 | Uso | Color | Aplicación |
 |---|---|---|
@@ -52,11 +52,11 @@ La paleta usa tonos neutros y un azul de acento para las acciones principales.
 
 ## Uso del color
 
-El azul se usa para los elementos con los que el usuario puede interactuar, como botones, enlaces activos o estados de navegación. El amarillo se deja para las puntuaciones, porque así las valoraciones se localizan rápido.
+El **azul** se usa para los elementos con los que el usuario puede interactuar, como botones, enlaces activos o estados de navegación. El **amarillo** se deja para las puntuaciones, porque así las valoraciones se localizan rápido.
 
-Los grises ayudan a separar zonas sin competir con las portadas de los juegos, que ya tienen bastante peso visual. Por eso los colores no se usan como decoración todo el rato, sino para ordenar mejor la pantalla.
+Los **grises** ayudan a separar zonas sin competir con las portadas de los juegos, que ya tienen bastante peso visual. Por eso los colores no se usan como decoración todo el rato, sino para ordenar mejor la pantalla.
 
-Los fondos claros aparecen en la cabecera, la navegación y algunos paneles secundarios. El texto principal usa un gris oscuro y los títulos un tono más fuerte para que la jerarquía se entienda sin tener que aumentar demasiado los tamaños.
+Los **fondos claros** aparecen en la cabecera, la navegación y algunos paneles secundarios. El texto principal usa un gris oscuro y los títulos un tono más fuerte para que la jerarquía se entienda sin tener que aumentar demasiado los tamaños.
 
 ## Tipografía
 
@@ -66,9 +66,9 @@ La marca **LogNow!** usa **Limelight**, también desde Google Fonts. Esta es la 
 
 ## Iconografía
 
-Los iconos se cargan desde FontAwesome 6.5.1 por CDN. Se usan como apoyo visual en navegación, búsqueda, favoritos, estados, administración y acciones rápidas.
+Los iconos se cargan desde **FontAwesome 6.5.1** por CDN. Se usan como apoyo visual en navegación, búsqueda, favoritos, estados, administración y acciones rápidas.
 
-En móvil, la barra inferior combina icono y texto para que las secciones principales sean fáciles de reconocer. En escritorio, los iconos aparecen sobre todo en acciones concretas donde ayudan a escanear más rápido la interfaz.
+En móvil, la barra inferior combina icono y texto para que las secciones principales sean fáciles de reconocer. En escritorio, los iconos aparecen en acciones concretas donde ayudan a escanear más rápido la interfaz.
 
 Las estrellas de puntuación tienen tratamiento propio con el color amarillo, que es un color bastante clásico para valoraciones.
 
@@ -83,7 +83,7 @@ La interfaz repite algunos componentes para que las pantallas no parezcan págin
 | Botones y acciones | Sirven para guardar cambios, filtrar, importar, editar, eliminar o marcar favoritos. |
 | Formularios y filtros | Mantienen campos agrupados, etiquetas claras y botones de acción al final del bloque. |
 | Etiquetas de estado | Resumen estados como jugando, completado, pendiente, abandonado, activo o inactivo. |
-| Tablas de administración | Organizan usuarios, reportes y datos de gestión, sobre todo en las pantallas del panel admin. |
+| Tablas de administración | Organizan usuarios, reportes y datos de gestión en las pantallas del panel admin. |
 
 Estos componentes ayudan a que el usuario reconozca patrones repetidos entre páginas, aunque cada vista tenga su propio contenido.
 
@@ -91,7 +91,7 @@ Estos componentes ayudan a que el usuario reconozca patrones repetidos entre pá
 
 La aplicación usa una estructura común en todas las páginas principales. Cada vista se apoya en una cabecera, un contenido principal, una navegación adaptada al tamaño de pantalla y un pie de página.
 
-La maquetación usa Flexbox y CSS Grid. El catálogo se organiza como una cuadrícula de portadas, la ficha de juego combina información principal con acciones personales, y el perfil agrupa cabecera, estadísticas, favoritos, biblioteca, listas y reseñas.
+La maquetación usa **Flexbox** y **CSS Grid**. El catálogo se organiza como una cuadrícula de portadas, la ficha de juego combina información principal con acciones personales, y el perfil agrupa cabecera, estadísticas, favoritos, biblioteca, listas y reseñas.
 
 <div align="center">
   <img src="img/catalogo-movil-marco.webp" style="max-width: 300px; width: 100%;"><br>
@@ -118,17 +118,24 @@ Los textos de interfaz son directos. Se evita añadir ayuda o mensajes repetidos
 
 ## Menús
 
-La navegación principal cambia según el dispositivo. En móvil se usa una barra inferior fija con accesos a Inicio, Buscar, Juegos y Perfil o Entrar. Este menú queda cerca del pulgar y permite moverse por las secciones principales sin ocupar espacio en la parte superior.
+La navegación principal cambia según el dispositivo. En móvil se usa una **barra inferior fija** con accesos a Inicio, Buscar, Juegos y Perfil o Entrar. Este menú queda cerca del pulgar y permite moverse por las secciones principales sin ocupar espacio en la parte superior.
 
-En pantallas más grandes se usa una navegación superior dentro de la cabecera. Ahí aparecen el logotipo, el buscador y los enlaces principales. La barra inferior se oculta para dejar más espacio al contenido.
+![Menú móvil](img/menu-movil.webp)
 
-Los enlaces activos se marcan con el color principal para que el usuario sepa en qué sección está. Los iconos se usan como apoyo visual, especialmente en móvil y en acciones rápidas.
+En pantallas más grandes se usa una **navegación superior** dentro de la cabecera. Ahí aparecen el logotipo, el buscador y los enlaces principales.
+
+![Menú en escritorio](img/menu-escritorio.webp)
+
+Los **enlaces activos** se marcan con el color principal para que el usuario sepa en qué sección está. Los iconos se usan como apoyo visual, especialmente en móvil y en acciones rápidas.
 
 ## Imágenes y logotipos
 
-Las portadas de videojuegos usan proporción vertical, parecida a una caja de juego. Se muestran con `object-fit: cover` para evitar deformaciones y con una imagen por defecto cuando IGDB no devuelve portada.
+Las **portadas** de videojuegos usan proporción vertical, parecida a una caja de juego. Se muestran con `object-fit: cover` para evitar deformaciones y con una imagen por defecto cuando IGDB no devuelve portada.
 
-El perfil del usuario usa dos imágenes: avatar circular y encabezado horizontal. Ambas se suben desde la edición del perfil y están limitadas a 5 MB. Si el usuario no sube imágenes propias, se muestran las imágenes por defecto del proyecto.
+El perfil del usuario usa dos imágenes: **avatar circular** y **encabezado horizontal**. Ambas se suben desde la edición del perfil y están limitadas a 5 MB.
+
+![Ejemplo encabezado de perfil](img/ejemplo-encabezado.webp)
+<center>Ejemplo de encabezado e imagen de perfil de usuario.</center>
 
 El logotipo es el texto **LogNow!** en azul con la fuente **Limelight**. En móvil aparece centrado en la cabecera y en pantallas más grandes se alinea a la izquierda para dejar espacio al buscador y a la navegación superior.
 
@@ -156,8 +163,8 @@ La idea es que el usuario note qué elementos se pueden pulsar sin cargar la pá
 
 ## Accesibilidad
 
-La aplicación usa etiquetas semánticas de HTML5 como `header`, `nav`, `main`, `section` y `footer`. Esto mejora la organización del código y la lectura de la estructura.
+La aplicación usa **etiquetas semánticas** de HTML5 como `header`, `nav`, `main`, `section` y `footer`. Esto mejora la organización del código y la lectura de la estructura.
 
-Los contrastes principales están pensados para fondos claros. Los estados importantes no dependen solo del color: también se acompañan de texto, iconos, posición o cambios de forma.
+Los **contrastes principales** están pensados para fondos claros. Los estados importantes no dependen solo del color: también se acompañan de texto, iconos, posición o cambios de forma.
 
-En móvil se cuidan los tamaños de botones y campos para que sean cómodos al tocar. La navegación inferior coloca las secciones principales en una zona accesible para el pulgar.
+En móvil se cuidan los **tamaños de botones** y campos para que sean cómodos al tocar. La navegación inferior coloca las secciones principales en una zona accesible para el pulgar.
