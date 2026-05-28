@@ -408,11 +408,13 @@
 
 .reportes-admin {
     display: grid;
+    min-width: 0;
     gap: 1rem;
 }
 
 .reporte-admin {
     display: grid;
+    min-width: 0;
     gap: 0.85rem;
     border-bottom: 1px solid #e1e7ed;
     padding-bottom: 1rem;
@@ -425,26 +427,31 @@
 
 .cabecera-reporte-admin {
     display: grid;
+    min-width: 0;
     gap: 0.25rem;
 }
 
 .cabecera-reporte-admin h2 {
     font-size: 1.15rem;
     margin-bottom: 0.25rem;
+    overflow-wrap: anywhere;
 }
 
 .cabecera-reporte-admin p {
     color: #6f7d8c;
     font-size: 0.9rem;
+    overflow-wrap: anywhere;
 }
 
 .detalle-reporte-admin {
     border: 1px solid var(--bordes);
     background: #f7f9fa;
     display: grid;
+    min-width: 0;
 }
 
 .detalle-reporte-admin > div {
+    min-width: 0;
     padding: 0.85rem;
 }
 
@@ -460,6 +467,7 @@
 
 .detalle-reporte-admin p {
     line-height: 1.55;
+    overflow-wrap: anywhere;
 }
 
 .acciones-reporte-admin {

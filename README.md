@@ -29,11 +29,15 @@ La aplicación está disponible en https://lognow.jorgemv.es.
 
 ## Puesta en marcha rápida
 
-Antes de levantar el proyecto hay que crear el archivo de variables de entorno:
+La instalación recomendada es en un entorno Linux, ya sea en una máquina real o en una máquina virtual.
+
+Antes de levantar el proyecto hay que crear el archivo de variables de entorno copiando el ejemplo que se proporciona:
 
 ```bash
 cp .env.example .env
 ```
+
+En ese archivo hay que rellenar `TWITCH_CLIENT_ID` y `TWITCH_CLIENT_SECRET` con credenciales reales de Twitch Developers para poder importar juegos desde IGDB.
 
 Después se construyen y arrancan los contenedores:
 
@@ -47,7 +51,15 @@ La aplicación queda disponible en:
 http://localhost
 ```
 
-Para cargar la base de datos inicial se puede importar el archivo `sql/lognow.sql` desde phpMyAdmin o seguir los pasos de la documentación de instalación.
+Para cargar la base de datos inicial:
+
+```bash
+docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD"' < sql/lognow.sql
+```
+
+El SQL incluye usuarios de prueba: `pedrito@lognow.local` y `admin@lognow.local`, ambos con contraseña `lognow1234`.
+
+Para usar la app con juegos reales hay que entrar como administrador, abrir `http://localhost/admin/` y lanzar la importación inicial desde el botón en el panel.
 
 ## Estructura del proyecto
 
@@ -65,13 +77,15 @@ docs/       Documentación del proyecto
 
 ## Documentación
 
-La documentación completa del proyecto está en la carpeta `docs/`:
+La documentación completa del proyecto está publicada en GitHub Pages:
 
-- [Introducción](docs/introduccion.md)
-- [Instalación](docs/instalacion.md)
-- [Uso](docs/uso.md)
-- [Arquitectura](docs/arquitectura.md)
-- [Guía de estilos](docs/guia-estilos.md)
+- [Introducción](https://jormarveg.github.io/LogNow/introduccion.html)
+- [Instalación](https://jormarveg.github.io/LogNow/instalacion.html)
+- [Uso](https://jormarveg.github.io/LogNow/uso.html)
+- [Arquitectura](https://jormarveg.github.io/LogNow/arquitectura.html)
+- [Guía de estilos](https://jormarveg.github.io/LogNow/guia-estilos.html)
+- [Conclusiones](https://jormarveg.github.io/LogNow/conclusiones.html)
+- [Referencias](https://jormarveg.github.io/LogNow/referencias.html)
 
 ## Autor
 

@@ -51,11 +51,15 @@ h3 {
     font-size: 1.5rem;
     margin-bottom: 0;
     color: whitesmoke;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.65);
+    overflow-wrap: anywhere;
 }
 
 .nick-perfil {
     color: rgba(255, 255, 255, 0.92);
     font-size: 0.95rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95), 0 0 9px rgba(0, 0, 0, 0.9);
+    overflow-wrap: anywhere;
 }
 
 .boton-editar-perfil {
@@ -157,6 +161,7 @@ aside.sidebar {
 
 .bio {
     grid-column: 1/-1;
+    min-width: 0;
     margin: 0;
     border: 1px solid var(--bordes);
     padding: 0.9rem;
@@ -165,6 +170,7 @@ aside.sidebar {
 
 .bio p {
     font-size: 0.9rem;
+    overflow-wrap: anywhere;
 }
 
 .stats .datos {

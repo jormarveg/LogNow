@@ -1,6 +1,7 @@
 <?php
 require '../api/cache.php';
 require '../includes/auth.php';
+require '../includes/helpers.php';
 require '../includes/biblioteca_helpers.php';
 require '../includes/perfil_helpers.php';
 require '../includes/listas_helpers.php';

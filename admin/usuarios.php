@@ -130,6 +130,7 @@ $mensajesError = [
 
 $titulo = 'Usuarios — LogNow!';
 $css = ['admin.css'];
+$js = ['admin.js'];
 $pagina = 'admin';
 $adminPagina = 'usuarios';
 require __DIR__ . '/../includes/header.php';
@@ -202,12 +203,12 @@ require __DIR__ . '/../includes/header.php';
                                     <td data-label="Estado">
                                         <div class="estado-admin">
                                             <span class="estado-cuenta estado-<?= $usuario['activo'] ? 'activo' : 'inactivo' ?>"><?= $usuario['activo'] ? 'Activo' : 'Inactivo' ?></span>
-                                            <form method="POST">
+                                            <form method="POST" class="form-confirmacion-admin" data-titulo="<?= $usuario['activo'] ? 'Desactivar usuario' : 'Activar usuario' ?>" data-texto="<?= $usuario['activo'] ? 'El usuario no podrá iniciar sesión mientras esté desactivado.' : 'El usuario podrá volver a iniciar sesión.' ?>" data-confirmar="<?= $usuario['activo'] ? 'Desactivar' : 'Activar' ?>">
                                                 <input type="hidden" name="accion" value="estado">
                                                 <input type="hidden" name="id_usuario" value="<?= (int) $usuario['id'] ?>">
                                                 <input type="hidden" name="activo" value="<?= $usuario['activo'] ? '0' : '1' ?>">
                                                 <input type="hidden" name="volver" value="<?= htmlspecialchars($urlVolver) ?>">
-                                                <button class="boton-estado" type="submit"<?= $esCuentaActual ? ' disabled' : '' ?>>
+                                                <button class="boton-estado abrir-confirmacion-admin" type="button"<?= $esCuentaActual ? ' disabled' : '' ?>>
                                                     <?= $usuario['activo'] ? 'Desactivar' : 'Activar' ?>
                                                 </button>
                                             </form>
@@ -246,6 +247,18 @@ require __DIR__ . '/../includes/header.php';
         <?php endif; ?>
     </section>
 </main>
+
+<div class="modal-admin-confirmacion" id="modalAdminConfirmacion" hidden>
+    <div class="modal-admin-fondo"></div>
+    <div class="modal-admin-panel" role="dialog" aria-modal="true" aria-labelledby="tituloModalAdmin">
+        <h2 id="tituloModalAdmin">Confirmar acción</h2>
+        <p id="textoModalAdmin"></p>
+        <div class="acciones-modal-admin">
+            <button type="button" class="boton-cancelar-admin">Cancelar</button>
+            <button type="button" class="boton-confirmar-admin">Confirmar</button>
+        </div>
+    </div>
+</div>
 
 <?php
 require __DIR__ . '/../includes/nav_inferior.php';

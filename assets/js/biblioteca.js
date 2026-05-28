@@ -253,11 +253,8 @@ if (formBiblioteca) {
             validarNumero(input, input.id === 'minutos_jugados' ? 59 : null);
         });
 
-        // solo valida de nuevo si se consideraba no válido antes
         input.addEventListener('input', function() {
-            if (input.classList.contains('invalido')) {
-                validarNumero(input, input.id === 'minutos_jugados' ? 59 : null);
-            }
+            validarNumero(input, input.id === 'minutos_jugados' ? 59 : null);
         });
     });
 

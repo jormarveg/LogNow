@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
                 if ($e instanceof RuntimeException && $e->getMessage() === 'limite_favoritos') {
                     $error = 'Has alcanzado el límite de juegos favoritos';
                 } elseif ($e instanceof RuntimeException && $e->getMessage() === 'resena_publicada') {
-                    $error = 'No puedes quitar la puntuación de una reseña publicada';
+                    $error = 'No puedes quitar la puntuación con una reseña publicada';
                 } else {
                     $error = $e->getCode() === '23000'
                         ? 'Ese juego ya está en tu biblioteca'

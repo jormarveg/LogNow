@@ -103,7 +103,7 @@ function iniciarSelectorPuntuacion(alCambiar = function() {}) {
             // comprueba si el ratón está en la mitad izquierda o derecha
             const rect = boton.getBoundingClientRect();
             const mitadIzquierda = e.clientX - rect.left < rect.width / 2;
-            // mitad izquierda = media, mitad izquierda = completa
+            // mitad izquierda = media, mitad derecha = completa
             const valor = mitadIzquierda ? (estrella * VALOR_ESTRELLA) - VALOR_MEDIA_ESTRELLA : estrella * VALOR_ESTRELLA;
 
             pintar(valor, false);

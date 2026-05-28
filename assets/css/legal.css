@@ -1,0 +1,41 @@
+.pagina-legal {
+    max-width: 52rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    line-height: 1.7;
+}
+
+.cuerpo-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    border: 1px solid rgba(195, 207, 217, 0.7);
+    border-radius: 8px;
+    background: #fff;
+    padding: 1.1rem;
+}
+
+.pagina-legal h1 {
+    margin-bottom: 0;
+}
+
+.pagina-legal h2 {
+    font-size: 1.35rem;
+    margin-bottom: 0.6rem;
+}
+
+.pagina-legal p {
+    color: #4b5c6b;
+}
+
+.pagina-legal p + p {
+    margin-top: 0.8rem;
+}
+
+@media (min-width: 768px) {
+    .cuerpo-texto {
+        padding: 1.3rem 1.5rem;
+    }
+}

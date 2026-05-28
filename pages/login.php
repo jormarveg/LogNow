@@ -37,8 +37,8 @@ require '../includes/header.php';
 <main class="container">
     <div class="auth-form">
         <h1>Iniciar sesión</h1>
-        <?php if (isset($_GET['registro']) && $_GET['registro'] === 'ok'): ?>
-            <p class="exito">Cuenta creada correctamente. Ya puedes iniciar sesión.</p>
+        <?php if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['registro']) && $_GET['registro'] === 'ok'): ?>
+            <p class="exito">Cuenta creada correctamente.</p>
         <?php endif; ?>
         <?php if (isset($_GET['cuenta']) && $_GET['cuenta'] === 'desactivada'): ?>
             <p class="error">Esta cuenta ha sido desactivada.</p>

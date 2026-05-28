@@ -12,12 +12,14 @@ nav_order: 3
 - [Puesta en marcha](#puesta-en-marcha)
 - [Base de datos](#base-de-datos)
 - [Importación inicial de juegos](#importación-inicial-de-juegos)
-- [Subida de imágenes](#subida-de-imágenes)
 - [Despliegue](#despliegue)
 - [Comandos útiles](#comandos-útiles)
 
 
 El proyecto se puede levantar con contenedores usando Docker y el archivo `docker-compose.yml`.
+
+{: .info }
+El proyecto se ha desarrollado y probado en Linux. Se recomienda instalar en un entorno Linux, ya sea en una máquina real o en una máquina virtual, para poder seguir bien estos pasos.
 
 ## Herramientas necesarias
 
@@ -41,23 +43,33 @@ TWITCH_CLIENT_SECRET=tu_client_secret
 MARIADB_ROOT_PASSWORD=password
 ```
 
+`TWITCH_CLIENT_ID` y `TWITCH_CLIENT_SECRET` deben sustituirse por credenciales reales de Twitch Developers. Son necesarias para importar juegos desde IGDB y dejar el catálogo preparado.
+
 {: .warning }
-El archivo `.env` contiene credenciales y no debe subirse al repositorio. 
+El archivo `.env` contiene credenciales y debe ignorarse en GIT.
 
 ## Puesta en marcha
 
-Se clona el repositorio y se entra en la carpeta:
+1. Se clona el repositorio y se entra en la carpeta:
 
 ```bash
 git clone https://github.com/jormarveg/LogNow.git
 cd LogNow
 ```
 
-Después se construyen y levantan los contenedores:
+2. Después se construyen y levantan los contenedores:
 
 ```bash
 docker compose up -d --build
 ```
+
+3. Se puede comprobar que los servicios están levantados con:
+
+```bash
+docker compose ps
+```
+
+Deberían aparecer los servicios `web`, `php`, `db` y `phpmyadmin`.
 
 Servicios creados:
 
@@ -68,7 +80,7 @@ Servicios creados:
 | `db` | MariaDB con la base de datos `lognow`. |
 | `phpmyadmin` | Interfaz web para revisar la base de datos. |
 
-La aplicación queda disponible en:
+4. La aplicación queda disponible en:
 
 ```text
 http://localhost
@@ -88,33 +100,22 @@ El script principal está en:
 sql/lognow.sql
 ```
 
-Se puede importar desde phpMyAdmin entrando en `http://localhost:8000`, seleccionando la base de datos `lognow` y usando la pestaña **Importar** con el archivo `sql/lognow.sql`.
+Se puede importar desde phpMyAdmin entrando en `http://localhost:8000` y usando la pestaña **Importar** con el archivo `sql/lognow.sql`.
 
 También se puede importar por consola desde la raíz del proyecto:
 
 ```bash
-docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" lognow' < sql/lognow.sql
+docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD"' < sql/lognow.sql
 ```
 
-Después se puede abrir `http://localhost/registro.php` y crear el primer usuario.
+El script incluye dos usuarios de prueba para poder entrar directamente después de importar la base de datos:
 
-Para convertir ese usuario en administrador se puede hacer desde phpMyAdmin ejecutando una consulta SQL sobre la base de datos `lognow`, cambiando el email por el usado en el registro:
+| Rol | Email | Contraseña |
+|---|---|---|
+| Administrador | `admin@lognow.local` | `lognow1234` |
+| Usuario | `pedrito@lognow.local` | `lognow1234` |
 
-```sql
-UPDATE USUARIO SET rol = 'admin' WHERE email = 'correo@ejemplo.com';
-```
-
-También se puede hacer desde consola entrando a MariaDB:
-
-```bash
-docker compose exec db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" lognow'
-```
-
-```sql
-UPDATE USUARIO SET rol = 'admin' WHERE email = 'correo@ejemplo.com';
-```
-
-Con ese usuario se accede al panel desde:
+Con el usuario administrador se accede al panel desde:
 
 ```text
 http://localhost/admin/
@@ -122,17 +123,7 @@ http://localhost/admin/
 
 ## Importación inicial de juegos
 
-El panel de administración muestra una acción de importación inicial si el catálogo está vacío. Para que funcione, las variables `TWITCH_CLIENT_ID` y `TWITCH_CLIENT_SECRET` deben estar configuradas en `.env`.
-
-También se puede lanzar el importador desde:
-
-```text
-http://localhost/api/importar.php
-```
-
-## Subida de imágenes
-
-El avatar y el encabezado del perfil admiten JPG, PNG y WEBP hasta 5 MB. Nginx y PHP permiten un margen mayor para que la aplicación pueda mostrar un mensaje claro cuando el archivo supera el límite.
+Habiendo iniciado sesión con el rol de `admin`, el panel de administración muestra una **acción de importación inicial** si el catálogo está vacío. Para que funcione, las variables `TWITCH_CLIENT_ID` y `TWITCH_CLIENT_SECRET` deben estar configuradas en `.env`. Tras unos segundos, se habrá importado un catálogo inicial.
 
 ## Despliegue
 
@@ -169,3 +160,12 @@ Parar el entorno:
 ```bash
 docker compose down
 ```
+
+Empezar de cero eliminando también la base de datos local:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+Este comando borra el volumen de MariaDB, por lo que después hay que volver a importar `sql/lognow.sql`.

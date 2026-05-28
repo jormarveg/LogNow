@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/helpers.php';
+
 $baseBibliotecaUrl = $baseBibliotecaUrl ?? '/mis-juegos.php';
 $bibliotecaEyebrow = $bibliotecaEyebrow ?? 'Biblioteca personal';
 $bibliotecaTitulo = $bibliotecaTitulo ?? 'Mis juegos';

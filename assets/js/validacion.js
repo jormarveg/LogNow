@@ -65,6 +65,13 @@ function validarCampo(input) {
         return false;
     }
 
+    if (id === 'nombre') {
+        if (valor.length > 20) {
+            mostrarError(input, 'El nombre no puede superar los 20 caracteres');
+            return false;
+        }
+    }
+
     if (id === 'nick') {
         if (!regexNick.test(valor)) {
             mostrarError(input, 'Entre 3 y 20 caracteres: letras, números y _');
@@ -112,11 +119,8 @@ if (formRegistro) {
             }
         });
 
-        // vuelve a validar si el campo ya estaba marcado como inválido
         input.addEventListener('input', function() {
-            if (input.classList.contains('invalido')) {
-                validarCampo(input);
-            }
+            validarCampo(input);
         });
     });
 
@@ -149,9 +153,7 @@ if (formPasswordPerfil) {
         });
 
         input.addEventListener('input', function() {
-            if (input.classList.contains('invalido')) {
-                validarCampo(input);
-            }
+            validarCampo(input);
         });
     });
 

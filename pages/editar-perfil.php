@@ -51,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($nombre === '' || $nick === '') {
             $errorPerfil = 'El nombre y el nick son obligatorios';
+        } elseif (mb_strlen($nombre, 'UTF-8') > 20) {
+            $errorPerfil = 'El nombre no puede superar los 20 caracteres';
         } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nick)) {
             $errorPerfil = 'El nick debe tener entre 3 y 20 caracteres (letras, números y _)';
         } elseif (mb_strlen($biografia, 'UTF-8') > 280) {
@@ -127,7 +129,7 @@ require '../includes/header.php';
                 <div class="grid-formulario">
                     <div class="campo">
                         <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" maxlength="100" required value="<?= htmlspecialchars($nombre) ?>">
+                        <input type="text" id="nombre" name="nombre" maxlength="20" required value="<?= htmlspecialchars($nombre) ?>">
                         <span class="msg-error"></span>
                     </div>
 

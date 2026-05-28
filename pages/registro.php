@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($nombre) || empty($nick) || empty($email) || empty($password) || empty($password2)) {
         $error = 'Todos los campos son obligatorios';
+    } elseif (mb_strlen($nombre, 'UTF-8') > 20) {
+        $error = 'El nombre no puede superar los 20 caracteres';
     } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $nick)) {
         $error = 'El nick debe tener entre 3 y 20 caracteres (letras, números y _)';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -50,7 +52,7 @@ require '../includes/header.php';
         <form method="POST" id="form-registro" novalidate>
             <div class="campo">
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required
+                <input type="text" id="nombre" name="nombre" required maxlength="20"
                        value="<?= htmlspecialchars($nombre) ?>">
                 <span class="msg-error"></span>
             </div>

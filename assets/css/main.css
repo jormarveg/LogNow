@@ -9,11 +9,19 @@
     --puntuacion: #f7c325;
     --bordes: #c3cfd9;
     --fondos: #dfe6ed;
+    --texto-principal: #333333;
+    --texto-titulo: #1a1a1a;
+    --texto-secundario: #4b5c6b;
+    --texto-suave: #6f7d8c;
+    --fondo-claro: #f7f9fa;
+    --fondo-panel: #f7f9fb;
+    --exito-fondo: #e8f5e9;
+    --exito-texto: #2e7d32;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
-    color: #333333;
+    color: var(--texto-principal);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -37,7 +45,7 @@ img {
 }
 
 h1, h2, h3, h4 {
-    color: #1a1a1a;
+    color: var(--texto-titulo);
 }
 h1 {
     font-size: 2.4rem;
@@ -65,7 +73,7 @@ main {
 
 header {
     border-bottom: 2px solid var(--bordes);
-    background: #f7f9fa;
+    background: var(--fondo-claro);
     position: relative;
     z-index: 5;
 }
@@ -93,7 +101,7 @@ header .logo .marca-lognow {
 header .info {
     grid-column: 3/span 1;
     justify-self: end;
-    color: dimgray;
+    color: var(--texto-secundario);
     font-size: 1.5rem;
 }
 
@@ -103,7 +111,7 @@ header .info {
     width: 10rem;
     top: 4.4rem;
     right: 0;
-    background: #f7f9fa;
+    background: var(--fondo-claro);
     border: 2px solid var(--bordes);
 }
 
@@ -125,7 +133,7 @@ header .info {
 .contenido-info .redes-sociales {
     padding-top: 1.5rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
 .contenido-info .session-info {
@@ -158,11 +166,6 @@ header .buscar, header nav, header .btnAgregar, header .btn-salir {
     display: none;
 }
 
-
-/* FIN HEADER */
-
-/* parte inferior */
-
 .nav-inferior {
     position: fixed;
     bottom: 0;
@@ -185,7 +188,7 @@ header .buscar, header nav, header .btnAgregar, header .btn-salir {
 }
 
 .nav-inferior li a {
-    color: #4b5c6b;
+    color: var(--texto-secundario);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -257,7 +260,7 @@ footer {
         line-height: 2rem;
         font-size: 1.1rem;
         flex-grow: 1;
-        color: dimgray;
+        color: var(--texto-secundario);
         background: none;
         min-width: 0;
     }
@@ -307,7 +310,7 @@ footer {
 
     footer {
         display: block;
-        background: #f7f9fa;
+        background: var(--fondo-claro);
         border-top: 2px solid var(--bordes);
         margin-top: 2.5rem;
     }

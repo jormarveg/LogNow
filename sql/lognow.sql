@@ -130,3 +130,8 @@ CREATE TABLE REPORTE (
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id) ON DELETE CASCADE,
     FOREIGN KEY (id_resena) REFERENCES RESENA(id) ON DELETE CASCADE
 );
+
+INSERT INTO USUARIO (nombre, nick, email, password, rol)
+VALUES
+    ('Pedrito', 'pedrito', 'pedrito@lognow.local', '$2y$12$ObyCMoNXjbWx.XZ9oDeYqOYjopUq/zFEthO.H2VzFDvKL0/I3Dy8W', 'usuario'),
+    ('Administrador', 'admin', 'admin@lognow.local', '$2y$12$3oOkSu.OTTDeRH7DSm1oEuPkhUVcRc8KvCdjUOQUDpC3AKfs2BUOO', 'admin');

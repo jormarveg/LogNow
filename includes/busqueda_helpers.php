@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/paginacion_helpers.php';
 
 const BUSQUEDA_MINIMA_JUEGOS = 3;

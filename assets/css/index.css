@@ -14,8 +14,8 @@
 }
 
 .mensaje-inicio.exito {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: var(--exito-fondo);
+    color: var(--exito-texto);
 }
 
 .tendencias {
@@ -43,8 +43,8 @@
     --f-arrow-border-radius: 999px;
     --f-arrow-color: #fff;
     --f-arrow-bg: rgba(30, 35, 48, 0.88);
-    --f-arrow-hover-color: var(--azul);
-    --f-arrow-active-color: var(--azul);
+    --f-arrow-hover-color: var(--primary);
+    --f-arrow-active-color: var(--primary);
 }
 
 .seccion-juegos-home .elemento-carousel {
@@ -109,7 +109,7 @@
 }
 
 .seccion-juegos-home .titulo-juego:hover {
-    color: var(--azul);
+    color: var(--primary);
 }
 
 .seccion-juegos-home .f-button.is-arrow {
@@ -131,9 +131,13 @@
     border: 1px dashed var(--bordes);
     border-radius: 12px;
     padding: 1.1rem 1rem;
-    background: #f7f9fb;
-    color: #5d6d7d;
+    background: var(--fondo-panel);
+    color: var(--texto-suave);
     text-align: center;
+}
+
+.sin-juegos{
+    margin: 2rem;
 }
 
 

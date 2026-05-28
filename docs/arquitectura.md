@@ -65,6 +65,8 @@ Las vistas comparten cabecera, navegación inferior móvil y pie mediante includ
 
 Las rutas a recursos se escriben desde la raíz web, por ejemplo `/assets/css/main.css` o `/catalogo.php`. Esto evita problemas al incluir plantillas desde `pages/` o desde `admin/`.
 
+`includes/header.php` carga la base común de las páginas visuales. La sesión y los permisos quedan en `includes/auth.php`, mientras que `includes/helpers.php` guarda funciones comunes para imágenes por defecto, como avatares, encabezados y portadas.
+
 ## Base de datos
 
 La base de datos es MariaDB y el esquema principal está en `sql/lognow.sql`.
@@ -76,6 +78,8 @@ La base de datos es MariaDB y el esquema principal está en `sql/lognow.sql`.
 | `DESARROLLADORA` | Empresa desarrolladora asociada al juego. |
 | `GENERO` | Géneros de videojuegos. |
 | `PLATAFORMA` | Plataformas disponibles. |
+| `VIDEOJUEGO_GENERO` | Tabla intermedia para relacionar videojuegos y géneros. |
+| `VIDEOJUEGO_PLATAFORMA` | Tabla intermedia para relacionar videojuegos y plataformas. |
 | `USUARIO_JUEGO` | Biblioteca personal: estado, plataforma, horas, fechas y favorito. |
 | `RESENA` | Puntuación y comentario del usuario sobre un juego. |
 | `LISTA` | Listas personales creadas por los usuarios. |
@@ -157,6 +161,8 @@ Si cada estrella, favorito o reporte recargara toda la página, la ficha sería 
 
 El registro guarda el usuario en `USUARIO` usando la clase `Usuario`. El login se hace por email y, si las credenciales son correctas, `includes/auth.php` guarda en sesión el `id`, el `nick` y el `rol`.
 
+Las contraseñas no se guardan en texto plano. En el registro se almacenan mediante `password_hash()` y en el login se comprueban con `password_verify()`.
+
 En cada carga se comprueba si la cuenta sigue activa. Si un administrador desactiva una cuenta, esa sesión se cierra en la siguiente petición y el usuario vuelve al login con aviso.
 
 ### Búsqueda e importación de juegos
@@ -169,7 +175,7 @@ El administrador también puede lanzar una importación inicial desde el panel c
 
 Cuando un usuario añade un juego a su biblioteca, se crea o actualiza un registro en `USUARIO_JUEGO`. Ahí se guarda el estado, plataforma, horas, fechas y favorito.
 
-Las reseñas se guardan en `RESENA` y están relacionadas con el usuario y el videojuego. La puntuación se almacena de 0 a 100 y se muestra al usuario como estrellas de 0,5 a 5.
+Las reseñas se guardan en `RESENA` y están relacionadas con el usuario y el videojuego. La puntuación se almacena de 10 a 100 y se muestra al usuario como estrellas de 0,5 a 5.
 
 ### Puntuación rápida por AJAX
 
@@ -189,6 +195,10 @@ La sesión se gestiona en `includes/auth.php`. Hay dos roles principales:
 | `admin` | Acceder al panel de administración, gestionar usuarios, revisar reportes e importar juegos. |
 
 Las páginas privadas comprueban si el usuario ha iniciado sesión. El panel `admin/` usa `admin/includes/proteger.php`, que exige sesión iniciada y rol `admin`.
+
+La restricción no depende solo de ocultar enlaces en la interfaz: cada página del panel administrativo comprueba el rol en servidor antes de ejecutarse.
+
+Los formularios también usan validaciones HTML5 como `required`, `type="email"`, `minlength`, `maxlength`, `pattern`, `min`, `max`, `step`, `type="date"` y `accept` en ficheros.
 
 La validación del cliente mejora la experiencia, pero no sustituye la del servidor. Los formularios y endpoints vuelven a comprobar datos antes de guardar cambios.
 
@@ -223,8 +233,11 @@ JavaScript se reparte por pantallas. No se carga todo en todas las vistas.
 |---|---|
 | `assets/js/validacion.js` | Registro, login, contraseña y edición de perfil. |
 | `assets/js/biblioteca.js` | Validación de fechas y modal de quitar juego. |
+| `assets/js/puntuacion.js` | Selector de estrellas reutilizado en ficha, biblioteca y reseñas. |
 | `assets/js/juego.js` | Favorito, estado, puntuación rápida y reportes por AJAX. |
 | `assets/js/resena-form.js` | Formulario de reseñas y contador de caracteres. |
+| `assets/js/resenas.js` | Botones de leer más y menos en reseñas del perfil. |
+| `assets/js/admin.js` | Modales de confirmación del panel de administración. |
 | `assets/js/carrusel.js` | Carruseles de la página principal. |
 
 Se usan expresiones regulares para nick, email y contraseña. También se usa el objeto `Date` para validar fechas de biblioteca. jQuery se usa en interacciones concretas, como efectos de mostrar, ocultar, fade y slide.
@@ -265,17 +278,28 @@ La estructura interna se mantiene igual: Nginx sirve los archivos estáticos y e
 | Módulo | Requisito | Dónde se cumple |
 |---|---|---|
 | DIW | Guía de estilo web | `docs/guia-estilos.md`. |
+| DIW | Prototipos | Mockups de móvil, tablet y escritorio preparados para la entrega. |
 | DIW | HTML5 semántico | Plantillas y vistas con `header`, `main`, `section`, `nav` y `footer`. |
+| DIW | Formularios HTML5 | Registro, login, perfil, biblioteca, listas y reseñas. |
 | DIW | Diseño responsive | CSS mobile first con media queries en vistas principales. |
 | DWEC | Validación y regex | `assets/js/validacion.js`, `biblioteca.js` y `resena-form.js`. |
 | DWEC | Objeto `Date` | Validación de fechas en biblioteca. |
-| DWEC | jQuery y AJAX | Interacciones de ficha, biblioteca, reportes y efectos visuales. |
+| DWEC | Eventos y DOM | Validaciones, selector de puntuación, modales y cambios dinámicos de interfaz. |
+| DWEC | jQuery y efectos visuales | Menús, formularios, mensajes y efectos de mostrar u ocultar elementos. |
+| DWEC | AJAX | Puntuación rápida, favoritos, estados y reportes sin recargar toda la página. |
 | DWEC | Carrusel | Carruseles de juegos y reseñas recientes en la home. |
-| DWES | PDO y sesiones | `includes/db.php`, `includes/auth.php` y clase `Usuario`. |
+| DWEC | Documentación de JavaScript | Funcionalidades explicadas en esta arquitectura y en la documentación de uso. |
+| DWES | PHP | Vistas, formularios y lógica principal desarrollados en PHP 8. |
+| DWES | PDO y base de datos | `includes/db.php`, consultas preparadas y operaciones sobre MariaDB. |
+| DWES | Sesiones y cookies | `includes/auth.php` mantiene la sesión y recuerda al usuario. |
 | DWES | Roles | Usuario registrado y administrador. |
 | DWES | CRUD | Usuarios, biblioteca, reseñas, listas, reportes y administración. |
+| DWES | Listado filtrado y paginado | Gestión de usuarios en el panel de administración. |
 | DWES | PDF con FPDF | Exportación de usuarios en `admin/exportar-pdf.php`. |
 | DWES | Subida de ficheros | Avatar y encabezado en edición de perfil. |
-| DAPW | Contenedores | Entorno con Nginx, PHP-FPM, MariaDB y phpMyAdmin. |
+| DWES | Plantillas | `includes/header.php`, `includes/footer.php` y navegación común. |
+| DWES | API externa | Integración con IGDB mediante `api/igdb.php` y caché local. |
+| DAPW | Docker | Entorno con Nginx, PHP-FPM, MariaDB y phpMyAdmin. |
+| DAPW | Git y GitHub | Historial de commits, ramas de trabajo y etiquetas `v0.1` y `v1.0`. |
 | DAPW | GitHub Pages | Documentación Jekyll en `docs/`. |
 | DAPW | Despliegue | AWS Free Tier con EC2 Ubuntu Server. |

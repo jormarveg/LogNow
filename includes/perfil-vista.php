@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/helpers.php';
+
 $perfilPropio = $perfilPropio ?? false;
 $urlPerfilBase = $urlPerfilBase ?? '/perfil.php';
 $nickPerfil = (string) ($datosUsuario['nick'] ?? '');

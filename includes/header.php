@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . '/auth.php'; ?>
+<?php
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/helpers.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -55,9 +58,8 @@
             <input id="check-info" type="checkbox" hidden>
             <div class="contenido-info">
                 <ul>
-                    <li><a href="#">Acerca de</a></li>
-                    <li><a href="#">Privacidad</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    <li><a href="/acerca.php">Acerca de</a></li>
+                    <li><a href="/privacidad.php">Privacidad</a></li>
                 </ul>
                 <?php if (estaLogueado()): ?>
                     <?php if (esAdmin()): ?>

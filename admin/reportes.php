@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtReportes = $db->prepare('DELETE FROM REPORTE WHERE id_resena = ?');
         $stmtReportes->execute([$idResena]);
 
-        $stmtResena = $db->prepare('DELETE FROM RESENA WHERE id = ?');
+        $stmtResena = $db->prepare('UPDATE RESENA
+                                    SET comentario = NULL
+                                    WHERE id = ?');
         $stmtResena->execute([$idResena]);
 
         $db->commit();
@@ -144,7 +146,7 @@ require __DIR__ . '/../includes/header.php';
                                     <input type="hidden" name="id_reporte" value="<?= (int) $reporte['id'] ?>">
                                     <button class="boton-estado abrir-confirmacion-admin" type="button">Ignorar</button>
                                 </form>
-                                <form method="POST" class="form-confirmacion-admin" data-titulo="Eliminar comentario" data-texto="Se eliminará la reseña reportada y sus reportes asociados." data-confirmar="Eliminar comentario">
+                                <form method="POST" class="form-confirmacion-admin" data-titulo="Eliminar comentario" data-texto="Se eliminará el comentario reportado y sus reportes asociados. La puntuación se conservará." data-confirmar="Eliminar comentario">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="id_reporte" value="<?= (int) $reporte['id'] ?>">
                                     <button class="boton-eliminar abrir-confirmacion-admin" type="button">Eliminar comentario</button>

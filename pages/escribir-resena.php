@@ -119,7 +119,7 @@ require '../includes/header.php';
 
                         <div class="campo campo-comentario">
                             <label for="comentario">Tu comentario</label>
-                            <textarea id="comentario" name="comentario" rows="10" maxlength="2000" placeholder="Cuéntanos qué te ha parecido este juego, qué destaca y qué te ha dejado peor sabor de boca si lo tiene."><?= htmlspecialchars($comentario) ?></textarea>
+                            <textarea id="comentario" name="comentario" rows="10" maxlength="2000" placeholder="Cuéntanos qué te ha parecido este juego, qué destaca y qué te ha dejado peor sabor de boca si es el caso."><?= htmlspecialchars($comentario) ?></textarea>
                             <div class="meta-comentario">
                                 <span class="ayuda-comentario">Entre 20 y 2000 caracteres</span>
                                 <span class="contador-comentario" id="contador-comentario">0/2000</span>

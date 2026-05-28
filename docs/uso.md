@@ -113,7 +113,7 @@ El panel también permite exportar el listado de usuarios a PDF, respetando los 
 
 ### Catálogo y ficha de juego
 
-El catálogo permite consultar los videojuegos guardados en LogNow!. Desde esta pantalla se puede buscar por texto y filtrar los resultados para localizar juegos de forma más cómoda.
+El catálogo permite consultar los videojuegos guardados en LogNow!, aplicar filtros por género, plataforma o año, y ordenar los resultados. La búsqueda por texto se realiza desde el buscador general de la aplicación.
 
 Cada ficha de juego reúne la información principal del título: portada, desarrolladora, géneros, plataformas, fecha de lanzamiento, descripción, puntuación media y reseñas publicadas. Si el usuario ha iniciado sesión, desde la ficha también puede guardar el juego en su biblioteca y realizar acciones personales.
 

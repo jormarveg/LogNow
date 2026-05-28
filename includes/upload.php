@@ -1,5 +1,6 @@
 <?php
 
+// 5MB
 const LIMITE_IMAGEN_PERFIL = 5 * 1024 * 1024;
 
 function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen', $limite = LIMITE_IMAGEN_PERFIL) {
@@ -32,12 +33,8 @@ function subirImagenPerfil($archivo, $rutaActual, $carpeta, $prefijo = 'imagen',
         ];
     }
 
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = $finfo ? finfo_file($finfo, $archivo['tmp_name']) : false;
-
-    if ($finfo) {
-        finfo_close($finfo);
-    }
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($archivo['tmp_name']);
 
     $extensiones = [
         'image/jpeg' => 'jpg',

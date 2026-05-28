@@ -1,9 +1,8 @@
 <footer>
     <div class="container">
         <ul>
-            <li><a href="#">Acerca de</a></li>
-            <li><a href="#">Contacto</a></li>
-            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="/acerca.php">Acerca de</a></li>
+            <li><a href="/privacidad.php">Política de privacidad</a></li>
         </ul>
         <div class="redes-sociales">
             <a href="https://facebook.com"><i class="fa-brands fa-facebook"></i></a>

@@ -77,10 +77,7 @@ if (formResena) {
     // cada vez que se escribe se actualiza el contador
     comentarioInput.addEventListener('input', function() {
         actualizarContador();
-
-        if (comentarioInput.classList.contains('invalido')) {
-            validarComentario();
-        }
+        validarComentario();
     });
 
     // cuando se sale del textarea se valida
