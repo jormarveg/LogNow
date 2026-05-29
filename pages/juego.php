@@ -376,7 +376,7 @@ require '../includes/header.php';
                             <p>Guarda este juego en una de tus listas personales.</p>
                             <form method="POST">
                                 <input type="hidden" name="accion" value="anadir_lista">
-                                <label for="id_lista_juego">Lista</label>
+                                <label for="id_lista_juego">Lista<span class="asterisco-obligatorio">*</span></label>
                                 <select id="id_lista_juego" name="id_lista" required>
                                     <?php foreach ($listasUsuario as $listaUsuario): ?>
                                         <option value="<?= (int) $listaUsuario['id'] ?>"><?= htmlspecialchars($listaUsuario['nombre']) ?></option>
@@ -512,7 +512,7 @@ require '../includes/header.php';
                     <input type="hidden" name="id_resena" id="idResenaReporte">
                     <h2 id="tituloReporte">Reportar reseña</h2>
                     <p class="texto-modal-reporte">Cuéntanos brevemente por qué quieres reportar este comentario.</p>
-                    <label for="motivoReporte">Motivo</label>
+                    <label for="motivoReporte">Motivo<span class="asterisco-obligatorio">*</span></label>
                     <textarea id="motivoReporte" name="motivo" minlength="5" maxlength="255" required></textarea>
                     <p class="mensaje-reporte" id="mensajeReporte"></p>
                     <div class="acciones-reporte">

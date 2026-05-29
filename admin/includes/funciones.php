@@ -24,7 +24,7 @@ function adminPuntuacion($puntuacion) {
     return number_format(((float) $puntuacion) / 20, 1, ',', '.');
 }
 
-function adminTextoCorto($texto, $limite = 36) {
+function adminTextoCorto($texto, $limite = 30) {
     $texto = trim((string) $texto);
 
     if (mb_strlen($texto, 'UTF-8') <= $limite) {

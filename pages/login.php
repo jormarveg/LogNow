@@ -2,16 +2,16 @@
 require '../includes/auth.php';
 
 $error = '';
-$emailLogin = '';
+$login = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $emailLogin = trim($_POST['email'] ?? '');
+    $login = trim($_POST['login'] ?? ($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
 
-    if (empty($emailLogin) || empty($password)) {
+    if (empty($login) || empty($password)) {
         $error = 'Todos los campos son obligatorios';
     } else {
-        $usuario = $usuarioModel->buscarPorEmail($emailLogin);
+        $usuario = $usuarioModel->buscarPorEmailONick($login);
 
         if ($usuario && password_verify($password, $usuario['password'])) {
             if (!$usuario['activo']) {
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         } else {
-            $error = 'Email o contraseña incorrectos';
+            $error = 'Usuario o contraseña incorrectos';
         }
     }
 }
@@ -48,13 +48,13 @@ require '../includes/header.php';
         <?php endif; ?>
         <form method="POST" id="form-login">
             <div class="campo">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required
-                       value="<?= htmlspecialchars($emailLogin) ?>">
+                <label for="login">Email o nick<span class="asterisco-obligatorio">*</span></label>
+                <input type="text" id="login" name="login" autocomplete="username" required
+                       value="<?= htmlspecialchars($login) ?>">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">
-                <label for="password">Contraseña</label>
+                <label for="password">Contraseña<span class="asterisco-obligatorio">*</span></label>
                 <input type="password" id="password" name="password" required>
                 <span class="msg-error"></span>
             </div>

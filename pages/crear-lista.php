@@ -79,7 +79,7 @@ require '../includes/header.php';
                 <?php endif; ?>
 
                 <div class="campo-lista">
-                    <label for="nombre">Nombre</label>
+                    <label for="nombre">Nombre<span class="asterisco-obligatorio">*</span></label>
                     <input type="text" id="nombre" name="nombre" maxlength="100" required value="<?= htmlspecialchars($nombre) ?>">
                 </div>
 

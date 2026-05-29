@@ -51,29 +51,29 @@ require '../includes/header.php';
         <?php endif; ?>
         <form method="POST" id="form-registro" novalidate>
             <div class="campo">
-                <label for="nombre">Nombre</label>
+                <label for="nombre">Nombre<span class="asterisco-obligatorio">*</span></label>
                 <input type="text" id="nombre" name="nombre" required maxlength="20"
                        value="<?= htmlspecialchars($nombre) ?>">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">
-                <label for="nick">Nick</label>
+                <label for="nick">Nick<span class="asterisco-obligatorio">*</span></label>
                 <input type="text" id="nick" name="nick" required minlength="3" maxlength="20"
                        pattern="[a-zA-Z0-9_]{3,20}" value="<?= htmlspecialchars($nick) ?>">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">
-                <label for="email">Email</label>
+                <label for="email">Email<span class="asterisco-obligatorio">*</span></label>
                 <input type="email" id="email" name="email" required value="<?= htmlspecialchars($email) ?>">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">
-                <label for="password">Contraseña</label>
+                <label for="password">Contraseña<span class="asterisco-obligatorio">*</span></label>
                 <input type="password" id="password" name="password" required minlength="8">
                 <span class="msg-error"></span>
             </div>
             <div class="campo">
-                <label for="password2">Repetir contraseña</label>
+                <label for="password2">Repetir contraseña<span class="asterisco-obligatorio">*</span></label>
                 <input type="password" id="password2" name="password2" required>
                 <span class="msg-error"></span>
             </div>

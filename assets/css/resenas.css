@@ -97,7 +97,7 @@
 }
 
 .resenas-recientes .nombre-puntuacion {
-    justify-self: center;
+    justify-self: left;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

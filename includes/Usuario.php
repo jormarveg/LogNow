@@ -13,6 +13,12 @@ class Usuario {
         return $stmt->fetch();
     }
 
+    public function buscarPorEmailONick($login) {
+        $stmt = $this->db->prepare('SELECT * FROM USUARIO WHERE email = ? OR nick = ? LIMIT 1');
+        $stmt->execute([$login, $login]);
+        return $stmt->fetch();
+    }
+
     public function existeNick($nick) {
         $stmt = $this->db->prepare('SELECT id FROM USUARIO WHERE nick = ?');
         $stmt->execute([$nick]);

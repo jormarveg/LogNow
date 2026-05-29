@@ -100,10 +100,10 @@ button.favorito-juego.pulso {
 
 .datos-principales h1 {
     margin-bottom: 0.35rem;
-    font-size: 2.1rem;
+    font-size: 1.6rem;
     line-height: 1;
     color: white;
-    text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 3px 14px rgba(0, 0, 0, 1);
 }
 
 .subtitulo {
@@ -506,7 +506,7 @@ section.principal {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-bottom: 0.75rem;
+    margin: 0.75rem 0;
 }
 
 .resenas-juego h2 {
@@ -623,6 +623,8 @@ section.principal {
     margin-top: 0;
     text-align: right;
     white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: bold;
 }
 
 .resenas-juego .texto {

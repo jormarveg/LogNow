@@ -128,13 +128,13 @@ require '../includes/header.php';
                 <input type="hidden" name="accion" value="perfil">
                 <div class="grid-formulario">
                     <div class="campo">
-                        <label for="nombre">Nombre</label>
+                        <label for="nombre">Nombre<span class="asterisco-obligatorio">*</span></label>
                         <input type="text" id="nombre" name="nombre" maxlength="20" required value="<?= htmlspecialchars($nombre) ?>">
                         <span class="msg-error"></span>
                     </div>
 
                     <div class="campo">
-                        <label for="nick">Nick</label>
+                        <label for="nick">Nick<span class="asterisco-obligatorio">*</span></label>
                         <input type="text" id="nick" name="nick" minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]{3,20}" required value="<?= htmlspecialchars($nick) ?>">
                         <span class="msg-error"></span>
                     </div>
@@ -189,19 +189,19 @@ require '../includes/header.php';
                 <input type="hidden" name="accion" value="password">
                 <div class="grid-formulario">
                     <div class="campo campo-ancho">
-                        <label for="password_actual">Contraseña actual</label>
+                        <label for="password_actual">Contraseña actual<span class="asterisco-obligatorio">*</span></label>
                         <input type="password" id="password_actual" name="password_actual" required>
                         <span class="msg-error"></span>
                     </div>
 
                     <div class="campo">
-                        <label for="password_nueva">Nueva contraseña</label>
+                        <label for="password_nueva">Nueva contraseña<span class="asterisco-obligatorio">*</span></label>
                         <input type="password" id="password_nueva" name="password_nueva" required>
                         <span class="msg-error"></span>
                     </div>
 
                     <div class="campo">
-                        <label for="password_nueva2">Repetir nueva contraseña</label>
+                        <label for="password_nueva2">Repetir nueva contraseña<span class="asterisco-obligatorio">*</span></label>
                         <input type="password" id="password_nueva2" name="password_nueva2" required>
                         <span class="msg-error"></span>
                     </div>

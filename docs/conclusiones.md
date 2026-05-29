@@ -30,7 +30,7 @@ Este proyecto me ha permitido trabajar con PHP y PDO en una aplicación más com
 
 También he reforzado el uso de sesiones y roles de usuario. LogNow! diferencia entre visitantes, usuarios registrados y administradores, por lo que ha sido necesario controlar qué puede hacer cada tipo de usuario y proteger las páginas que requieren permisos concretos.
 
-En la parte de cliente, he practicado el uso de JavaScript para mejorar la interacción de la aplicación sin depender siempre de recargas completas. Algunos ejemplos son el buscador, los filtros, el selector de puntuación con estrellas, las validaciones de formularios y determinadas acciones mediante AJAX.
+En la parte de cliente, he practicado el uso de JavaScript para mejorar la interacción de la aplicación en puntos concretos. Algunos ejemplos son las validaciones de formularios, el selector de puntuación con estrellas, los carruseles, los modales de confirmación y determinadas acciones mediante AJAX, como favoritos, cambios rápidos de estado o puntuación y reportes de reseñas.
 
 Otro aprendizaje importante ha sido el tratamiento de datos externos. La integración con IGDB me ha ayudado a entender mejor cómo consumir una API, transformar los datos recibidos, guardarlos en una base de datos propia y combinarlos con información generada por los usuarios de la aplicación.
 

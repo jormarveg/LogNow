@@ -73,6 +73,7 @@ if (formBiblioteca) {
     const minutosInput = document.getElementById('minutos_jugados');
     const fechaInicioInput = document.getElementById('fecha_inicio');
     const fechaFinInput = document.getElementById('fecha_fin');
+    const bloqueTiempo = document.querySelector('.bloque-tiempo');
     const campoFechaInicio = document.querySelector('.campo-fecha-inicio');
     const campoFechaFin = document.querySelector('.campo-fecha-fin');
 
@@ -119,14 +120,23 @@ if (formBiblioteca) {
     // Función que decide qué fechas se ven según el estado del juego para el usuario
     function actualizarCamposFecha(animar) {
         if (estadoInput.value === 'pendiente') {
+            ocultarCampoFecha(bloqueTiempo, animar);
             ocultarCampoFecha(campoFechaInicio, animar);
             ocultarCampoFecha(campoFechaFin, animar);
+            horasInput.value = '0';
+            minutosInput.value = '0';
+            fechaInicioInput.value = '';
+            fechaFinInput.value = '';
+            limpiarBiblioteca(horasInput);
+            limpiarBiblioteca(minutosInput);
             limpiarBiblioteca(fechaInicioInput);
             limpiarBiblioteca(fechaFinInput);
         } else if (estadoInput.value === 'completado') {
+            mostrarCampoFecha(bloqueTiempo, animar);
             mostrarCampoFecha(campoFechaInicio, animar);
             mostrarCampoFecha(campoFechaFin, animar);
         } else {
+            mostrarCampoFecha(bloqueTiempo, animar);
             mostrarCampoFecha(campoFechaInicio, animar);
             ocultarCampoFecha(campoFechaFin, animar);
             limpiarBiblioteca(fechaFinInput);

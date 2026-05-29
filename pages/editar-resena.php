@@ -93,7 +93,7 @@ require '../includes/header.php';
                     </p>
                     <p class="meta-resumen">Estado: <?= htmlspecialchars(ucfirst($juego['usuario_juego']['estado'])) ?></p>
                     <p class="meta-resumen">Plataforma: <?= htmlspecialchars($juego['usuario_juego']['plataforma'] ?? 'Sin plataforma') ?></p>
-                    <p class="aviso-resena">Esta reseña ya estaba publicada. Los cambios se guardarán sobre la misma entrada.</p>
+                    <p class="aviso-resena">Estás editando una reseña ya publicada.</p>
                 </div>
             </section>
 
@@ -107,7 +107,7 @@ require '../includes/header.php';
 
                     <div class="grid-formulario-resena">
                         <div class="campo campo-puntuacion campo-puntuacion-resena">
-                            <span class="label-puntuacion">Tu puntuación</span>
+                            <span class="label-puntuacion">Tu puntuación<span class="asterisco-obligatorio">*</span></span>
                             <div class="selector-puntuacion" id="selector-puntuacion">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
                                     <span class="estrella-puntuacion" data-estrella="<?= $i ?>" aria-label="<?= $i ?> estrellas">
@@ -124,7 +124,7 @@ require '../includes/header.php';
                         </div>
 
                         <div class="campo campo-comentario">
-                            <label for="comentario">Tu comentario</label>
+                            <label for="comentario">Tu comentario<span class="asterisco-obligatorio">*</span></label>
                             <textarea id="comentario" name="comentario" rows="10" maxlength="2000" placeholder="Cuéntanos qué te ha parecido este juego, qué destaca y qué te ha dejado peor sabor de boca si es el caso."><?= htmlspecialchars($comentario) ?></textarea>
                             <div class="meta-comentario">
                                 <span class="ayuda-comentario">Entre 20 y 2000 caracteres</span>

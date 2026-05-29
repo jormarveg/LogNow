@@ -79,6 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $juego && ($_POST['accion'] ?? '') 
     $fechaFin = trim((string) ($_POST['fecha_fin'] ?? ''));
     $favorito = isset($_POST['favorito']);
 
+    if ($estado === 'pendiente') {
+        $horasJugadas = '0';
+        $minutosJugados = '0';
+        $fechaInicio = '';
+        $fechaFin = '';
+    }
+
     if (!estadoBibliotecaValido($estado)) {
         $error = 'Selecciona un estado válido';
     } elseif ($idPlataforma > 0 && !in_array($idPlataforma, $plataformasValidas, true)) {
@@ -207,7 +214,7 @@ require '../includes/header.php';
 
                     <div class="grid-formulario">
                         <div class="campo">
-                            <label for="estado">Estado</label>
+                            <label for="estado">Estado<span class="asterisco-obligatorio">*</span></label>
                             <select id="estado" name="estado" required>
                                 <?php foreach ($estados as $clave => $texto): ?>
                                     <option value="<?= $clave ?>"<?= $estado === $clave ? ' selected' : '' ?>><?= $texto ?></option>
@@ -246,7 +253,7 @@ require '../includes/header.php';
                             <span class="msg-error"></span>
                         </div>
 
-                        <div class="bloque-tiempo">
+                        <div class="bloque-tiempo<?= $estado === 'pendiente' ? ' oculto' : '' ?>">
                             <span class="label-tiempo">Tiempo jugado</span>
                             <div class="grupo-tiempo">
                                 <div class="campo">

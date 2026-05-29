@@ -20,6 +20,8 @@ nav_order: 4
   - [Usuario registrado](#usuario-registrado)
   - [Administrador](#administrador)
 - [Funcionalidades principales](#funcionalidades-principales)
+  - [Página principal y recomendaciones](#página-principal-y-recomendaciones)
+  - [Búsqueda local y búsqueda externa](#búsqueda-local-y-búsqueda-externa)
   - [Catálogo y ficha de juego](#catálogo-y-ficha-de-juego)
   - [Biblioteca personal](#biblioteca-personal)
   - [Puntuaciones y reseñas](#puntuaciones-y-reseñas)
@@ -36,25 +38,25 @@ nav_order: 4
 
 ### 1. Página principal
 
-Punto de entrada donde se visualizan las tendencias y la actividad reciente de la comunidad.
+Punto de entrada donde se visualizan las tendencias, la actividad reciente de la comunidad y recomendaciones para usuarios registrados.
 
 ![Pantalla Principal](img/principal-marco.webp)
 
 ### 2. Catálogo
 
-Página donde se muestran los juegos y pueden filtrarse.
+Página donde se muestran los juegos del catálogo local, con filtros, ordenación y paginación.
 
 ![Catálogo de juegos](img/catalogo-marco.webp)
 
 ### 3. Ficha de videojuego
 
-Vista de detalle con la información técnica traída de la API y el resumen de la interacción de los usuarios.
+Vista de detalle con la información obtenida de IGDB y guardada en la base de datos local, junto con la actividad de los usuarios.
 
 ![Ficha de videojuego](img/juego-marco.webp)
 
 ### 4. Búsqueda
 
-Página para buscar juegos y usuarios.
+Página para buscar juegos y usuarios. En el caso de los juegos, permite consultar el catálogo local y buscar también en IGDB.
 
 ![Búsqueda de juegos y usuarios](img/buscar-marco.webp)
 
@@ -83,7 +85,7 @@ Página donde un administrador puede gestionar reportes y usuarios.
 
 Un visitante sin iniciar sesión puede **navegar** por la parte pública de la aplicación.
 
-Desde la página principal puede ver juegos en tendencia y reseñas recientes de la comunidad. También puede entrar al catálogo, aplicar filtros, buscar juegos y usuarios, y abrir la ficha de cada título y perfil.
+Desde la página principal puede ver juegos en tendencia y reseñas recientes de la comunidad. También puede entrar al catálogo, aplicar filtros, buscar juegos y usuarios, buscar títulos en IGDB y abrir la ficha de cada título y perfil.
 
 En la ficha de un juego se muestra la información principal: portada, título, desarrolladora, géneros, plataformas, fecha de lanzamiento, descripción, puntuación media y reseñas publicadas. El invitado puede consultar estos datos, pero no puede guardar juegos ni publicar contenido.
 
@@ -99,7 +101,7 @@ En la edición de perfil puede subir avatar y encabezado. Si cambia una imagen, 
 
 El administrador tiene acceso a un **panel propio** desde la navegación superior.
 
-Desde el panel puede consultar estadísticas generales, revisar usuarios registrados, filtrar cuentas por rol o estado y activar o desactivar usuarios. También puede revisar reportes enviados por la comunidad sobre reseñas.
+Desde el panel puede consultar un resumen de actividad, revisar usuarios registrados, filtrar cuentas por búsqueda, rol o estado y activar o desactivar usuarios. También puede revisar reportes enviados por la comunidad sobre reseñas.
 
 Cuando se desactiva una cuenta, ese usuario no puede volver a iniciar sesión. Si ya tenía la sesión abierta, se le cierra en la siguiente carga. Su perfil público muestra un aviso de perfil desactivado, pero sus reseñas ya publicadas siguen visibles en las fichas de juego.
 
@@ -111,29 +113,45 @@ El panel también permite exportar el listado de usuarios a PDF, respetando los 
 
 ## Funcionalidades principales
 
+### Página principal y recomendaciones
+
+La página principal muestra juegos en tendencia, reseñas recientes de la comunidad y, si el usuario ha iniciado sesión, recomendaciones personalizadas.
+
+Los juegos en tendencia se basan en la actividad reciente de la plataforma, teniendo en cuenta los juegos añadidos a bibliotecas en los últimos días. Las recomendaciones se calculan a partir de los géneros más repetidos en la biblioteca del usuario y evitan mostrar juegos que ya tenga guardados.
+
+### Búsqueda local y búsqueda externa
+
+La búsqueda permite localizar juegos y usuarios desde una misma pantalla. Los juegos se consultan primero en la base de datos local de LogNow!.
+
+Si el usuario necesita ampliar resultados, puede buscar también en IGDB. Los juegos encontrados se importan al catálogo local para poder reutilizarlos después en fichas, catálogo, biblioteca, reseñas y listas.
+
 ### Catálogo y ficha de juego
 
-El catálogo permite consultar los videojuegos guardados en LogNow!, aplicar filtros por género, plataforma o año, y ordenar los resultados. La búsqueda por texto se realiza desde el buscador general de la aplicación.
+El catálogo permite consultar los videojuegos guardados en LogNow!. Incluye filtros por género, plataforma y año, además de ordenación por puntuación, nombre o fecha. Los resultados se muestran paginados para que la navegación sea más cómoda.
 
-Cada ficha de juego reúne la información principal del título: portada, desarrolladora, géneros, plataformas, fecha de lanzamiento, descripción, puntuación media y reseñas publicadas. Si el usuario ha iniciado sesión, desde la ficha también puede guardar el juego en su biblioteca y realizar acciones personales.
+Cada ficha de juego reúne la información principal del título: portada, desarrolladora, géneros, plataformas, fecha de lanzamiento, descripción, puntuación media, distribución de puntuaciones y reseñas publicadas. Si el usuario ha iniciado sesión, desde la ficha también puede guardar el juego en su biblioteca, marcarlo como favorito, cambiar estado, puntuarlo rápidamente, escribir o editar una reseña y añadirlo a una lista personal.
+
+Las reseñas de la ficha se muestran paginadas. Los usuarios registrados pueden reportar reseñas de otros usuarios, y el administrador puede eliminar una reseña completa desde la propia ficha cuando sea necesario.
 
 ### Biblioteca personal
 
 La biblioteca es la parte donde cada usuario organiza los juegos que le interesan. Un juego puede estar marcado como jugando, completado, por jugar o abandonado.
 
-Además del estado, el usuario puede indicar plataforma, horas jugadas, fechas, favorito y puntuación personal. Estos datos permiten que el perfil muestre una actividad más completa que una simple lista de juegos guardados.
+Además del estado, el usuario puede indicar plataforma, horas jugadas, fechas de inicio y fin, marcar favorito y puntuación personal. Estos datos permiten que el perfil muestre una actividad más completa que una simple lista de juegos guardados.
+
+La biblioteca muestra tarjetas resumen y filtros por estado. Así el usuario puede consultar rápidamente cuántos juegos tiene en total, cuántos ha marcado como favoritos, cuántos está jugando y cuántos ha completado.
 
 ### Puntuaciones y reseñas
 
-La puntuación permite valorar rápidamente un juego. Se guarda asociada al usuario y al videojuego, y se usa para calcular las medias que se muestran en la aplicación.
+La puntuación permite valorar un juego. Se guarda asociada al usuario y al videojuego, y se usa para calcular las medias que se muestran en la aplicación.
 
-Cuando el usuario quiere dejar una opinión más completa, puede escribir una reseña. Las reseñas aparecen en la ficha del juego y también en el perfil del usuario, siempre que sigan visibles. En las fichas y en el tab de reseñas del perfil se muestran paginadas para evitar listas demasiado largas. Si una reseña es larga, se puede desplegar con "Leer más" en el perfil y en la ficha del juego.
+Cuando el usuario quiere dejar una opinión más completa, puede escribir una reseña. Las reseñas aparecen en la ficha del juego y también en el perfil del usuario, siempre que sigan visibles. En las fichas y en la pestaña de reseñas del perfil se muestran paginadas para evitar listas demasiado largas. Si una reseña es larga, se puede desplegar con «Leer más» en el perfil y en la ficha del juego.
 
 Cuando una reseña ya está publicada, su puntuación no se puede quitar desde la puntuación rápida. Para cambiarla, el usuario debe editar la reseña completa o eliminarla.
 
 ### Listas
 
-Las listas sirven para agrupar juegos con un criterio propio. Un usuario puede crear listas personales desde su perfil y añadir juegos desde la ficha de cada título.
+Las listas sirven para agrupar juegos con un criterio propio. Un usuario puede crear, editar y eliminar listas personales desde su perfil, añadir juegos desde la ficha de cada título y quitar juegos desde la vista de la lista.
 
 Esta funcionalidad permite separar juegos por ideas más concretas que los estados de biblioteca, por ejemplo favoritos de un género, juegos pendientes de una saga o títulos recomendados.
 
@@ -141,7 +159,9 @@ Solo se pueden añadir a una lista juegos que existan en el catálogo local y qu
 
 ### Perfil y cambio de contraseña
 
-El perfil muestra la información pública del usuario: avatar, encabezado, biografía, estadísticas, favoritos, biblioteca, listas y reseñas. Desde ahí se puede revisar la actividad propia de forma agrupada. La cifra de jugados no incluye juegos pendientes, y el contador de este año se basa en juegos iniciados durante el año actual.
+El perfil muestra avatar, encabezado, biografía, estadísticas, favoritos, biblioteca y reseñas. Desde ahí se puede revisar la actividad propia de forma agrupada. En el perfil propio, además, el usuario puede gestionar sus listas personales desde una pestaña específica.
+
+La cifra de jugados no incluye juegos pendientes, y el contador de este año se basa en juegos iniciados durante el año actual.
 
 En la edición de perfil se pueden cambiar los datos básicos y las imágenes personales. El avatar permite identificar al usuario en reseñas y listados, y la imagen de encabezado personaliza la parte superior del perfil. Si no se suben imágenes propias, la aplicación mantiene imágenes por defecto.
 
@@ -151,15 +171,17 @@ La contraseña se cambia en un bloque separado para pedir la contraseña actual,
 
 ### Panel de administración
 
-El panel de administración centraliza la gestión interna de LogNow!. Desde él se pueden ver estadísticas generales, acceder al listado de usuarios, revisar cuentas y consultar los reportes enviados por la comunidad.
+El panel de administración centraliza la gestión interna de LogNow!. Desde él se puede ver un resumen de actividad con últimos usuarios, reseñas recientes y juegos más guardados. También permite acceder al listado de usuarios, aplicar filtros por búsqueda, rol o estado, activar o desactivar cuentas y consultar los reportes enviados por la comunidad.
 
 Cuando el catálogo no tiene ningún juego importado, el panel muestra una acción para lanzar la importación inicial desde IGDB. Así el administrador puede preparar el catálogo sin entrar directamente al script.
 
 ### Reportes y exportación PDF
 
-Los usuarios pueden reportar reseñas que consideren inadecuadas. El administrador revisa esos reportes y decide si los descarta o si elimina la reseña reportada.
+Los usuarios pueden reportar reseñas de otros usuarios que consideren inadecuadas. No se puede reportar una reseña propia.
 
-La pantalla de usuarios del panel permite filtrar cuentas por rol o estado. Ese listado puede exportarse a PDF respetando los filtros aplicados, lo que cubre una salida documental sencilla desde la propia aplicación.
+El administrador revisa esos reportes y decide si los descarta o si elimina el comentario reportado. En ese caso, se conserva la puntuación de la reseña, pero el texto deja de mostrarse y se eliminan los reportes asociados.
+
+La pantalla de usuarios del panel permite filtrar cuentas por búsqueda, rol o estado. Ese listado puede exportarse a PDF respetando los filtros aplicados, lo que cubre una salida documental sencilla desde la propia aplicación.
 
 ### Interacciones JavaScript
 
@@ -169,9 +191,9 @@ También se usan AJAX y jQuery en acciones concretas, como actualizar favoritos,
 
 La edición de perfil valida las imágenes antes de enviarlas. Si el avatar o el encabezado supera los 5 MB, la interfaz muestra el aviso directamente y evita que el servidor responda con un error poco claro.
 
-En la página principal, los carruseles ayudan a navegar por juegos y reseñas recientes.
+En la página principal, los carruseles ayudan a navegar por juegos, recomendaciones y reseñas recientes.
 
-Las acciones delicadas, como eliminar una reseña o resolver un reporte desde administración, piden confirmación antes de enviar el formulario.
+También se usan modales de confirmación para acciones delicadas, como quitar un juego de la biblioteca, reportar una reseña, eliminar una reseña desde la ficha, eliminar un comentario reportado o cambiar el estado de una cuenta desde administración.
 
 ## Permisos principales
 
@@ -179,16 +201,21 @@ Las acciones delicadas, como eliminar una reseña o resolver un reporte desde ad
 |---|:---:|:---:|:---:|
 | Consultar catálogo | Sí | Sí | Sí |
 | Buscar juegos | Sí | Sí | Sí |
+| Buscar usuarios | Sí | Sí | Sí |
+| Buscar también en IGDB | Sí | Sí | Sí |
 | Ver fichas y reseñas | Sí | Sí | Sí |
 | Ver perfiles | Sí | Sí | Sí |
 | Gestionar biblioteca | No | Sí | Sí |
 | Puntuar juegos | No | Sí | Sí |
 | Escribir reseñas | No | Sí | Sí |
 | Crear listas personales | No | Sí | Sí |
+| Añadir juegos a listas | No | Sí | Sí |
+| Reportar reseñas ajenas | No | Sí | No |
 | Editar perfil | No | Sí | Sí |
 | Cambiar contraseña | No | Sí | Sí |
 | Acceder al panel admin | No | No | Sí |
 | Gestionar usuarios | No | No | Sí |
+| Activar/desactivar cuentas | No | No | Sí |
 | Revisar reportes | No | No | Sí |
 | Exportar usuarios a PDF | No | No | Sí |
 

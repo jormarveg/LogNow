@@ -159,7 +159,7 @@ Si cada estrella, favorito o reporte recargara toda la página, la ficha sería 
 
 ### Registro e inicio de sesión
 
-El registro guarda el usuario en `USUARIO` usando la clase `Usuario`. El login se hace por email y, si las credenciales son correctas, `includes/auth.php` guarda en sesión el `id`, el `nick` y el `rol`.
+El registro guarda el usuario en `USUARIO` usando la clase `Usuario`. El login se puede hacer por email o nick y, si las credenciales son correctas, `includes/auth.php` guarda en sesión el `id`, el `nick` y el `rol`.
 
 Las contraseñas no se guardan en texto plano. En el registro se almacenan mediante `password_hash()` y en el login se comprueban con `password_verify()`.
 

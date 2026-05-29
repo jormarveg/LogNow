@@ -19,6 +19,12 @@
     --exito-texto: #2e7d32;
 }
 
+.asterisco-obligatorio {
+    color: #e74c3c;
+    margin-left: 0.15rem;
+    font-weight: 700;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--texto-principal);
