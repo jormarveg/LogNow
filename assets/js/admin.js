@@ -1,6 +1,24 @@
 // Archivo que controla los modales del panel de administración
 
 const modalAdminConfirmacion = document.getElementById('modalAdminConfirmacion');
+const botonImportarAdmin = document.querySelector('.boton-importar-admin');
+
+// muestra indicación de que los juegos se están importando
+if (botonImportarAdmin) {
+    let importacionAdminActiva = false;
+
+    botonImportarAdmin.addEventListener('click', function(e) {
+        if (importacionAdminActiva) {
+            e.preventDefault();
+            return;
+        }
+
+        importacionAdminActiva = true;
+        botonImportarAdmin.textContent = 'Importando...';
+        botonImportarAdmin.classList.add('cargando');
+        botonImportarAdmin.setAttribute('aria-disabled', 'true');
+    });
+}
 
 if (modalAdminConfirmacion) {
     const tituloModalAdmin = document.getElementById('tituloModalAdmin');

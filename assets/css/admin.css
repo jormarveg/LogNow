@@ -218,6 +218,12 @@
     padding: 0.8rem 1rem;
 }
 
+.admin-importar a.cargando {
+    opacity: 0.75;
+    cursor: wait;
+    pointer-events: none;
+}
+
 .mensaje-admin {
     padding: 0.85rem 1rem;
     border-radius: 6px;

@@ -29,6 +29,7 @@ $juegosPopulares = $db->query("SELECT v.titulo, v.igdb_id, COUNT(uj.id) AS total
 
 $titulo = 'Panel admin — LogNow!';
 $css = ['admin.css'];
+$js = ['admin.js'];
 $pagina = 'admin';
 $adminPagina = 'inicio';
 require __DIR__ . '/../includes/header.php';
@@ -48,7 +49,7 @@ require __DIR__ . '/../includes/header.php';
                     <h2>Catálogo vacío</h2>
                     <p>Todavía no hay juegos importados desde IGDB.</p>
                 </div>
-                <a href="/api/importar.php?pagina=1&cantidad=500&reiniciar=1">Importar juegos</a>
+                <a class="boton-importar-admin" href="/api/importar.php?pagina=1&cantidad=500&reiniciar=1">Importar juegos</a>
             </section>
         <?php endif; ?>
 
